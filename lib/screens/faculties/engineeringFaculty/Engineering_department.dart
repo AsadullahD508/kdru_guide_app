@@ -2,7 +2,6 @@ import 'package:Kdru_Guide_app/screens/faculties/economics/semester_screen.dart'
 import 'package:flutter/material.dart';
 import '../../../widgets/custom_header.dart';
 import '../../../widgets/custome_footer.dart';
-
 import '../computer_science/teacher_screen.dart';
 
 class EconomicDepartment extends StatelessWidget {
@@ -44,6 +43,7 @@ class EconomicDepartment extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       Row(
+                        textDirection: TextDirection.rtl,
                         children: [
                           Expanded(
                             child: ElevatedButton(
@@ -66,6 +66,7 @@ class EconomicDepartment extends StatelessWidget {
                               ),
                               child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
+                                textDirection: TextDirection.rtl,
                                 children: [
                                   Icon(Icons.calendar_today, size: 20),
                                   SizedBox(width: 8),
@@ -96,6 +97,7 @@ class EconomicDepartment extends StatelessWidget {
                               ),
                               child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
+                                textDirection: TextDirection.rtl,
                                 children: [
                                   Icon(Icons.people, size: 20),
                                   SizedBox(width: 8),
@@ -108,6 +110,7 @@ class EconomicDepartment extends StatelessWidget {
                       ),
                       const SizedBox(height: 32),
                       const Row(
+                        textDirection: TextDirection.rtl,
                         children: [
                           _StatCard(
                             icon: Icons.people,
@@ -152,34 +155,37 @@ class EconomicDepartment extends StatelessWidget {
 
   static Widget _buildProgramCard(
       String title, String description, IconData icon) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: const Color(0xFF0D3B66)),
-                const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF0D3B66),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, color: const Color(0xFF0D3B66)),
+                  const SizedBox(width: 12),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0D3B66),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-          ],
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                description,
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -202,32 +208,35 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3), width: 1),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: color,
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: color.withOpacity(0.3), width: 1),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: color),
+              const SizedBox(height: 8),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(fontSize: 12, color: color.withOpacity(0.8)),
-              textAlign: TextAlign.center,
-            ),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(fontSize: 12, color: color.withOpacity(0.8)),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

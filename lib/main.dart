@@ -1,24 +1,22 @@
+import 'dart:async';
+import 'package:Kdru_Guide_app/screens/firstHomePage.dart'
+    show HomeFirstPage, HomePage;
+import 'package:Kdru_Guide_app/widgets/custom_header.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'screens/home_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(UniversityFutureApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class UniversityFutureApp extends StatelessWidget {
+  const UniversityFutureApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AI Generator',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
-      ),
-      home: const HomeScreen(),
-      debugShowCheckedModeBanner: false,
+      title: 'کند هار پوهنتون',
+      theme: ThemeData.light(),
+      home: HomeFirstPage(), // Set HomePage as the home widget
     );
   }
 }

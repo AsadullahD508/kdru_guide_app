@@ -8,6 +8,7 @@ class TeamMember {
   final String bio;
   final String phone;
   final String email;
+  final String imageUrl;
 
   TeamMember({
     required this.id,
@@ -16,21 +17,23 @@ class TeamMember {
     required this.bio,
     required this.phone,
     required this.email,
+    required this.imageUrl,
   });
 }
 
 class TeamProfilePage extends StatelessWidget {
-  TeamProfilePage({Key? key}) : super(key: key);
+  const TeamProfilePage({super.key});
 
-  final List<TeamMember> teamMembers = [
+  static final List<TeamMember> teamMembers = [
     TeamMember(
       id: 1,
       name: "Engineer Fared Ahmad",
-      title: "Lead Engineer",
+      title: "Manager",
       bio:
           "Experienced engineer leading technical development and system architecture.",
       phone: "+93 700 111 111",
-      email: "fared@example.com",
+      email: "fared@gmail.com",
+      imageUrl: "images/darwish.jpg",
     ),
     TeamMember(
       id: 2,
@@ -39,16 +42,18 @@ class TeamProfilePage extends StatelessWidget {
       bio:
           "Skilled software developer with expertise in building robust applications.",
       phone: "+93 700 222 222",
-      email: "qudratullah@example.com",
+      email: "qudratullah@gmail.com",
+      imageUrl: "images/darwish.jpg",
     ),
     TeamMember(
       id: 3,
       name: "Engineer Asadullah Darwish",
-      title: "Systems Engineer",
+      title: "Software Developer",
       bio:
           "Specialized in designing and implementing complex system solutions.",
       phone: "+93 700 333 333",
-      email: "asadullah@example.com",
+      email: "asadullah@gmail.com",
+      imageUrl: "images/darwish.jpg",
     ),
     TeamMember(
       id: 4,
@@ -57,16 +62,18 @@ class TeamProfilePage extends StatelessWidget {
       bio:
           "Creative designer focused on creating intuitive and engaging user experiences.",
       phone: "+93 700 444 444",
-      email: "hamidullah@example.com",
+      email: "hamidullah@gmail.com",
+      imageUrl: "images/darwish.jpg",
     ),
     TeamMember(
       id: 5,
       name: "Shabir Ahmad",
-      title: "Project Manager",
+      title: "Backend Developer",
       bio:
-          "Dedicated project manager ensuring successful delivery of all team initiatives.",
+          "Dedicated backend developer ensuring robust and scalable server-side logic.",
       phone: "+93 700 555 555",
-      email: "shabir@example.com",
+      email: "shabir@gmail.com",
+      imageUrl: "images/darwish.jpg",
     ),
   ];
 
@@ -97,7 +104,7 @@ class TeamProfilePage extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Close'),
-          )
+          ),
         ],
       ),
     );
@@ -106,131 +113,142 @@ class TeamProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const CustomHeader(
-          title: 'Group F',
-          selectedIndex: 0,
-        ),
-        centerTitle: true,
+      appBar: const CustomHeader(
+        title: 'Group F',
+        selectedIndex: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 40,
-                    child: Text(
-                      'F',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Group F',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'A talented team of professionals working together to bring innovative solutions to life.',
-                    style: TextStyle(color: Colors.white70),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      1, // you can adjust crossAxisCount based on screen size
-                  childAspectRatio: 3 / 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: teamMembers.length,
-                itemBuilder: (context, index) {
-                  final member = teamMembers[index];
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 4,
-                    child: Padding(
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Container(
                       padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            backgroundColor: Colors.blue.shade100,
-                            radius: 30,
+                            backgroundColor: Colors.white,
+                            radius: 40,
                             child: Text(
-                              getInitials(member.name),
+                              'F',
                               style: TextStyle(
-                                fontSize: 24,
+                                fontSize: 32,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue.shade700,
+                                color: Theme.of(context).primaryColor,
                               ),
                             ),
                           ),
                           const SizedBox(height: 12),
-                          Text(
-                            member.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            member.title,
+                          const Text(
+                            'Group F',
                             style: TextStyle(
-                              color: Colors.grey[600],
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            member.bio,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.black54,
-                            ),
+                          const Text(
+                            'A talented team of professionals working together to bring innovative solutions to life.',
+                            style: TextStyle(color: Colors.white70),
                             textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 8),
-                          ElevatedButton(
-                            onPressed: () => showContactDialog(context, member),
-                            child: const Text('Contact'),
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(30),
-                            ),
                           ),
                         ],
                       ),
                     ),
-                  );
-                },
+                    const SizedBox(height: 20),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: teamMembers.length,
+                      itemBuilder: (context, index) {
+                        final member = teamMembers[index];
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 4,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage:
+                                        AssetImage(member.imageUrl),
+                                    child: member.imageUrl.isEmpty
+                                        ? Text(
+                                            getInitials(member.name),
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue.shade700,
+                                            ),
+                                          )
+                                        : null,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    member.name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    member.title,
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    member.bio,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black54,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () =>
+                                          showContactDialog(context, member),
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12),
+                                      ),
+                                      child: const Text('Contact'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

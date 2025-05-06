@@ -7,79 +7,83 @@ class EngFaculty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomHeader(
-        title: 'انجینري فاکولته',
-        selectedIndex: 1,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'انجینري فاکولته',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0D3B66),
+    return Directionality(
+      // <<< RTL دلته اضافه شو
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: const CustomHeader(
+          title: 'انجینري پوهنځي',
+          selectedIndex: 1,
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'انجینري فاکولته',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0D3B66),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'د ټکنالوژۍ راتلونکی مشران د کیفیت زده کړې، نوښتګرې څېړنې، او د انجینري اصولو عملي غوښتنلیک له لارې ځواکمنول.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
+                      const SizedBox(height: 12),
+                      const Text(
+                        'د ټکنالوژۍ راتلونکی مشران د کیفیت زده کړې، نوښتګرې څېړنې، او د انجینري اصولو عملي غوښتنلیک له لارې ځواکمنول.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 32),
+                      const SizedBox(height: 32),
 
-                    // Statistics Cards
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: _buildStatCard('ډپارټمنټونه', '4'),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildStatCard('ښوونکي', '6'),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                      // Statistics Cards
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: _buildStatCard('ډپارټمنټونه', '4'),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _buildStatCard('ښوونکي', '6'),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
 
-                    const SizedBox(height: 40),
+                      const SizedBox(height: 40),
 
-                    // Departments Section
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        return constraints.maxWidth < 800
-                            ? Column(
-                                children: [
-                                  _buildDepartmentsSection(context),
-                                  const SizedBox(height: 40),
-                                ],
-                              )
-                            : const Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [],
-                              );
-                      },
-                    ),
-                  ],
+                      // Departments Section
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return constraints.maxWidth < 800
+                              ? Column(
+                                  children: [
+                                    _buildDepartmentsSection(context),
+                                    const SizedBox(height: 40),
+                                  ],
+                                )
+                              : const Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [],
+                                );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

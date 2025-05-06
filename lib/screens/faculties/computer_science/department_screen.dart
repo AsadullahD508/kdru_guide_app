@@ -1,160 +1,191 @@
 import 'package:flutter/material.dart';
 import '../../../widgets/custom_header.dart';
 import '../../../widgets/custome_footer.dart';
-import 'teacher_screen.dart';
+import '../computer_science/teacher_screen.dart';
+import '../economics/semester_screen.dart';
 
-class ComputerScienceDepartmentScreen extends StatelessWidget {
-  const ComputerScienceDepartmentScreen({super.key});
+class ComputerScienceDepartment extends StatelessWidget {
+  final String departmentName;
+
+  const ComputerScienceDepartment({super.key, required this.departmentName});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomHeader(title: 'CS Departments', selectedIndex: 1),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Computer Science Departments',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0D3B66),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'The Computer Science Faculty offers comprehensive programs across various specializations. Our departments are equipped with modern facilities and led by experienced professionals.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                        height: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    const Row(
-                      children: [
-                        _StatCard(
-                          icon: Icons.people,
-                          label: 'Faculty Members',
-                          value: '28',
-                          color: Colors.blue,
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: const CustomHeader(title: 'څانګې', selectedIndex: 1),
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'د پوهنځي څانګه $departmentName',
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0D3B66),
                         ),
-                        SizedBox(width: 16),
-                        _StatCard(
-                          icon: Icons.science,
-                          label: 'Research Labs',
-                          value: '5',
-                          color: Colors.green,
-                        ),
-                        SizedBox(width: 16),
-                        _StatCard(
-                          icon: Icons.school,
-                          label: 'Programs',
-                          value: '4',
-                          color: Colors.purple,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-                    const Text(
-                      'Our Departments',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0D3B66),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDepartmentCard(
-                      'Software Engineering',
-                      'Focus on software development methodologies, design patterns, and software architecture.',
-                      '8 Faculty Members',
-                      '12 Courses',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDepartmentCard(
-                      'Computer Networks',
-                      'Specializing in network architecture, security, and cloud computing.',
-                      '6 Faculty Members',
-                      '10 Courses',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDepartmentCard(
-                      'Artificial Intelligence',
-                      'Research and education in machine learning, data science, and AI applications.',
-                      '7 Faculty Members',
-                      '8 Courses',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDepartmentCard(
-                      'Information Systems',
-                      'Focus on database management, information security, and business intelligence.',
-                      '7 Faculty Members',
-                      '9 Courses',
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      const Text(
+                        'د کمپیوټر ساینس پوهنځی د ټیکنالوژۍ او نوښت یو مهم مرکز دی.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        textDirection: TextDirection.rtl,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SemesterScreen(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.indigo[100],
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                textDirection: TextDirection.rtl,
+                                children: [
+                                  Icon(Icons.calendar_today, size: 20),
+                                  SizedBox(width: 8),
+                                  Text('سمیسټرونه'),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ComputerScienceTeacherScreen(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.indigo[100],
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                textDirection: TextDirection.rtl,
+                                children: [
+                                  Icon(Icons.people, size: 20),
+                                  SizedBox(width: 8),
+                                  Text('استادان'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
+                      const Row(
+                        textDirection: TextDirection.rtl,
+                        children: [
+                          _StatCard(
+                            icon: Icons.people,
+                            label: 'د پوهنځي استادان',
+                            value: '۲۰',
+                            color: Colors.indigo,
+                          ),
+                          SizedBox(width: 16),
+                          _StatCard(
+                            icon: Icons.book_sharp,
+                            label: 'کتابونه',
+                            value: '۳۰',
+                            color: Colors.brown,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
+                      const Text(
+                        'پېشنهاد شوي پروګرامونه',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0D3B66),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildProgramCard(
+                        'لیسانس',
+                        'یوه څلور کلنه لېسانس دوره چې د کمپیوټر ساینس بنسټیز او پرمختللي مفاهیم پوښي.',
+                        Icons.computer,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          const CustomFooter(),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildDepartmentCard(
-    String title,
-    String description,
-    String facultyCount,
-    String courseCount,
-  ) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF0D3B66),
+  static Widget _buildProgramCard(
+      String title, String description, IconData icon) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, color: const Color(0xFF0D3B66)),
+                  const SizedBox(width: 12),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0D3B66),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Icon(Icons.people, size: 16, color: Colors.grey[600]),
-                const SizedBox(width: 8),
-                Text(
-                  facultyCount,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
-                const SizedBox(width: 24),
-                Icon(Icons.book, size: 16, color: Colors.grey[600]),
-                const SizedBox(width: 8),
-                Text(
-                  courseCount,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                description,
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -177,32 +208,35 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3), width: 1),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: color,
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: color.withOpacity(0.3), width: 1),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: color),
+              const SizedBox(height: 8),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(fontSize: 12, color: color.withOpacity(0.8)),
-              textAlign: TextAlign.center,
-            ),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(fontSize: 12, color: color.withOpacity(0.8)),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,5 +1,5 @@
 name: Kdru_Guide_app
-description: A modern AI image generation landing page
+description: this is the kandahar university Guide App
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -12,6 +12,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^5.1.0
   flutter_svg: ^2.0.7
+  lottie: ^2.0.0
+  flutter_map: ^6.0.0
+  flutter_map_mbtiles: ^1.0.4
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +26,15 @@ flutter:
   assets:
     - assets/
     - images/
+    - assets/fonts/
+
+  fonts:
+    - family: PashtoFont
+      fonts:
+        - asset: assets/fonts/Moon_Dance,Noto_Nastaliq_Urdu/Moon_Dance/MoonDance-Regular.ttf
+    - family: pashtoUrd
+      fonts:
+        - asset: assets/fonts/pashto/NotoNastaliqUrdu-VariableFont_wght.ttf
+    - family: pashto
+      fonts:
+        - asset: assets/fonts/pashto/pashto.ttf

@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import '../../../widgets/custom_header.dart';
 import '../../../widgets/custome_footer.dart';
 
+// د څانګې سکرین
 class DepartmentScreen extends StatelessWidget {
-  final String departmentName;
+  final String departmentName; // د څانګې نوم
 
   const DepartmentScreen({super.key, required this.departmentName});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomHeader(title: 'Department', selectedIndex: 1),
+      appBar: const CustomHeader(title: 'څانګه', selectedIndex: 1),
       body: Column(
         children: [
           Expanded(
@@ -21,8 +22,9 @@ class DepartmentScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // د څانګې نوم ښکاره کول
                     Text(
-                      'Department of $departmentName',
+                      'د $departmentName څانګه',
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -31,7 +33,7 @@ class DepartmentScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     const Text(
-                      'The Engineering Department at Kandahar University offers comprehensive programs in civil, electrical, and mechanical engineering. Our faculty consists of experienced professionals dedicated to providing quality education and practical training to prepare students for successful careers in engineering.',
+                      'د کندهار پوهنتون د انجینري څانګه د ملکي، برېښنایي او میخانیکي انجنیرۍ بشپړې پروګرامونه وړاندې کوي. زموږ استادان تجربه لرونکي دي او موخه يې د باکیفیته زده کړو او عملي مهارتونو ورکول دي، ترڅو زده کوونکي د انجینرۍ په برخه کې بریالي مسلکي کسان شي.',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey,
@@ -39,12 +41,13 @@ class DepartmentScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
+                    // تڼۍ: سمستر معلومات او استادان
                     Row(
                       children: [
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              // Add semester information functionality
+                              // دلته د سمستر معلومات لپاره کار وکړئ
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF0D3B66),
@@ -58,7 +61,7 @@ class DepartmentScreen extends StatelessWidget {
                               children: [
                                 Icon(Icons.calendar_today, size: 20),
                                 SizedBox(width: 8),
-                                Text('View Semester Information'),
+                                Text('د سمستر معلومات وګورئ'),
                               ],
                             ),
                           ),
@@ -87,7 +90,7 @@ class DepartmentScreen extends StatelessWidget {
                               children: [
                                 Icon(Icons.people, size: 20),
                                 SizedBox(width: 8),
-                                Text('View Teachers'),
+                                Text('استادان وګورئ'),
                               ],
                             ),
                           ),
@@ -95,33 +98,35 @@ class DepartmentScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 32),
+                    // احصایوي معلومات
                     const Row(
                       children: [
                         _StatCard(
                           icon: Icons.people,
-                          label: 'Faculty Members',
-                          value: '20',
+                          label: 'د استادانو شمېر',
+                          value: '۲۰',
                           color: Colors.blue,
                         ),
                         SizedBox(width: 16),
                         _StatCard(
                           icon: Icons.science,
-                          label: 'Research Labs',
-                          value: '5',
+                          label: 'د څېړنې لابراتوارونه',
+                          value: '۵',
                           color: Colors.green,
                         ),
                         SizedBox(width: 16),
                         _StatCard(
                           icon: Icons.school,
-                          label: 'Courses',
-                          value: '12',
+                          label: 'کورسونه',
+                          value: '۱۲',
                           color: Colors.purple,
                         ),
                       ],
                     ),
                     const SizedBox(height: 32),
+                    // وړاندې شوي پروګرامونه
                     const Text(
-                      'Programs Offered',
+                      'ارائه شوي پروګرامونه',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -130,14 +135,14 @@ class DepartmentScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     _buildProgramCard(
-                      'Bachelor of Engineering',
-                      'A 4-year undergraduate program covering fundamental and advanced engineering concepts.',
+                      'د انجنیرۍ لیسانس',
+                      'یو څلور کلن پروګرام چې د انجنیرۍ بنسټیز او پرمختللي مفاهیم ښووي.',
                       Icons.engineering,
                     ),
                     const SizedBox(height: 16),
                     _buildProgramCard(
-                      'Master of Engineering',
-                      'Advanced graduate program focusing on specialized engineering disciplines.',
+                      'د انجنیرۍ ماسټري',
+                      'د لوړو زده کړو پروګرام چې په تخصصي انجنیرۍ برخو تمرکز لري.',
                       Icons.school,
                     ),
                   ],
@@ -150,6 +155,7 @@ class DepartmentScreen extends StatelessWidget {
     );
   }
 
+  // د پروګرام کارت جوړولو ځانګړې طریقه
   static Widget _buildProgramCard(
       String title, String description, IconData icon) {
     return Card(
@@ -186,6 +192,7 @@ class DepartmentScreen extends StatelessWidget {
   }
 }
 
+// د احصایې کارت جوړولو ځانګړی ویجټ
 class _StatCard extends StatelessWidget {
   final IconData icon;
   final String label;

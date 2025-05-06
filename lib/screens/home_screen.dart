@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../widgets/custom_header.dart';
 import '../widgets/custome_footer.dart';
-import 'riast/riyasat_qadari_screen.dart';
-import 'Qadri_hospital/hospital_screen.dart';
-import 'faculties/faculty.dart';
-import 'faculties/facultycard.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -13,315 +11,127 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      appBar: const CustomHeader(title: 'Home', selectedIndex: 0),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildHeroSection(context, screenWidth),
-                  _buildKandaharUniversityInfoSection(),
-                  _buildFeaturesSection(context, screenWidth),
-                  _buildWelcomeSection(),
-                ],
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar:
+            const CustomHeader(title: 'د پوهنتون معلومات', selectedIndex: 1),
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildHeroSection(context, screenWidth),
+                    _buildKandaharUniversityInfoSection(),
+                    _buildMapSection(),
+                    _buildWelcomeSection(),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildHeroSection(BuildContext context, double screenWidth) {
-    bool isMobile = screenWidth < 600;
     return Container(
       padding: const EdgeInsets.all(32.0),
       decoration: const BoxDecoration(color: Colors.white),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.blue[100],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(Icons.school, color: Colors.blue, size: 32),
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.blue[100],
+                borderRadius: BorderRadius.circular(50),
               ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          isMobile
-              ? Column(
-                  children: [
-                    _buildHeroTextPart(),
-                    const SizedBox(height: 24),
-                    _buildHeroImage(screenWidth),
-                  ],
-                )
-              : Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: _buildHeroTextPart()),
-                    const SizedBox(width: 48),
-                    _buildHeroImage(screenWidth),
-                  ],
-                ),
-        ],
+              child: Image.asset(
+                'images/kdr_logo.png',
+                width: 64,
+                height: 64,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildHeroTextPart() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Text(
-          'Welcome to\nKandahar University',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-            height: 1.2,
-          ),
-        ),
-        SizedBox(height: 16),
-        Text(
-          'Find information about faculties, departments, admission, events, and more at Kandahar University.',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-      ],
     );
   }
 
   Widget _buildKandaharUniversityInfoSection() {
     return Container(
-      padding: const EdgeInsets.all(32.0),
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.white, Colors.blue[100]!],
-        ),
-        borderRadius: BorderRadius.circular(32),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end, // Right-to-left alignment
-        children: [
-          const Text(
-            'د کندهار پوهنتون تاریخچه',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'کندهار پوهنتون (Kandahar University) چې د کندهار پوهنتون په نوم هم پېژندل کېږي، په ۱۹۹۰ کال کې د افغانستان د لوړو زده کړو وزارت تر سرپرستۍ لاندې تاسیس شو. دا پوهنتون د هېواد له پنځو مهمو پوهنتونو څخه یو شمېرل کېږي او په کندهار ښار کې موقعیت لري، چې د کندهار ولایت د سیاسي او کلتوري مرکز په توګه پېژندل کېږي.',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.black,
-              height: 1.5,
-            ),
-            textAlign: TextAlign.right, // Right-aligned text
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'د پوهنتون تاریخچه: کندهار پوهنتون په ۱۹۹۰ کال کې د کرنې پوهنځي سره پیل شو. وروسته په ۱۹۹۳ کال کې د طب، انجنیري، ښوونه او روزنه، شریعت، اقتصاد، ژورنالیزم او عامه اړیکو، حقوق او سیاسي علوم، عامه اداره او پالیسۍ، ژبې او ادبیاتو، کمپیوټر ساینس، ستوماتولوژي او فارمسي پوهنځي یو په بل پسې تاسیس شول. پوهنتون د هېواد په سختو امنیتي، سیاسي او اقتصادي شرایطو کې هم د ځوان نسل روزنې او فارغ التحصیل کولو ته ادامه ورکړې ده.',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.black,
-              height: 1.5,
-            ),
-            textAlign: TextAlign.right, // Right-aligned text
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'تاسیس کال: ۱۹۹۰',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.black,
-              height: 1.5,
-            ),
-            textAlign: TextAlign.right, // Right-aligned text
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'د پوهنځیو شمېر: ۱۲',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.black,
-              height: 1.5,
-            ),
-            textAlign: TextAlign.right, // Right-aligned text
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeroImage(double screenWidth) {
-    double imageSize = screenWidth < 600 ? screenWidth * 0.8 : 400;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Image.asset(
-        'images/kdr.jpg',
-        width: imageSize,
-        height: imageSize,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  Widget _buildFeaturesSection(BuildContext context, double screenWidth) {
-    bool isMobile = screenWidth < 800;
-    return Container(
-      padding: const EdgeInsets.all(32.0),
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Explore KDU',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 32),
-          isMobile
-              ? Column(
-                  children: [
-                    _buildFeatureCard(
-                      context,
-                      'Faculties',
-                      'images/kdr.jpg',
-                      'See all faculties',
-                      const FacultyCard(),
-                      isAsset: true,
-                    ),
-                    const SizedBox(height: 24),
-                    _buildFeatureCard(
-                      context,
-                      'Riayasaat',
-                      'images/kdr.jpg',
-                      'More details',
-                      RiyasatScreen(),
-                      isAsset: true,
-                    ),
-                    const SizedBox(height: 24),
-                    _buildFeatureCard(
-                      context,
-                      'hospital',
-                      'images/kdr.jpg',
-                      'More details',
-                      const HospitalScreen(),
-                      isAsset: true,
-                    ),
-                  ],
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildFeatureCard(
-                      context,
-                      'Faculties',
-                      'images/kdr.jpg',
-                      'See all faculties',
-                      const FacultyScreen(),
-                      isAsset: true,
-                    ),
-                    _buildFeatureCard(
-                      context,
-                      'روغتون',
-                      'images/kdr.jpg',
-                      'More details',
-                      const HospitalScreen(),
-                      isAsset: true,
-                    ),
-                  ],
-                ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeatureCard(
-    BuildContext context,
-    String title,
-    String imageUrl,
-    String buttonText,
-    Widget page, {
-    bool isAsset = false,
-  }) {
-    return Container(
-      width: 300,
       height: 400,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+      decoration: const BoxDecoration(
+        color: Colors.blue,
         image: DecorationImage(
-          image: isAsset
-              ? AssetImage(imageUrl) as ImageProvider
-              : NetworkImage(imageUrl),
+          image: NetworkImage(
+            'https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+          ),
           fit: BoxFit.cover,
         ),
       ),
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          color: Colors.black54,
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'کندهار پوهنتون',
+                style: TextStyle(
+                    fontSize: 32,
                     fontWeight: FontWeight.bold,
-                  ),
+                    color: Colors.white,
+                    fontFamily: 'pashto'),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'کندهار پوهنتون د افغانستان په سویلي ولایت کندهار کې یو دولتي پوهنتون دی، چې په ۱۳۶۹ لمریز کال (۱۹۹۰ میلادي) د وخت د حکومت لخوا د کرنې پوهنځي په پرانیستلو سره تأسیس شو',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 18, color: Colors.white, fontFamily: 'pashto'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMapSection() {
+    return Container(
+      height: 300,
+      padding: const EdgeInsets.all(8.0),
+      child: FlutterMap(
+        options: const MapOptions(
+          center: LatLng(31.6107, 65.6910), // Kandahar University coordinates
+          zoom: 15.0,
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            subdomains: ['a', 'b', 'c'],
+          ),
+          const MarkerLayer(
+            markers: [
+              Marker(
+                width: 80.0,
+                height: 80.0,
+                point: LatLng(31.6107, 65.6910),
+                child: Icon(
+                  Icons.location_pin,
+                  color: Colors.red,
+                  size: 40,
                 ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => page),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlueAccent,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                  ),
-                  child: Text(
-                    buttonText,
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
@@ -340,9 +150,9 @@ class HomeScreen extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(32),
       ),
-      child: Column(
+      child: const Column(
         children: [
-          const CustomFooter(),
+          CustomFooter(),
         ],
       ),
     );

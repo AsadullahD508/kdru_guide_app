@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../widgets/custom_header.dart';
 
-// Ensure to import all relevant faculty pages
+// Faculty screens
 import 'agriculture/agriculture_faculty_screen.dart';
 import 'computer_science/faculty_screen.dart';
 import 'economics/Economics_screen.dart';
 import 'education/Education_screen.dart';
 import 'engineeringFaculty/EngFaculty.dart';
-import 'faculty_details_screen.dart';
 import 'medicine/medicine_faculty_screen.dart';
 
 class FacultyCard extends StatelessWidget {
@@ -16,9 +15,9 @@ class FacultyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomHeader(title: 'پوهنځیو', selectedIndex: 1),
+      appBar: const CustomHeader(title: 'پوهنځیو', selectedIndex: 0),
       body: Directionality(
-        textDirection: TextDirection.rtl, // Apply RTL direction here
+        textDirection: TextDirection.rtl,
         child: Column(
           children: [
             Expanded(
@@ -45,110 +44,63 @@ class FacultyCard extends StatelessWidget {
                             context,
                             'کمپیوټر ساینس',
                             'د ټکنالوژۍ او نوښت په برخه کې زده کړې وړاندې کوي.',
-                            Icons.computer,
+                            'images/kdr_logo.png',
                             4,
                             28,
-                            Scfaculty(), // Navigate to the Computer Science faculty page
+                            'images/kdr.jpg',
+                            CsFaculty(),
                           ),
                           _buildFacultyCard(
                             context,
                             'انجنیرۍ',
                             'د انجنیري مختلفو برخو لکه ساختماني، برښنا، او اوبو او چاپېریال انجنیرۍ کې تخصص لري.',
-                            Icons.engineering,
+                            'images/kdr_logo.png',
                             5,
                             32,
-                            EngFaculty(), // Navigate to the Engineering faculty page
+                            'images/kdr.jpg',
+                            EngFaculty(),
                           ),
                           _buildFacultyCard(
                             context,
                             'طب',
                             'د روغتیا په برخه کې زده کړې وړاندې کوي.',
-                            Icons.local_hospital,
+                            'images/kdr_logo.png',
                             6,
                             45,
-                            MedFaculty(), // Navigate to the Medicine faculty page
+                            'images/kdr.jpg',
+                            MedFaculty(),
                           ),
                           _buildFacultyCard(
                             context,
                             'زراعت',
                             'د کرنې او زراعت په برخه کې زده کړې وړاندې کوي.',
-                            Icons.agriculture,
+                            'images/kdr_logo.png',
                             3,
                             20,
-                            AgrFaculty(), // Navigate to the Agriculture faculty page
+                            'images/kdr.jpg',
+                            AgrFaculty(),
                           ),
                           _buildFacultyCard(
                             context,
                             'ښوونه او روزنه',
                             'د ښوونکو لپاره د مسلکي زده کړو پروګرامونه وړاندې کوي.',
-                            Icons.cast_for_education_rounded,
+                            'images/kdr_logo.png',
                             3,
                             20,
-                            EducationScreen(), // Navigate to the Education faculty page
+                            'images/kdr.jpg',
+                            EducationScreen(),
                           ),
                           _buildFacultyCard(
                             context,
                             'اقتصاد',
                             'د اقتصاد په برخه کې زده کړې وړاندې کوي.',
-                            Icons.money,
+                            'images/kdr_logo.png',
                             3,
                             20,
-                            EconomicsScreen(), // Navigate to the Economics faculty page
+                            'images/kdr.jpg',
+                            EconomicsScreen(),
                           ),
-                          _buildFacultyCard(
-                            context,
-                            'ژورنالیزم او عامه اړیکې',
-                            'د رسنیو او عامه اړیکو په برخه کې زده کړې وړاندې کوي.',
-                            Icons.article,
-                            3,
-                            20,
-                            AgrFaculty(), // Navigate to the Journalism faculty page
-                          ),
-                          _buildFacultyCard(
-                            context,
-                            'ژبې او ادبیات',
-                            'د مختلفو ژبو او ادبیاتو په برخه کې زده کړې وړاندې کوي.',
-                            Icons.menu_book,
-                            3,
-                            20,
-                            AgrFaculty(), // Navigate to the Languages and Literature faculty page
-                          ),
-                          _buildFacultyCard(
-                            context,
-                            'قانون او سیاسي علوم',
-                            'د قانون او سیاسي علومو په برخه کې زده کړې وړاندې کوي.',
-                            Icons.balance,
-                            3,
-                            20,
-                            AgrFaculty(), // Navigate to the Law and Political Science faculty page
-                          ),
-                          _buildFacultyCard(
-                            context,
-                            'عامه اداره او پالیسۍ',
-                            'د عامه ادارې او پالیسۍ په برخه کې زده کړې وړاندې کوي.',
-                            Icons.people,
-                            3,
-                            20,
-                            AgrFaculty(), // Navigate to the Public Administration and Policy faculty page
-                          ),
-                          _buildFacultyCard(
-                            context,
-                            'شریعت او قانون',
-                            'د اسلامي قانون او شریعت په برخه کې زده کړې وړاندې کوي.',
-                            Icons.mosque,
-                            3,
-                            20,
-                            AgrFaculty(), // Navigate to the Sharia and Law faculty page
-                          ),
-                          _buildFacultyCard(
-                            context,
-                            'د عامې روغتیا ماسټرۍ',
-                            'د عامې روغتیا په برخه کې ماسټرۍ وړاندې کوي.',
-                            Icons.local_hospital,
-                            3,
-                            20,
-                            AgrFaculty(), // Navigate to the Public Health Master program page
-                          ),
+                          // Add more faculties similarly...
                         ],
                       ),
                     ],
@@ -166,101 +118,180 @@ class FacultyCard extends StatelessWidget {
     BuildContext context,
     String title,
     String description,
-    IconData icon,
+    String iconImagePath, // ✅ Replaced IconData with String
     int departments,
     int staff,
-    Widget facultyPage, // Pass the specific faculty page widget
+    String backgroundImage,
+    Widget facultyPage,
   ) {
     return SizedBox(
-      width: 300, // fixed width for each card
+      width: 300,
+      height: 400,
       child: Card(
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, size: 32, color: Colors.black),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                title,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.right, // Set text alignment to right
-              ),
-              const SizedBox(height: 8),
-              Text(
-                description,
-                style: const TextStyle(fontSize: 14, color: Colors.black54),
-                textAlign: TextAlign.right, // Set text alignment to right
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildStatItem(departments.toString(), 'څانګې'),
-                  _buildStatItem(staff.toString(), 'کارمندان'),
-                ],
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
+        child: Stack(
+          children: [
+            // Background image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                backgroundImage,
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            facultyPage, // Use the passed faculty page widget
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
+                height: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+            // Gradient overlay
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.5),
+                    Colors.black.withOpacity(0.8),
+                  ],
+                ),
+              ),
+            ),
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        iconImagePath,
+                        width: 32,
+                        height: 32,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('تفصیل وګورئ',
-                          style: TextStyle(color: Colors.white)),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, color: Colors.white, size: 20),
-                    ],
+                  const SizedBox(height: 16),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.right,
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Text(
+                              departments.toString(),
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const Text(
+                              'څانګې',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              staff.toString(),
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const Text(
+                              'کارمندان',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => facultyPage,
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'تفصیل وګورئ',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Icon(Icons.arrow_forward,
+                              color: Colors.black, size: 20),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
-
-  Widget _buildStatItem(String number, String label) {
-    return Column(
-      children: [
-        Text(
-          number,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 14, color: Colors.black54),
-        ),
-      ],
     );
   }
 }
