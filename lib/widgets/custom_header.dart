@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../screens/faculties/facultycard.dart';
-import '../screens/home_screen.dart';
+
 import '../screens/faculties/faculty.dart';
+import '../screens/firstHomePage.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/faculties/computer_science/teacher_screen.dart';
 
@@ -28,7 +29,7 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
             if (selectedIndex != 0) {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                MaterialPageRoute(builder: (context) => HomeFirstPage()),
               );
             }
           },
