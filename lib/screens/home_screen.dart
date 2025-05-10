@@ -1,37 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import '../widgets/custom_header.dart';
-import '../widgets/custome_footer.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+import '../widgets/custome_footer.dart';
+import 'package:Kdru_Guide_app/header.dart';
+
+class Homescreen extends StatelessWidget {
+  const Homescreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar:
-            const CustomHeader(title: 'د پوهنتون معلومات', selectedIndex: 1),
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildHeroSection(context, screenWidth),
-                    _buildKandaharUniversityInfoSection(),
-                    _buildMapSection(),
-                    _buildWelcomeSection(),
-                  ],
-                ),
+    return Scaffold(
+      body: Column(
+        children: [
+          // CustomHeader is not wrapped inside Directionality, so it remains LTR
+          const CustomHeader(
+            userName: 'Guest User',
+            bannerImagePath: 'images/kdr_logo.png',
+            fullText: 'د کند هار پوهنتون ته شه راغلاست',
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildHeroSection(context, screenWidth),
+                  _buildKandaharUniversityInfoSection(),
+                  _buildMapSection(),
+                  _buildWelcomeSection(),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -149,11 +151,6 @@ class HomeScreen extends StatelessWidget {
           colors: [Colors.white, Colors.blue[100]!],
         ),
         borderRadius: BorderRadius.circular(32),
-      ),
-      child: const Column(
-        children: [
-          CustomFooter(),
-        ],
       ),
     );
   }

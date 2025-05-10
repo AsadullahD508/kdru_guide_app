@@ -15,6 +15,7 @@ dependencies:
   lottie: ^2.0.0
   flutter_map: ^6.0.0
   flutter_map_mbtiles: ^1.0.4
+  font_awesome_flutter: ^10.8.0
 
 dev_dependencies:
   flutter_test:
@@ -38,3 +39,7 @@ flutter:
     - family: pashto
       fonts:
         - asset: assets/fonts/pashto/pashto.ttf
+
+    - family: Noto
+      fonts:
+        - asset: assets/fonts/NotoNastaliqUrdu-VariableFont_wght.ttf

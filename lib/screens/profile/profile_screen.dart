@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../header.dart';
 import '../../widgets/custom_header.dart';
 
 class TeamMember {
@@ -113,12 +114,13 @@ class TeamProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomHeader(
-        title: 'Group F',
-        selectedIndex: 0,
-      ),
       body: Column(
         children: [
+          const CustomHeader(
+            userName: 'Guest User',
+            bannerImagePath: 'images/kdr_logo.png',
+            fullText: 'د کند هار پوهنتون پوهنځي',
+          ),
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
