@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../screens/faculties/computer_science/faculty_screen.dart';
-import '../screens/Faculty/engineeringFaculty/EngFaculty.dart';
+import '../screens/Faculty/ComputerScience/CS_home.dart';
+import '../screens/Faculty/Engineering/Eng_home.dart';
+
 // import 'package:Kdru_Guide_app/screens/faculties/education/education_home.dart';
 // import '../screens/faculties/journalism/journalism_home.dart';
 // import '../screens/faculties/public_admin/public_admin_home.dart';

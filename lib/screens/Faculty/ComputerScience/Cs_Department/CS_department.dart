@@ -57,7 +57,7 @@ class ComputerScienceDepartment extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const CsSemesters(),
+                                    builder: (context) => CurriculumScreen(),
                                   ),
                                 );
                               },

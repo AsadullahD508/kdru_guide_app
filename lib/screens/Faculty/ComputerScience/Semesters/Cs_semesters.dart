@@ -1,266 +1,210 @@
 import 'package:flutter/material.dart';
 
-import '../../../../header.dart';
-import '../Cs_Department/CS_department.dart';
+// Alias the conflicting imports:
+import 'package:Kdru_Guide_app/header.dart' as header;
+import 'package:Kdru_Guide_app/screens/Faculty/ComputerScience/Semesters/Cs_semesters.dart'
+    as semesters;
 
-// Add this import
+class CurriculumScreen extends StatefulWidget {
+  @override
+  _CurriculumScreenState createState() => _CurriculumScreenState();
+}
 
-class CsSemesters extends StatelessWidget {
-  const CsSemesters({super.key});
+class _CurriculumScreenState extends State<CurriculumScreen> {
+  int expandedIndex = -1;
+
+  final List<Map<String, dynamic>> semesterData = List.generate(8, (index) {
+    return {
+      'title': 'Civil Engineering - Semester ${index + 1}',
+      'books': [
+        [
+          '1',
+          'Subject ${index + 1}-1',
+          'CE-${index + 1}01',
+          'Basics',
+          '2',
+          '2',
+          '4',
+          '3',
+          'Engineering Faculty'
+        ],
+        [
+          '2',
+          'Subject ${index + 1}-2',
+          'CE-${index + 1}02',
+          'Collegiate',
+          '3',
+          '0',
+          '3',
+          '3',
+          'Sharia Faculty'
+        ],
+        [
+          '3',
+          'Subject ${index + 1}-3',
+          'CE-${index + 1}03',
+          'Basics',
+          '2',
+          '1',
+          '3',
+          '2',
+          'Engineering Faculty'
+        ],
+        [
+          '4',
+          'Subject ${index + 1}-4',
+          'CE-${index + 1}04',
+          'Basics',
+          '3',
+          '2',
+          '5',
+          '4',
+          'Architecture Dept.'
+        ],
+      ],
+    };
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.lightBlue[50],
       body: Column(
         children: [
-          const CustomHeader(
+          // Use the CustomHeader from header.dart
+          const header.CustomHeader(
             userName: 'Guest User',
             bannerImagePath: 'images/kdr_logo.png',
             fullText: 'کمپیوټر ساینس پوهنځي ته ښه راغلاست',
           ),
+
+          // Expanded ListView for semester cards
           Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Engineering Faculty',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0D3B66),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Empowering the future technology leaders through quality education, innovative research, and practical application of engineering principles.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
+            child: ListView.builder(
+              padding: EdgeInsets.all(12),
+              itemCount: semesterData.length,
+              itemBuilder: (context, index) {
+                final semester = semesterData[index];
+                final isExpanded = expandedIndex == index;
 
-                    // Statistics Cards
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: _buildStatCard('Departments', '4'),
+                return Card(
+                  elevation: 4,
+                  margin: EdgeInsets.only(bottom: 16),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.teal[700],
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(12)),
+                        ),
+                        child: ListTile(
+                          title: AnimatedDefaultTextStyle(
+                            duration: Duration(milliseconds: 400),
+                            curve: Curves.easeInOut,
+                            style: TextStyle(
+                              color: isExpanded
+                                  ? Colors.yellow[200]
+                                  : Colors.white,
+                              fontSize: isExpanded ? 18 : 16,
+                              fontWeight: isExpanded
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildStatCard('Teachers', '6'),
+                            child: Text(semester['title']),
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(
+                              isExpanded
+                                  ? Icons.expand_less
+                                  : Icons.expand_more,
+                              color: Colors.white,
                             ),
-                          ],
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 40),
-
-                    // Departments Section
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        return constraints.maxWidth < 800
-                            ? Column(
-                                children: [
-                                  _buildDepartmentsSection(context),
-                                  const SizedBox(height: 40),
-                                ],
-                              )
-                            : Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [],
-                              );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static Widget _buildStatCard(String title, String value) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF0D3B66),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static Widget _buildDepartmentsSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Departments',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF0D3B66),
-          ),
-        ),
-        const SizedBox(height: 16),
-        _buildDepartmentCard(
-          context,
-          'Software Engineering',
-          'Focus on software development methodologies, design patterns, and software architecture.',
-          '8 Teachers',
-          '12 Courses',
-        ),
-        const SizedBox(height: 24),
-        _buildDepartmentCard(
-          context,
-          'Electrical Engineering',
-          'Study of electrical systems, circuits, and renewable energy technologies.',
-          '5 Teachers',
-          '10 Courses',
-        ),
-        const SizedBox(height: 24),
-        _buildDepartmentCard(
-          context,
-          'Civil Engineering',
-          'Focus on designing, building, and maintaining physical infrastructure.',
-          '7 Teachers',
-          '9 Courses',
-        ),
-        const SizedBox(height: 24),
-        _buildDepartmentCard(
-          context,
-          'Mechanical Engineering',
-          'Design and manufacturing of mechanical systems and devices.',
-          '6 Teachers',
-          '11 Courses',
-        ),
-      ],
-    );
-  }
-
-  static Widget _buildDepartmentCard(
-    BuildContext context,
-    String title,
-    String description,
-    String teacherCount,
-    String courseCount,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF0D3B66),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            description,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 16),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Icon(Icons.people, size: 16, color: Colors.grey[600]),
-                const SizedBox(width: 8),
-                Text(
-                  teacherCount,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
+                            onPressed: () {
+                              setState(() {
+                                expandedIndex = isExpanded ? -1 : index;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      AnimatedCrossFade(
+                        firstChild: SizedBox.shrink(),
+                        secondChild: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Table(
+                              border: TableBorder.all(),
+                              defaultVerticalAlignment:
+                                  TableCellVerticalAlignment.middle,
+                              columnWidths: {
+                                0: FixedColumnWidth(30),
+                                1: FixedColumnWidth(120),
+                                2: FixedColumnWidth(80),
+                                3: FixedColumnWidth(80),
+                                4: FixedColumnWidth(50),
+                                5: FixedColumnWidth(62),
+                                6: FixedColumnWidth(45),
+                                7: FixedColumnWidth(65),
+                                8: FixedColumnWidth(150),
+                              },
+                              children: [
+                                TableRow(
+                                  decoration:
+                                      BoxDecoration(color: Colors.grey[300]),
+                                  children: [
+                                    tableCell('No'),
+                                    tableCell('Subject'),
+                                    tableCell('Code'),
+                                    tableCell('Category'),
+                                    tableCell('Thory'),
+                                    tableCell('Practical'),
+                                    tableCell('Total'),
+                                    tableCell('Credit'),
+                                    tableCell('In-Charge Dept.'),
+                                  ],
+                                ),
+                                ...semester['books'].map<TableRow>((book) {
+                                  return TableRow(
+                                    children: book
+                                        .map<Widget>(
+                                            (cellText) => tableCell(cellText))
+                                        .toList(),
+                                  );
+                                }).toList(),
+                              ],
+                            ),
+                          ),
+                        ),
+                        crossFadeState: isExpanded
+                            ? CrossFadeState.showSecond
+                            : CrossFadeState.showFirst,
+                        duration: Duration(milliseconds: 400),
+                        firstCurve: Curves.easeOut,
+                        secondCurve: Curves.easeIn,
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 24),
-                Icon(Icons.book, size: 16, color: Colors.grey[600]),
-                const SizedBox(width: 8),
-                Text(
-                  courseCount,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ComputerScienceDepartment(departmentName: title),
-                ),
-              );
-            },
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('View Department'),
-                SizedBox(width: 8),
-                Icon(Icons.arrow_forward, size: 16),
-              ],
+                );
+              },
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget tableCell(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 12),
       ),
     );
   }
