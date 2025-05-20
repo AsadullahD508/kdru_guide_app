@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../widgets/custom_header.dart';
 import '../../widgets/custome_footer.dart';
-import '../faculties/computer_science/teacher_screen.dart';
+import '../Faculty/ComputerScience/Teachers/Cs_teachers.dart';
 
 class DepartmentScreen extends StatelessWidget {
   final String departmentName;
