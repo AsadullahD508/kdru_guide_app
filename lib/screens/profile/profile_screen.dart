@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../../header.dart';
-import '../../widgets/custom_header.dart';
+
 
 class TeamMember {
   final int id;
