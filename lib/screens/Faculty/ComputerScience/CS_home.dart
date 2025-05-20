@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:Kdru_Guide_app/header.dart';
+import '../../../header.dart';
 import '../../../widgets/buttom_header.dart';
 import './Cs_Department/CS_department.dart';
+import 'Teachers/Cs_teachers.dart';
 
 class CsFaculty extends StatefulWidget {
   const CsFaculty({super.key});
@@ -54,13 +55,15 @@ class _CsFacultyState extends State<CsFaculty> {
                           Image.asset('images/kdr_logo.png',
                               width: 20, height: 20),
                           const SizedBox(width: 12),
-                          const Text(
-                            'کمپیوټر ساینس پوهنځی',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'pashto',
-                              color: Color(0xFF0D3B66),
+                          const Expanded(
+                            child: Text(
+                              'کمپیوټر ساینس پوهنځی',
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'pashto',
+                                color: Color(0xFF0D3B66),
+                              ),
                             ),
                           ),
                         ],
@@ -71,13 +74,15 @@ class _CsFacultyState extends State<CsFaculty> {
                           Image.asset('images/folder.png',
                               width: 40, height: 40),
                           const SizedBox(width: 12),
-                          const Text(
-                            ' دپوهنځی تاریخچه',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'pashto',
-                              color: Color(0xFF0D3B66),
+                          const Expanded(
+                            child: Text(
+                              ' دپوهنځی تاریخچه',
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'pashto',
+                                color: Color(0xFF0D3B66),
+                              ),
                             ),
                           ),
                         ],
@@ -90,6 +95,11 @@ class _CsFacultyState extends State<CsFaculty> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Text(
+                          'د کمپیوټر ساینس پوهنځی په ۱۳۹۳ هجري شمسي کال کې تاسیس شو...'
+                          'د کمپیوټر ساینس پوهنځی په ۱۳۹۳ هجري شمسي کال کې تاسیس شو...'
+                          'د کمپیوټر ساینس پوهنځی په ۱۳۹۳ هجري شمسي کال کې تاسیس شو...'
+                          'د کمپیوټر ساینس پوهنځی په ۱۳۹۳ هجري شمسي کال کې تاسیس شو...'
+                          'د کمپیوټر ساینس پوهنځی په ۱۳۹۳ هجري شمسي کال کې تاسیس شو...'
                           'د کمپیوټر ساینس پوهنځی په ۱۳۹۳ هجري شمسي کال کې تاسیس شو...',
                           style: TextStyle(
                             fontFamily: 'pashto',
@@ -99,6 +109,7 @@ class _CsFacultyState extends State<CsFaculty> {
                         ),
                       ),
                       const SizedBox(height: 40),
+                      // First row with two cards
                       Row(
                         children: [
                           Expanded(
@@ -118,26 +129,82 @@ class _CsFacultyState extends State<CsFaculty> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 40),
-                      const Text(
-                        'لرلید',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'pashto',
-                          color: Colors.black,
-                        ),
-                      ),
                       const SizedBox(height: 12),
-                      const Text(
-                        'د یو معیاري، نوښتګر او نړیوالې کچې کمپیوټر ساینس پوهنځی جوړول...',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black87,
-                          fontFamily: 'pashto',
-                        ),
-                        textAlign: TextAlign.center,
+                      // Second row with one card
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildStatCard(
+                              'کمپیوټر لیب',
+                              '۲',
+                              'images/laboratory.png',
+                            ),
+                          ),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ComputerScienceTeacherScreen()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Text(
+                                'ټول استادان وګورئ',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+
+                      const SizedBox(height: 40),
+                      Container(
+                        color: Colors.white, // Set background color to white
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset('images/view.png',
+                                  width: 60, height: 60),
+                              const Text(
+                                'موخي',
+                                style: TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontFamily: 'pashto',
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              const Text(
+                                'د یو معیاري، نوښتګر او نړیوالې کچې کمپیوټر ساینس پوهنځی جوړول...'
+                                'د یو معیاري، نوښتګر او نړیوالې کچې کمپیوټر ساینس پوهنځی جوړول...'
+                                'د یو معیاري، نوښتګر او نړیوالې کچې کمپیوټر ساینس پوهنځی جوړول...',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontFamily: 'pashto',
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
                       const SizedBox(height: 24),
                       _buildVisionSection(),
                       const SizedBox(height: 24),
@@ -145,7 +212,7 @@ class _CsFacultyState extends State<CsFaculty> {
                       const SizedBox(height: 40),
                       _buildDepartmentsSection(),
                       const SizedBox(height: 40),
-                      _buildGallerySection(),
+                      _buildGallerySectionWithAnimation(),
                       const SizedBox(height: 24),
                       Center(
                         child: ElevatedButton.icon(
@@ -167,32 +234,6 @@ class _CsFacultyState extends State<CsFaculty> {
                           ),
                         ),
                       ),
-
-                      const SizedBox(height: 24),
-
-                      // ✅ New Button for Teachers Info
-                      Center(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            // TODO: Replace with actual navigation
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('استادانو ته انتقال...'),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.school),
-                          label: const Text(
-                            'د استادانو معلومات',
-                            style: TextStyle(fontFamily: 'pashto'),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4A90E2),
-                            foregroundColor: Colors.white,
-                          ),
-                        ),
-                      ),
-
                       const SizedBox(height: 40),
                     ],
                   ),
@@ -209,36 +250,52 @@ class _CsFacultyState extends State<CsFaculty> {
     );
   }
 
-  static Widget _buildStatCard(String title, String value, String iconPath) {
+  Widget _buildStatCard(String title, String value, String iconPath) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
+      height: 160,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
+            color: Colors.grey.withOpacity(0.7),
+            spreadRadius: 4,
             blurRadius: 5,
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Image.asset(iconPath, width: 32, height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontFamily: 'pashto',
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Image.asset(iconPath, width: 32, height: 32),
+            ],
+          ),
           const SizedBox(height: 12),
-          Text(title,
+          Center(
+            child: Text(
+              value,
               style: const TextStyle(
-                  fontSize: 16, color: Colors.black, fontFamily: 'pashto')),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF0D3B66),
-              fontFamily: 'pashto',
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF0D3B66),
+                fontFamily: 'pashto',
+              ),
             ),
           ),
         ],
@@ -246,7 +303,7 @@ class _CsFacultyState extends State<CsFaculty> {
     );
   }
 
-  static Widget _buildVisionSection() {
+  Widget _buildVisionSection() {
     return Container(
       height: 250,
       width: double.infinity,
@@ -284,7 +341,7 @@ class _CsFacultyState extends State<CsFaculty> {
     );
   }
 
-  static Widget _buildMissionSection() {
+  Widget _buildMissionSection() {
     return Container(
       color: Colors.black54,
       padding: const EdgeInsets.all(16),
@@ -312,7 +369,7 @@ class _CsFacultyState extends State<CsFaculty> {
     );
   }
 
-  Widget _buildGallerySection() {
+  Widget _buildGallerySectionWithAnimation() {
     List<String> images = List.generate(6, (index) => 'images/kdr.jpg');
     int imageCount = showAllImages ? images.length : 2;
 
@@ -339,12 +396,38 @@ class _CsFacultyState extends State<CsFaculty> {
             mainAxisSpacing: 8,
           ),
           itemBuilder: (context, index) {
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                image: DecorationImage(
-                  image: AssetImage(images[index]),
-                  fit: BoxFit.cover,
+            return GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => Dialog(
+                    backgroundColor: Colors.transparent,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Hero(
+                        tag: 'image$index',
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            images[index],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              child: Hero(
+                tag: 'image$index',
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    image: DecorationImage(
+                      image: AssetImage(images[index]),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
             );
@@ -373,60 +456,59 @@ class _CsFacultyState extends State<CsFaculty> {
                   fontFamily: 'pashto')),
           const SizedBox(height: 16),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: departments
                 .take(showAllDepartments ? departments.length : 1)
-                .map((department) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ComputerScienceDepartment(
-                        departmentName: department,
+                .map((dept) => GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const ComputerScienceDepartment(
+                                    departmentName: 'عمومي',
+                                  )),
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                dept,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: 'pashto',
+                                  color: Colors.black,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const Icon(Icons.arrow_forward_ios_rounded,
+                                color: Colors.black54),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    department,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'pashto',
-                      color: Color(0xFF0D3B66),
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
+                    ))
+                .toList(),
           ),
-          const SizedBox(height: 12),
-          Center(
-            child: ElevatedButton.icon(
+          if (departments.length > 1)
+            TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ComputerScienceDepartment(
-                      departmentName: 'عمومی',
-                    ),
-                  ),
-                );
+                setState(() {
+                  showAllDepartments = !showAllDepartments;
+                });
               },
-              icon: const Icon(Icons.arrow_forward),
-              label: const Text(
-                'د څانګي لیدل',
-                style: TextStyle(fontFamily: 'pashto'),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF759FC6),
-                foregroundColor: Colors.black,
+              child: Text(
+                showAllDepartments ? 'کمه ښکاره کړه' : 'ټول ښکاره کړه',
+                style: const TextStyle(fontFamily: 'pashto'),
               ),
             ),
-          ),
         ],
       ),
     );

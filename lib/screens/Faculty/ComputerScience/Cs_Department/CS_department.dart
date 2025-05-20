@@ -62,19 +62,23 @@ class ComputerScienceDepartment extends StatelessWidget {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.indigo[100],
+                                backgroundColor: Colors.white,
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 16),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.calendar_today, size: 20),
-                                  SizedBox(width: 8),
-                                  Text('سمیسټرونه'),
+                                  Image.asset(
+                                    'images/curriculum.png', // Replace with your actual image path
+                                    width: 30,
+                                    height: 30,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text('سمیسټرونه'),
                                 ],
                               ),
                             ),
@@ -92,40 +96,26 @@ class ComputerScienceDepartment extends StatelessWidget {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.indigo[100],
+                                backgroundColor: Colors.white,
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 16),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.people, size: 20),
+                                  Image.asset(
+                                    'images/teacher.png', // Replace with your actual image path
+                                    width: 30,
+                                    height: 30,
+                                  ),
                                   SizedBox(width: 8),
                                   Text('استادان'),
                                 ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 32),
-                      const Row(
-                        children: [
-                          _StatCard(
-                            icon: Icons.people,
-                            label: 'د پوهنځي استادان',
-                            value: '۲۰',
-                            color: Colors.indigo,
-                          ),
-                          SizedBox(width: 16),
-                          _StatCard(
-                            icon: Icons.book_sharp,
-                            label: 'کتابونه',
-                            value: '۳۰',
-                            color: Colors.brown,
                           ),
                         ],
                       ),
@@ -160,6 +150,7 @@ class ComputerScienceDepartment extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Card(
+        color: Colors.white,
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
@@ -169,7 +160,11 @@ class ComputerScienceDepartment extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(icon, color: const Color(0xFF0D3B66)),
+                  Image.asset(
+                    'images/bachelors-degree.png', // Replace with your actual image path
+                    width: 70,
+                    height: 50,
+                  ),
                   const SizedBox(width: 12),
                   Text(
                     title,
@@ -184,7 +179,7 @@ class ComputerScienceDepartment extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 description,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+                style: const TextStyle(fontSize: 14, color: Colors.black),
               ),
             ],
           ),

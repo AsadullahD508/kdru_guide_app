@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-
 import '../widgets/buttom_header.dart';
 import 'package:Kdru_Guide_app/header.dart';
 
 class Homescreen extends StatefulWidget {
-  const Homescreen({super.key});
+  final int selectedIndex;
+  const Homescreen({super.key, this.selectedIndex = 2}); // default is 2
 
   @override
   State<Homescreen> createState() => _HomescreenState();
 }
 
 class _HomescreenState extends State<Homescreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
 
   final List<Map<String, String>> faculties = [
     {'name': 'د کمپیوټر ساینس پوهنځي', 'image': 'images/hospital.png'},
@@ -30,6 +30,12 @@ class _HomescreenState extends State<Homescreen> {
     {'name': 'د عامې روغتیا پوهنځي', 'image': 'images/hospital.png'},
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex;
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -38,24 +44,22 @@ class _HomescreenState extends State<Homescreen> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
+      backgroundColor: const Color(0xFFE5F7FE),
       body: Column(
         children: [
           const CustomHeader(
             userName: 'Guest User',
-            bannerImagePath: 'images/hospital.png',
-            fullText: 'د کند هار پوهنتون معلومات',
+            bannerImagePath: 'images/kdr_logo.png',
+            fullText: 'د کند هار پوهنتون ته شه راغلاست',
           ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildHeroSection(screenWidth),
-                  _buildKandaharUniversityInfoSection(),
+                  _buildUniversityInfo(),
+                  _buildFacultySection(),
                   _buildMapSection(),
-                  _buildWelcomeSection(),
                 ],
               ),
             ),
@@ -69,207 +73,145 @@ class _HomescreenState extends State<Homescreen> {
     );
   }
 
-  Widget _buildHeroSection(double screenWidth) {
-    return Container(
-      padding: const EdgeInsets.all(32.0),
-      decoration: const BoxDecoration(color: Colors.white),
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.blue[100],
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Image.asset(
-                'images/kdr_logo.png',
-                width: 64,
-                height: 64,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildKandaharUniversityInfoSection() {
-    return Container(
-      color: Colors.white, // Set the background color to white
-      padding: const EdgeInsets.all(24),
+  Widget _buildUniversityInfo() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text(
+        children: const [
+          Text(
             'د کندهار پوهنتون تاریخي شالید',
             style: TextStyle(
-              fontSize: 26,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Colors
-                  .black, // Changed text color to black for better contrast
               fontFamily: 'pashto',
             ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 12),
-          const SizedBox(height: 16),
-          const Text(
-            'کندهار پوهنتون د افغانستان په سویلي ولایت کندهار کې یو دولتي پوهنتون دی، چې په ۱۳۶۹ لمریز کال (۱۹۹۰ میلادي) د وخت د حکومت لخوا د کرنې پوهنځي په پرانیستلو سره تأسیس شو. '
-            'کندهار پوهنتون د افغانستان په سویلي ولایت کندهار کې یو دولتي پوهنتون دی، چې په ۱۳۶۹ لمریز کال (۱۹۹0 میلادي) د وخت د حکومت لخوا د کرنې پوهنځي په پرانیستلو سره تأسیس شو. '
-            'کندهار پوهنتون د افغانستان په سویلي ولایت کندهار کې یو دولتي پوهنتون دی، چې په ۱۳۶۹ لمریز کال (۱۹۹0 میلادي) د وخت د حکومت لخوا د کرنې پوهنځي په پرانیستلو سره تأسیس شو.',
+          SizedBox(height: 12),
+          Text(
+            'کندهار پوهنتون د افغانستان په سویلي ولایت کندهار کې یو دولتي پوهنتون دی، چې په ۱۳۶۹ لمریز کال (۱۹۹۰ میلادي) د وخت د حکومت لخوا د کرنې پوهنځي په پرانیستلو سره تأسیس شو.'
+            'کندهار پوهنتون د افغانستان په سویلي ولایت کندهار کې یو دولتي پوهنتون دی، چې په ۱۳۶۹ لمریز کال (۱۹۹۰ میلادي) د وخت د حکومت لخوا د کرنې پوهنځي په پرانیستلو سره تأسیس شو.'
+            'کندهار پوهنتون د افغانستان په سویلي ولایت کندهار کې یو دولتي پوهنتون دی، چې په ۱۳۶۹ لمریز کال (۱۹۹۰ میلادي) د وخت د حکومت لخوا د کرنې پوهنځي په پرانیستلو سره تأسیس شو.',
             style: TextStyle(
-              fontSize: 18,
-              color: Colors
-                  .black, // Changed text color to black for better contrast
+              fontSize: 16,
               height: 1.6,
               fontFamily: 'pashto',
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
 
-          // Faculty count
-          Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue[100],
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: Image.asset(
-                  'images/hostel (1).png',
-                  height: 60,
-                  width: 60,
-                ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                '۱۲ پوهنځي',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors
-                      .black, // Changed text color to black for better contrast
-                  fontFamily: 'pashto',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          // Faculty section (Displayed in a column, one by one)
+  Widget _buildFacultySection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
           const Text(
             'پوهنځي',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors
-                  .black, // Changed text color to black for better contrast
               fontFamily: 'pashto',
             ),
           ),
           const SizedBox(height: 16),
-          Column(
-            children: faculties.map((faculty) {
-              return Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue[100],
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Image.asset(
-                      faculty['image']!,
-                      height: 40, // Made the image smaller
-                      width: 40, // Made the image smaller
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    faculty['name']!,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors
-                          .black, // Changed text color to black for better contrast
-                      fontFamily: 'pashto',
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16), // Add space between items
-                ],
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: faculties.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.2,
+            ),
+            itemBuilder: (context, index) {
+              return _buildFacultyCard(
+                title: faculties[index]['name']!,
+                imagePath: faculties[index]['image']!,
               );
-            }).toList(),
+            },
           ),
-          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFacultyCard({
+    required String title,
+    required String imagePath,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.0),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
+      ),
+      margin: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(11.0),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              imagePath,
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'pashto',
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildMapSection() {
-    return Container(
-      height: 250,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.blueGrey.shade100),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: FlutterMap(
-        options: const MapOptions(
-          center: LatLng(31.6107, 65.6910),
-          zoom: 15.0,
-          interactiveFlags: InteractiveFlag.doubleTapZoom,
-        ),
-        children: [
-          TileLayer(
-            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            subdomains: ['a', 'b', 'c'],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SizedBox(
+        height: 200,
+        child: FlutterMap(
+          options: MapOptions(
+            center: LatLng(31.6289, 65.7372),
+            zoom: 13.0,
           ),
-          const MarkerLayer(
-            markers: [
-              Marker(
-                width: 80.0,
-                height: 80.0,
-                point: LatLng(31.6107, 65.6910),
-                child: Icon(
-                  Icons.location_pin,
-                  color: Colors.red,
-                  size: 40,
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'com.example.app',
+            ),
+            MarkerLayer(
+              markers: [
+                Marker(
+                  width: 80.0,
+                  height: 80.0,
+                  point: LatLng(31.6289, 65.7372),
+                  child: const Icon(
+                    Icons.location_pin,
+                    color: Colors.red,
+                    size: 40,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWelcomeSection() {
-    return Container(
-      padding: const EdgeInsets.all(32.0),
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.white, Colors.blue[100]!],
-        ),
-        borderRadius: BorderRadius.circular(32),
-      ),
-      child: const Text(
-        'ښه راغلاست زموږ اپلیکیشن ته! تاسو کولی شئ د پوهنتون په اړه معلومات، نقشې، پوهنځي او نور وګورئ.',
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w500,
-          fontFamily: 'pashto',
+              ],
+            ),
+          ],
         ),
       ),
     );
