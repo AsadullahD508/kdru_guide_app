@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart'; // ✅ AutoSizeText imported
 
 // Faculty screens
-
 import '../../widgets/buttom_header.dart';
-// import '../faculties/agriculture/agriculture_faculty_screen.dart';
-// import '../faculties/computer_science/faculty_screen.dart';
-// import '../faculties/economics/Economics_screen.dart';
-// import '../faculties/education/Education_screen.dart';
 import 'ComputerScience/CS_home.dart';
 import 'Engineering/Eng_home.dart';
 
@@ -20,7 +16,7 @@ class FacultyCard extends StatefulWidget {
 }
 
 class _FacultyCardState extends State<FacultyCard> {
-  int _selectedIndex = 1; // Initially set to 'پوهنځي'
+  int _selectedIndex = 1;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -45,7 +41,6 @@ class _FacultyCardState extends State<FacultyCard> {
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Directionality(
-                    // ✅ RTL only for inner content
                     textDirection: TextDirection.rtl,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,13 +65,13 @@ class _FacultyCardState extends State<FacultyCard> {
                               'images/kdr_logo.png',
                               4,
                               28,
-                              'images/kdr.jpg',
+                              'images/hospital.png',
                               const CsFaculty(),
                             ),
                             _buildFacultyCard(
                               context,
                               'انجنیرۍ',
-                              'د انجنیري مختلفو برخو لکه ساختماني، برښنا، او اوبو او چاپېریال انجنیرۍ کې تخصص لري.',
+                              'د انجنیري مختلفو برخو لکه ساختماني، برښنا، او اوبو ا.',
                               'images/kdr_logo.png',
                               5,
                               32,
@@ -203,24 +198,28 @@ class _FacultyCardState extends State<FacultyCard> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
+                  AutoSizeText(
                     title,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    minFontSize: 16,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  AutoSizeText(
                     description,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.white,
                       height: 1.5,
                     ),
-                    textAlign: TextAlign.right,
+                    maxLines: 3,
+                    minFontSize: 12,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const Spacer(),
                   Container(
