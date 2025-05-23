@@ -1,27 +1,17 @@
 import 'package:flutter/material.dart';
-import 'TeacherProfileScreen.dart';
-
-// Your other imports
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../header.dart';
-import '../../../../widgets/buttom_header.dart';
 
-class ComputerScienceTeacherScreen extends StatefulWidget {
-  const ComputerScienceTeacherScreen({Key? key}) : super(key: key);
+class TeachersScreen extends StatelessWidget {
+  final String facultyId;
+  final String departmentId;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  @override
-  State<ComputerScienceTeacherScreen> createState() =>
-      _ComputerScienceTeacherScreenState();
-}
-
-class _ComputerScienceTeacherScreenState
-    extends State<ComputerScienceTeacherScreen> {
-  int selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
+  TeachersScreen({
+    Key? key,
+    required this.facultyId,
+    required this.departmentId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,126 +21,95 @@ class _ComputerScienceTeacherScreenState
         children: [
           const CustomHeader(
             userName: 'Guest User',
-            bannerImagePath: 'images/computerscience.jpg',
-            fullText: 'کمپیوټر ساینس پوهنځي ته ښه راغلاست',
+            bannerImagePath: 'images/teachers.jpg',
+            fullText: 'استادان',
           ),
           Expanded(
-            child: Directionality(
-              textDirection: TextDirection.rtl,
-              child: ListView(
-                padding: const EdgeInsets.all(16.0),
-                children: [
-                  _buildTeacherCard(
-                    context,
-                    name: 'انجینر عبدالله شفیق',
-                    title: 'د ویب پراختیا استاد',
-                    graduatedYear: '۲۰۱۵',
-                    jobStartYear: '۲۰۱۷',
-                    imagePath: 'assets/a.jpg',
-                  ),
-                  _buildTeacherCard(
-                    context,
-                    name: 'دوکتور ناصر احمد',
-                    title: 'د معلوماتي علومو متخصص',
-                    graduatedYear: '۲۰۱۴',
-                    jobStartYear: '۲۰۱۶',
-                    imagePath: 'assets/a.jpg',
-                  ),
-                  _buildTeacherCard(
-                    context,
-                    name: 'پوهنمل ناهید احمدزی',
-                    title: 'ماشین زده کړه',
-                    graduatedYear: '۲۰۱۶',
-                    jobStartYear: '۲۰۱۸',
-                    imagePath: 'assets/a.jpg',
-                  ),
-                  _buildTeacherCard(
-                    context,
-                    name: 'انجینر احمد شاه سلیم',
-                    title: 'د سایبري امنیت استاد',
-                    graduatedYear: '۲۰۱۳',
-                    jobStartYear: '۲۰۱۴',
-                    imagePath: 'assets/a.jpg',
-                  ),
-                  _buildTeacherCard(
-                    context,
-                    name: 'م. فرهاد سادات',
-                    title: 'د ډیټابیس استاد',
-                    graduatedYear: '۲۰۱۷',
-                    jobStartYear: '۲۰۱۹',
-                    imagePath: 'assets/a.jpg',
-                  ),
-                ],
-              ),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _firestore
+                  .collection('Kandahar University')
+                  .doc('kdru')
+                  .collection('faculties')
+                  .doc(facultyId)
+                  .collection('departments')
+                  .doc(departmentId)
+                  .collection('teachers')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading teachers'));
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('No teachers found'));
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot teacher = snapshot.data!.docs[index];
+                    Map<String, dynamic> teacherData =
+                        teacher.data() as Map<String, dynamic>;
+
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 40,
+                              backgroundImage:
+                                  NetworkImage(teacherData['photoUrl'] ?? ''),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    teacherData['name'] ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'pashto',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    teacherData['position'] ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                      fontFamily: 'pashto',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    teacherData['education'] ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'pashto',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTeacherCard(
-    BuildContext context, {
-    required String name,
-    required String title,
-    required String graduatedYear,
-    required String jobStartYear,
-    required String imagePath,
-  }) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const TeacherProfileScreen(),
-          ),
-        );
-      },
-      child: Card(
-        color: Colors.white,
-        margin: const EdgeInsets.only(bottom: 16),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: AssetImage(imagePath),
-                radius: 30,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'فراغت: $graduatedYear   |   دندې پیل: $jobStartYear',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

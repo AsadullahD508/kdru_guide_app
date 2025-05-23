@@ -1,69 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../header.dart';
 
-// Alias the conflicting imports:
-import 'package:Kdru_Guide_app/header.dart' as header;
-import 'package:Kdru_Guide_app/screens/Faculty/ComputerScience/Semesters/Cs_semesters.dart'
-    as semesters;
+class SemesterScreen extends StatelessWidget {
+  final String facultyId;
+  final String departmentId;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-class CurriculumScreen extends StatefulWidget {
-  @override
-  _CurriculumScreenState createState() => _CurriculumScreenState();
-}
-
-class _CurriculumScreenState extends State<CurriculumScreen> {
-  int expandedIndex = -1;
-
-  final List<Map<String, dynamic>> semesterData = List.generate(8, (index) {
-    return {
-      'title': 'Civil Engineering - Semester ${index + 1}',
-      'books': [
-        [
-          '1',
-          'Subject ${index + 1}-1',
-          'CE-${index + 1}01',
-          'Basics',
-          '2',
-          '2',
-          '4',
-          '3',
-          'Engineering Faculty'
-        ],
-        [
-          '2',
-          'Subject ${index + 1}-2',
-          'CE-${index + 1}02',
-          'Collegiate',
-          '3',
-          '0',
-          '3',
-          '3',
-          'Sharia Faculty'
-        ],
-        [
-          '3',
-          'Subject ${index + 1}-3',
-          'CE-${index + 1}03',
-          'Basics',
-          '2',
-          '1',
-          '3',
-          '2',
-          'Engineering Faculty'
-        ],
-        [
-          '4',
-          'Subject ${index + 1}-4',
-          'CE-${index + 1}04',
-          'Basics',
-          '3',
-          '2',
-          '5',
-          '4',
-          'Architecture Dept.'
-        ],
-      ],
-    };
-  });
+  SemesterScreen({
+    Key? key,
+    required this.facultyId,
+    required this.departmentId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -71,140 +19,121 @@ class _CurriculumScreenState extends State<CurriculumScreen> {
       backgroundColor: Colors.lightBlue[50],
       body: Column(
         children: [
-          // Use the CustomHeader from header.dart
-          const header.CustomHeader(
+          const CustomHeader(
             userName: 'Guest User',
-            bannerImagePath: 'images/kdr_logo.png',
-            fullText: 'کمپیوټر ساینس پوهنځي ته ښه راغلاست',
+            bannerImagePath: 'images/semesters.jpg',
+            fullText: 'سمسټرونه',
           ),
-
-          // Expanded ListView for semester cards
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(12),
-              itemCount: semesterData.length,
-              itemBuilder: (context, index) {
-                final semester = semesterData[index];
-                final isExpanded = expandedIndex == index;
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _firestore
+                  .collection('Kandahar University')
+                  .doc('kdru')
+                  .collection('faculties')
+                  .doc(facultyId)
+                  .collection('departments')
+                  .doc(departmentId)
+                  .collection('semesters')
+                  .orderBy('number')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading semesters'));
+                }
 
-                return Card(
-                  elevation: 4,
-                  margin: EdgeInsets.only(bottom: 16),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.teal[700],
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(12)),
-                        ),
-                        child: ListTile(
-                          title: AnimatedDefaultTextStyle(
-                            duration: Duration(milliseconds: 400),
-                            curve: Curves.easeInOut,
-                            style: TextStyle(
-                              color: isExpanded
-                                  ? Colors.yellow[200]
-                                  : Colors.white,
-                              fontSize: isExpanded ? 18 : 16,
-                              fontWeight: isExpanded
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
-                            child: Text(semester['title']),
-                          ),
-                          trailing: IconButton(
-                            icon: Icon(
-                              isExpanded
-                                  ? Icons.expand_less
-                                  : Icons.expand_more,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                expandedIndex = isExpanded ? -1 : index;
-                              });
-                            },
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('No semesters found'));
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot semester = snapshot.data!.docs[index];
+                    Map<String, dynamic> semesterData =
+                        semester.data() as Map<String, dynamic>;
+                    List<dynamic> subjects = semesterData['subjects'] ?? [];
+
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: ExpansionTile(
+                        title: Text(
+                          'سمسټر ${semesterData['number']}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'pashto',
                           ),
                         ),
-                      ),
-                      AnimatedCrossFade(
-                        firstChild: SizedBox.shrink(),
-                        secondChild: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Table(
-                              border: TableBorder.all(),
-                              defaultVerticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              columnWidths: {
-                                0: FixedColumnWidth(30),
-                                1: FixedColumnWidth(120),
-                                2: FixedColumnWidth(80),
-                                3: FixedColumnWidth(80),
-                                4: FixedColumnWidth(50),
-                                5: FixedColumnWidth(62),
-                                6: FixedColumnWidth(45),
-                                7: FixedColumnWidth(65),
-                                8: FixedColumnWidth(150),
-                              },
-                              children: [
-                                TableRow(
-                                  decoration:
-                                      BoxDecoration(color: Colors.grey[300]),
-                                  children: [
-                                    tableCell('No'),
-                                    tableCell('Subject'),
-                                    tableCell('Code'),
-                                    tableCell('Category'),
-                                    tableCell('Thory'),
-                                    tableCell('Practical'),
-                                    tableCell('Total'),
-                                    tableCell('Credit'),
-                                    tableCell('In-Charge Dept.'),
-                                  ],
+                        children: [
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: DataTable(
+                              columns: const [
+                                DataColumn(
+                                  label: Text(
+                                    'مضمون',
+                                    style: TextStyle(fontFamily: 'pashto'),
+                                  ),
                                 ),
-                                ...semester['books'].map<TableRow>((book) {
-                                  return TableRow(
-                                    children: book
-                                        .map<Widget>(
-                                            (cellText) => tableCell(cellText))
-                                        .toList(),
-                                  );
-                                }).toList(),
+                                DataColumn(
+                                  label: Text(
+                                    'کوډ',
+                                    style: TextStyle(fontFamily: 'pashto'),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'کریډټ',
+                                    style: TextStyle(fontFamily: 'pashto'),
+                                  ),
+                                ),
                               ],
+                              rows: subjects.map<DataRow>((subject) {
+                                return DataRow(
+                                  cells: [
+                                    DataCell(
+                                      Text(
+                                        subject['name'] ?? '',
+                                        style: const TextStyle(
+                                          fontFamily: 'pashto',
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        subject['code'] ?? '',
+                                        style: const TextStyle(
+                                          fontFamily: 'pashto',
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        subject['credits'].toString(),
+                                        style: const TextStyle(
+                                          fontFamily: 'pashto',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
                             ),
                           ),
-                        ),
-                        crossFadeState: isExpanded
-                            ? CrossFadeState.showSecond
-                            : CrossFadeState.showFirst,
-                        duration: Duration(milliseconds: 400),
-                        firstCurve: Curves.easeOut,
-                        secondCurve: Curves.easeIn,
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 );
               },
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget tableCell(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 12),
       ),
     );
   }
