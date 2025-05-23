@@ -34,7 +34,7 @@ class _CustomHeaderState extends State<CustomHeader>
     );
 
     _imageOffsetAnimation =
-        Tween<Offset>(begin: const Offset(-3.0, 0), end: Offset.zero).animate(
+        Tween<Offset>(begin: const Offset(3.0, 0), end: Offset.zero).animate(
       CurvedAnimation(parent: _imageController, curve: Curves.easeOut),
     );
 
@@ -62,56 +62,75 @@ class _CustomHeaderState extends State<CustomHeader>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.lightBlue[50],
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Back button with proper check
-              IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  final isFirst = ModalRoute.of(context)?.isFirst ?? false;
-                  if (!isFirst) {
-                    Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('تاسې په اصلي صفحه کې یاست.'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                },
-              ),
-              const Text(
-                "کند هار پوهنتون",
-                style: TextStyle(fontSize: 16, fontFamily: 'pashto'),
-              ),
-              Row(
-                children: [
-                  const Icon(Icons.notifications_none),
-                  const SizedBox(width: 10),
-                  CircleAvatar(radius: 15, backgroundColor: Colors.grey[300]),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            padding: const EdgeInsets.all(12),
-            child: Row(
+    return Directionality(
+      textDirection: TextDirection.rtl, // RTL ټول widget ته
+      child: Container(
+        color: Colors.lightBlue[50],
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: SlideTransition(
+                Row(
+                  children: [
+                    const Icon(Icons.notifications_none),
+                    const SizedBox(width: 10),
+                    CircleAvatar(radius: 15, backgroundColor: Colors.grey[300]),
+                  ],
+                ),
+                const Text(
+                  "کند هار پوهنتون",
+                  style: TextStyle(fontSize: 16, fontFamily: 'pashto'),
+                ),
+                IconButton(
+                  icon:
+                      const Icon(Icons.arrow_forward), // RTL کې forward = back
+                  onPressed: () {
+                    final isFirst = ModalRoute.of(context)?.isFirst ?? false;
+                    if (!isFirst) {
+                      Navigator.pop(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('تاسې په اصلي صفحه کې یاست.'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          displayedText,
+                          textDirection: TextDirection.rtl,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black87,
+                            fontFamily: 'pashto',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  SlideTransition(
                     position: _imageOffsetAnimation,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
@@ -122,29 +141,11 @@ class _CustomHeaderState extends State<CustomHeader>
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        displayedText,
-                        textDirection: TextDirection.rtl,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black87,
-                          fontFamily: 'pashto',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

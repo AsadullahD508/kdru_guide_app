@@ -34,7 +34,7 @@ class Faculty {
       id: doc.id,
       name: data['name'] ?? '',
       description: data['description'] ?? '',
-      iconUrl: data['iconUrl'] ?? '',
+      iconUrl: data['logo'] ?? '',
       departments: data['departments'] ?? 0,
       staff: data['staff'] ?? 0,
       backgroundUrl: data['logo'] ?? '',
@@ -50,10 +50,31 @@ class FacultyCard extends StatefulWidget {
   _FacultyCardScreenState createState() => _FacultyCardScreenState();
 }
 
-class _FacultyCardScreenState extends State<FacultyCard> {
+class _FacultyCardScreenState extends State<FacultyCard>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 1;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  late AnimationController _controller;
+  late Animation<double> _hoverAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _hoverAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -140,6 +161,10 @@ class _FacultyCardScreenState extends State<FacultyCard> {
                 fit: BoxFit.cover,
                 placeholder: (context, url) =>
                     const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => const Center(
+                  child:
+                      Icon(Icons.broken_image, size: 60, color: Colors.white),
+                ),
               ),
             ),
             Container(
@@ -168,23 +193,22 @@ class _FacultyCardScreenState extends State<FacultyCard> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: FutureBuilder<String>(
-                        future: _getImageUrl(faculty.iconUrl),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const SizedBox(
-                              width: 32,
-                              height: 32,
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return CachedNetworkImage(
-                            imageUrl: snapshot.data!,
-                            width: 32,
-                            height: 32,
-                            fit: BoxFit.cover,
-                          );
-                        },
+                      child: CachedNetworkImage(
+                        imageUrl: faculty.iconUrl ?? '',
+                        width: 32,
+                        height: 32,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => const SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (context, url, error) => const SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: Icon(Icons.broken_image,
+                              size: 24, color: Colors.grey),
+                        ),
                       ),
                     ),
                   ),
@@ -240,22 +264,36 @@ class _FacultyCardScreenState extends State<FacultyCard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.8),
-                          foregroundColor: Colors.blue,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FacultyScreen(
-                                  facultyId: faculty.id, section: "teachers"),
+                      MouseRegion(
+                        onEnter: (_) => _controller.forward(),
+                        onExit: (_) => _controller.reverse(),
+                        child: ScaleTransition(
+                          scale: _hoverAnimation,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white.withOpacity(0.8),
+                              foregroundColor: Colors.blue,
                             ),
-                          );
-                        },
-                        icon: const Icon(Icons.person),
-                        label: const Text('د نورو معلوماتو لپاره'),
+                            onPressed: () {
+                              _controller.forward(from: 0.0);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FacultyScreen(
+                                    facultyId: faculty.id,
+                                    galleryId: 'galleryId',
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: Image.asset(
+                              'images/seo.png',
+                              width: 24,
+                              height: 24,
+                            ),
+                            label: const Text('د نورو معلوماتو لپاره'),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -278,9 +316,9 @@ class _FacultyCardScreenState extends State<FacultyCard> {
             FutureBuilder<String>(
               future: _getImageUrl('images/kdr_logo.png'),
               builder: (context, snapshot) {
-                return CustomHeader(
+                return const CustomHeader(
                   userName: 'Guest User',
-                  bannerImagePath: snapshot.data ?? 'images/kdr_logo.png',
+                  bannerImagePath: 'images/department (2).png',
                   fullText: 'د کند هار پوهنتون پوهنځي',
                 );
               },
