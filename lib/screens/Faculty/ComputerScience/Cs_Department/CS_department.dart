@@ -55,8 +55,8 @@ class DepartmentScreen extends StatelessWidget {
             children: [
               CustomHeader(
                 userName: 'Guest User',
-                bannerImagePath: departmentData['backgroundUrl'] ?? '',
-                fullText: departmentData['name'] ?? '',
+                bannerImagePath: 'images/department (2).png',
+                fullText: departmentData['name'] + 'څانګه' ?? '',
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -79,9 +79,8 @@ class DepartmentScreen extends StatelessWidget {
                               () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => TeachersScreen(
-                                    facultyId: facultyId,
-                                    departmentId: departmentId,
+                                  builder: (context) => AllTeachersScreen(
+                                    facultyData: {},
                                   ),
                                 ),
                               ),

@@ -282,6 +282,7 @@ class _FacultyCardScreenState extends State<FacultyCard>
                                   builder: (context) => FacultyScreen(
                                     facultyId: faculty.id,
                                     galleryId: 'galleryId',
+                                    departmentId: 'departmentId',
                                   ),
                                 ),
                               );

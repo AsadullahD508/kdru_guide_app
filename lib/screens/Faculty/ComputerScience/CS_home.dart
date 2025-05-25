@@ -1,16 +1,23 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../header.dart';
 import '../../../widgets/buttom_header.dart';
 import '../../Departement/Departement.dart';
 import 'Cs_Department/CS_department.dart';
+import 'Teachers/Cs_teachers.dart';
+import 'Teachers/Cs_teachers.dart';
 
 class FacultyScreen extends StatefulWidget {
   final String facultyId;
   final String galleryId;
+  final String departmentId;
 
   const FacultyScreen(
-      {Key? key, required this.facultyId, required this.galleryId})
+      {Key? key,
+      required this.facultyId,
+      required this.galleryId,
+      required this.departmentId})
       : super(key: key);
 
   @override
@@ -111,7 +118,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
                             Text(
                               facultyData['name'] ?? '',
                               style: const TextStyle(
-                                  fontSize: 32,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'pashto',
                                   color: Color(0xFF0D3B66)),
@@ -155,8 +162,8 @@ class _FacultyScreenState extends State<FacultyScreen> {
                                 Row(
                                   children: [
                                     Expanded(
-                                        child: _buildStatCard(
-                                            'کمپیوټر لیب', '$labcount')),
+                                        child: _buildStatCard('کمپیوټر لیب',
+                                            facultyData['ComputerLeb'])),
                                     const SizedBox(width: 12),
                                   ],
                                 ),
@@ -165,15 +172,48 @@ class _FacultyScreenState extends State<FacultyScreen> {
                           },
                         ),
                         const SizedBox(height: 30),
+                        Center(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFFFFFF),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AllTeachersScreen(
+                                    facultyData: {},
+                                  ),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'ټول استادان',
+                              style: TextStyle(
+                                fontFamily: 'pashto',
+                                fontSize: 18,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
                         _buildSectionTitleWithIcon(
-                            'لید لوری', 'images/hospital.png'),
+                            ' لر لید', 'images/view.png'),
                         const SizedBox(height: 12),
                         _buildInfoCard(facultyData['vision'] ?? ''),
                         const SizedBox(height: 30),
-                        _buildSectionTitleWithIcon(
-                            'موخه', 'images/mission.png'),
+                        _buildSectionTitleWithIcon('رسالت', 'images/view.png'),
                         const SizedBox(height: 12),
-                        _buildInfoCard(facultyData['mission'] ?? ''),
+                        _buildInfoCard(facultyData['Mission'] ?? ''),
+                        const SizedBox(height: 30),
+                        _buildSectionTitleWithIcon('موخه', 'images/view.png'),
+                        const SizedBox(height: 12),
+                        _buildInfoCard(facultyData['objectiv'] ?? ''),
                         const SizedBox(height: 30),
                         _buildDepartmentsSection(widget.facultyId),
                         const SizedBox(height: 30),
@@ -199,7 +239,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
         const SizedBox(width: 12),
         Text(title,
             style: const TextStyle(
-                fontSize: 28,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'pashto',
                 color: Color(0xFF0D3B66))),
@@ -296,12 +336,13 @@ class _FacultyScreenState extends State<FacultyScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const Text('څانګې',
-                style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'pashto',
-                    color: Color(0xFF0D3B66))),
+            const Center(
+                child: Text('څانګې',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'pashto',
+                        color: Color(0xFF0D3B66)))),
             const SizedBox(height: 12),
             ListView.builder(
               shrinkWrap: true,
@@ -344,69 +385,152 @@ class _FacultyScreenState extends State<FacultyScreen> {
   }
 
   Widget _buildGallerySection(String facultyId, String galleryId) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        const Text('ګالري',
-            style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'pashto',
-                color: Color(0xFF0D3B66))),
-        const SizedBox(height: 12),
-        StreamBuilder<QuerySnapshot>(
-          stream: _firestore
-              .collection('Kandahar University')
-              .doc('kdru')
-              .collection('faculties')
-              .doc(facultyId)
-              .collection('gallery')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text('د ګالري په لوستلو کې ستونزه',
-                  style: TextStyle(fontFamily: 'pashto'));
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return const Text('ګالري خالي ده',
-                  style: TextStyle(fontFamily: 'pashto'));
-            }
-            List<QueryDocumentSnapshot> images = snapshot.data!.docs;
-            return SizedBox(
-              height: 150,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: images.length,
-                itemBuilder: (context, index) {
-                  String imageUrl = images[index]['picture'] ?? '';
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: imageUrl.isNotEmpty
-                          ? Image.network(
-                              imageUrl,
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.cover,
-                            )
-                          : Container(
-                              width: 150,
-                              height: 150,
-                              color: Colors.grey[300],
-                              child: const Icon(Icons.image, size: 50),
-                            ),
-                    ),
-                  );
-                },
+    bool showAllImages = false;
+    return StatefulBuilder(
+      builder: (context, setState) {
+        // دلته دننه سیټ شو
+
+        void _showFullImage(BuildContext context, String imageUrl) {
+          showDialog(
+            context: context,
+            builder: (_) => Dialog(
+              backgroundColor: Colors.transparent,
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Hero(
+                  tag: imageUrl,
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) =>
+                        const Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ),
+                ),
               ),
-            );
-          },
-        ),
-      ],
+            ),
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const Center(
+              child: Text(
+                'ګالري',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'pashto',
+                  color: Color(0xFF0D3B66),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            StreamBuilder<QuerySnapshot>(
+              stream: _firestore
+                  .collection('Kandahar University')
+                  .doc('kdru')
+                  .collection('faculties')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('د ګالري په لوستلو کې ستونزه',
+                      style: TextStyle(fontFamily: 'pashto'));
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Text('ګالري خالي ده',
+                      style: TextStyle(fontFamily: 'pashto'));
+                }
+
+                List<String> allImages = [];
+                for (var doc in snapshot.data!.docs) {
+                  List<dynamic>? galleryList = doc['gellery'];
+                  if (galleryList != null && galleryList is List) {
+                    allImages.addAll(galleryList.cast<String>());
+                  }
+                }
+
+                int imagesToShow = showAllImages ? allImages.length : 3;
+
+                return Column(
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 400),
+                      height: 150,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: imagesToShow,
+                        itemBuilder: (context, index) {
+                          String imageUrl = allImages[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 12.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(30),
+                              child: GestureDetector(
+                                onTap: () => _showFullImage(context, imageUrl),
+                                child: Hero(
+                                  tag: imageUrl,
+                                  child: CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Container(
+                                      width: 100,
+                                      height: 100,
+                                      alignment: Alignment.center,
+                                      child: const CircularProgressIndicator(),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                      width: 100,
+                                      height: 100,
+                                      color: Colors.grey[300],
+                                      alignment: Alignment.center,
+                                      child: const Icon(Icons.error,
+                                          color: Colors.red),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    if (allImages.length > 3)
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              showAllImages = !showAllImages;
+                            });
+                          },
+                          child: Text(
+                            showAllImages
+                                ? 'لیږ عکسونه شکاره کول'
+                                : 'نور عکسونه شکاره کول',
+                            style: const TextStyle(
+                              fontFamily: 'pashto',
+                              fontSize: 16,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

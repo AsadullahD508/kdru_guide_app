@@ -1,115 +1,100 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../../../header.dart';
+import '../../../../widgets/buttom_header.dart';
 
-class TeachersScreen extends StatelessWidget {
-  final String facultyId;
-  final String departmentId;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+class AllTeachersScreen extends StatefulWidget {
+  final Map<String, dynamic> facultyData;
 
-  TeachersScreen({
-    Key? key,
-    required this.facultyId,
-    required this.departmentId,
-  }) : super(key: key);
+  const AllTeachersScreen({super.key, required this.facultyData});
+
+  @override
+  State<AllTeachersScreen> createState() => _AllTeachersScreenState();
+}
+
+class _AllTeachersScreenState extends State<AllTeachersScreen> {
+  int selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+      // تاسو دلته کولی شئ هر bottom nav page ته لاړ شئ
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightBlue[50],
-      body: Column(
-        children: [
-          const CustomHeader(
-            userName: 'Guest User',
-            bannerImagePath: 'images/teachers.jpg',
-            fullText: 'استادان',
-          ),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection('Kandahar University')
-                  .doc('kdru')
-                  .collection('faculties')
-                  .doc(facultyId)
-                  .collection('departments')
-                  .doc(departmentId)
-                  .collection('teachers')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Center(child: Text('Error loading teachers'));
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text('No teachers found'));
-                }
-
-                return ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    DocumentSnapshot teacher = snapshot.data!.docs[index];
-                    Map<String, dynamic> teacherData =
-                        teacher.data() as Map<String, dynamic>;
-
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundImage:
-                                  NetworkImage(teacherData['photoUrl'] ?? ''),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    teacherData['name'] ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'pashto',
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    teacherData['position'] ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
-                                      fontFamily: 'pashto',
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    teacherData['education'] ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'pashto',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: Colors.lightBlue[50],
+        body: Column(
+          children: [
+            CustomHeader(
+              userName: 'Guest User',
+              bannerImagePath:
+                  widget.facultyData['backgroundUrl'] ?? 'images/kdr_logo.png',
+              fullText: widget.facultyData['name'] ?? 'پوهنځی',
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collectionGroup('teachers')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Center(
+                        child: Text(
+                            'د استادانو په ترلاسه کولو کې ستونزه رامنځته شوه.'));
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final teachers = snapshot.data!.docs;
+
+                  if (teachers.isEmpty) {
+                    return const Center(child: Text('هیڅ استاد ونه موندل شو.'));
+                  }
+
+                  return ListView.builder(
+                    itemCount: teachers.length,
+                    itemBuilder: (context, index) {
+                      final teacherData =
+                          teachers[index].data() as Map<String, dynamic>;
+
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage:
+                                NetworkImage(teacherData['photoUrl'] ?? ''),
+                          ),
+                          title: Text(
+                            teacherData['name'] ?? '',
+                            style: const TextStyle(fontFamily: 'pashto'),
+                          ),
+                          subtitle: Text(
+                            teacherData['position'] ?? '',
+                            style: const TextStyle(fontFamily: 'pashto'),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        bottomNavigationBar: CustomBottomNavBar(
+          onItemTapped: _onItemTapped,
+          selectedIndex: selectedIndex,
+        ),
       ),
     );
   }
