@@ -85,16 +85,34 @@ class _CustomHeaderState extends State<CustomHeader>
                   style: TextStyle(fontSize: 16, fontFamily: 'pashto'),
                 ),
                 IconButton(
-                  icon:
-                      const Icon(Icons.arrow_forward), // RTL کې forward = back
+                  icon: const Icon(Icons.arrow_forward),
                   onPressed: () {
-                    final isFirst = ModalRoute.of(context)?.isFirst ?? false;
-                    if (!isFirst) {
-                      Navigator.pop(context);
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).popUntil((route) {
+                        if (!Navigator.of(context).canPop()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'تاسې په اصلي صفحه کې یاست.',
+                                textDirection: TextDirection.rtl,
+                                style: TextStyle(fontFamily: 'pashto'),
+                              ),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          return true;
+                        }
+                        return false;
+                      });
                     } else {
+                      // که نور pages نه وي
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('تاسې په اصلي صفحه کې یاست.'),
+                          content: Text(
+                            'تاسې په اصلي صفحه کې یاست.',
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(fontFamily: 'pashto'),
+                          ),
                           duration: Duration(seconds: 2),
                         ),
                       );

@@ -64,7 +64,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
       backgroundColor: Colors.lightBlue[50],
       bottomNavigationBar: CustomBottomNavBar(
         onItemTapped: _onItemTapped,
-        selectedIndex: selectedIndex,
+        selectedIndex: 1,
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: _firestore
@@ -181,16 +181,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                             ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AllTeachersScreen(
-                                    facultyData: {},
-                                  ),
-                                ),
-                              );
-                            },
+                            onPressed: () {},
                             child: const Text(
                               'ټول استادان',
                               style: TextStyle(
@@ -217,8 +208,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
                         const SizedBox(height: 30),
                         _buildDepartmentsSection(widget.facultyId),
                         const SizedBox(height: 30),
-                        _buildGallerySection(
-                            widget.facultyId, widget.galleryId),
+                        _buildGallerySection(widget.facultyId),
                         const SizedBox(height: 30),
                       ],
                     ),
@@ -384,12 +374,11 @@ class _FacultyScreenState extends State<FacultyScreen> {
     );
   }
 
-  Widget _buildGallerySection(String facultyId, String galleryId) {
+  Widget _buildGallerySection(String facultyId) {
     bool showAllImages = false;
+
     return StatefulBuilder(
       builder: (context, setState) {
-        // دلته دننه سیټ شو
-
         void _showFullImage(BuildContext context, String imageUrl) {
           showDialog(
             context: context,
@@ -428,11 +417,12 @@ class _FacultyScreenState extends State<FacultyScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            StreamBuilder<QuerySnapshot>(
+            StreamBuilder<DocumentSnapshot>(
               stream: _firestore
                   .collection('Kandahar University')
                   .doc('kdru')
                   .collection('faculties')
+                  .doc(facultyId)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -442,66 +432,57 @@ class _FacultyScreenState extends State<FacultyScreen> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Text('ګالري خالي ده',
+                if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return const Text('ګالري ونه موندل شوه',
                       style: TextStyle(fontFamily: 'pashto'));
                 }
 
-                List<String> allImages = [];
-                for (var doc in snapshot.data!.docs) {
-                  List<dynamic>? galleryList = doc['gellery'];
-                  if (galleryList != null && galleryList is List) {
-                    allImages.addAll(galleryList.cast<String>());
-                  }
+                List<dynamic>? galleryList = snapshot.data!['gellery'];
+                if (galleryList == null || galleryList.isEmpty) {
+                  return const Text(
+                    'هیڅ عکس نشته',
+                    style: TextStyle(fontFamily: 'pashto'),
+                  );
                 }
 
-                int imagesToShow = showAllImages ? allImages.length : 3;
+                List<String> allImages = galleryList.cast<String>();
+
+                int imagesToShow = showAllImages
+                    ? allImages.length
+                    : (allImages.length >= 3 ? 3 : allImages.length);
 
                 return Column(
                   children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 400),
-                      height: 150,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: imagesToShow,
-                        itemBuilder: (context, index) {
-                          String imageUrl = allImages[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 12.0),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List.generate(imagesToShow, (index) {
+                        String imageUrl = allImages[index];
+                        return GestureDetector(
+                          onTap: () => _showFullImage(context, imageUrl),
+                          child: Hero(
+                            tag: imageUrl,
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(30),
-                              child: GestureDetector(
-                                onTap: () => _showFullImage(context, imageUrl),
-                                child: Hero(
-                                  tag: imageUrl,
-                                  child: CachedNetworkImage(
-                                    imageUrl: imageUrl,
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => Container(
-                                      width: 100,
-                                      height: 100,
-                                      alignment: Alignment.center,
-                                      child: const CircularProgressIndicator(),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        Container(
-                                      width: 100,
-                                      height: 100,
-                                      color: Colors.grey[300],
-                                      alignment: Alignment.center,
-                                      child: const Icon(Icons.error,
-                                          color: Colors.red),
-                                    ),
+                              borderRadius: BorderRadius.circular(20),
+                              child: CachedNetworkImage(
+                                imageUrl: imageUrl,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const SizedBox(
+                                  width: 100,
+                                  height: 100,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
                                   ),
                                 ),
+                                errorWidget: (context, url, error) =>
+                                    const SizedBox.shrink(),
                               ),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      }),
                     ),
                     const SizedBox(height: 10),
                     if (allImages.length > 3)
