@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TeacherProfileScreen extends StatelessWidget {
   final String teacherId;
@@ -56,15 +57,15 @@ class TeacherProfileScreen extends StatelessWidget {
             }
 
             final teacherData = snapshot.data!.data() as Map<String, dynamic>;
+            final List<dynamic> researchAreas =
+                teacherData['researchAreas'] ?? [];
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 40),
-
-                  // Profile Card
+                  const SizedBox(height: 20),
                   Container(
                     padding: const EdgeInsets.all(30),
                     decoration: BoxDecoration(
@@ -173,44 +174,39 @@ class TeacherProfileScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 30),
-
-                  // Researches Section
                   Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      border: Border.all(color: Colors.grey[300]!),
+                      border: Border.all(color: Colors.grey.shade300),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'څیړڼی',
+                          'څیړنې',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 12),
-                        _buildResearchItem(
-                          title:
-                              'عنوان: ${teacherData['publishResearches'] ?? 'نامعلوم'}',
-                          publishYear:
-                              'د خپریدو کال: ${teacherData['research'] ?? 'نامعلوم'}',
-                          publishLink:
-                              '   د خپریدیو لینک: ${teacherData['research'] ?? 'نامعلوم'}',
-                          where:
-                              '   د خپریدیو لینک: ${teacherData['research'] ?? 'نامعلوم'}',
-                        ),
-                        const SizedBox(height: 16),
+                        ...researchAreas.map((research) {
+                          final Map<String, dynamic> r =
+                              Map<String, dynamic>.from(research);
+                          return _buildResearchItem(
+                            title: 'عنوان: ${r['title'] ?? 'نامعلوم'}',
+                            publishYear: 'کال: ${r['year'] ?? 'نامعلوم'}',
+                            publishLink: r['journalUrl'] ?? '',
+                            researchers:
+                                'څیړونکي: ${r['researchers'] ?? 'نامعلوم'}',
+                          );
+                        }).toList(),
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 30),
-
-                  // Contact Card
                   Container(
                     margin:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -238,16 +234,27 @@ class TeacherProfileScreen extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Email',
+                                  const Text('برېښنالیک',
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold)),
-                                  Text(
-                                    teacherData['email'] ?? 'نامعلوم',
-                                    style: const TextStyle(
-                                        fontSize: 14, color: Colors.grey),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                  GestureDetector(
+                                    onTap: () {
+                                      final email = teacherData['email'];
+                                      if (email != null) {
+                                        _launchUrlInBrowser("mailto:$email");
+                                      }
+                                    },
+                                    child: Text(
+                                      teacherData['email'] ?? 'نامعلوم',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.blue,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -264,7 +271,7 @@ class TeacherProfileScreen extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Phone',
+                                  const Text('تلیفون',
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold)),
@@ -283,10 +290,7 @@ class TeacherProfileScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 30),
-
-                  // Skills Section
                 ],
               ),
             );
@@ -300,52 +304,57 @@ class TeacherProfileScreen extends StatelessWidget {
     required String title,
     required String publishYear,
     required String publishLink,
-    required String where,
+    required String researchers,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 4),
-        Text(publishYear, style: const TextStyle(fontSize: 14)),
-        const SizedBox(height: 6),
-        Text(publishLink, style: const TextStyle(fontSize: 14)),
-        const SizedBox(height: 6),
-        Text(where, style: const TextStyle(fontSize: 14)),
-        const SizedBox(height: 6),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          Text(publishYear,
+              style: const TextStyle(fontSize: 13, color: Colors.grey)),
+          if (publishLink.isNotEmpty)
+            InkWell(
+              onTap: () => _launchUrlInBrowser(publishLink),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Text(
+                  publishLink,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ),
+          Text(researchers,
+              style:
+                  const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+          const Divider(),
+        ],
+      ),
     );
   }
 
-  Widget _buildSkillCard(String skillName, IconData icon) {
-    return Container(
-      margin: const EdgeInsets.only(right: 10),
-      width: 100,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 24, color: Colors.blue),
-          const SizedBox(height: 4),
-          Text(skillName,
-              textAlign: TextAlign.center,
-              style:
-                  const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
+  Future<void> _launchUrlInBrowser(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    try {
+      if (!await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+        webViewConfiguration: const WebViewConfiguration(
+          enableJavaScript: true,
+          enableDomStorage: true,
+        ),
+      )) {
+        debugPrint('لینک خلاصه نشو: $urlString');
+      }
+    } catch (e) {
+      debugPrint('د لینک په خلاصولو کې ستونزه: $e');
+    }
   }
 }

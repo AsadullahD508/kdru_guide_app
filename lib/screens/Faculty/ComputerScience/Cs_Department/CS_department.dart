@@ -25,7 +25,7 @@ class DepartmentScreen extends StatefulWidget {
 
 class _DepartmentScreenState extends State<DepartmentScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  int _selectedIndex = 1; // د bottom nav انتخاب شوی انډیکس
+  int _selectedIndex = 1;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -152,7 +152,7 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                                     () => Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => SemesterScreen(
+                                        builder: (context) => CurriculumScreen(
                                           facultyId: widget.facultyId,
                                           departmentId: widget.departmentId,
                                         ),
