@@ -1,21 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-
-import '../widgets/custome_footer.dart';
+import '../widgets/buttom_header.dart';
 import 'package:Kdru_Guide_app/header.dart';
 
-class Homescreen extends StatelessWidget {
-  const Homescreen({super.key});
+class Homescreen extends StatefulWidget {
+  final int selectedIndex;
+  const Homescreen({super.key, this.selectedIndex = 2}); // default is 2
+
+  @override
+  State<Homescreen> createState() => _HomescreenState();
+}
+
+class _HomescreenState extends State<Homescreen> {
+  late int _selectedIndex;
+
+  final List<Map<String, String>> faculties = [
+    {'name': 'د کمپیوټر ساینس پوهنځي', 'image': 'images/hospital.png'},
+    {'name': 'د انجینرۍ پوهنځي', 'image': 'images/hospital.png'},
+    {'name': 'د اقتصاد پوهنځي', 'image': 'images/hospital.png'},
+    {'name': 'د حقوقو او سیاسي علومو پوهنځي', 'image': 'images/hospital.png'},
+    {'name': 'د کرنې پوهنځي', 'image': 'images/hospital.png'},
+    {'name': 'د تعلیم او تربیې پوهنځي', 'image': 'images/hospital.png'},
+    {'name': 'د شرعیاتو پوهنځي', 'image': 'images/hospital.png'},
+    {'name': 'د ژورنالیزم پوهنځي', 'image': 'images/hospital.png'},
+    {'name': 'د ادبیاتو پوهنځي', 'image': 'images/hospital.png'},
+    {'name': 'د وترنري پوهنځي', 'image': 'images/learning.jpg'},
+    {'name': 'د طب پوهنځي', 'image': 'images/learning.jpg'},
+    {'name': 'د عامې روغتیا پوهنځي', 'image': 'images/hospital.png'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex;
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
+      backgroundColor: const Color(0xFFE5F7FE),
       body: Column(
         children: [
-          // CustomHeader is not wrapped inside Directionality, so it remains LTR
           const CustomHeader(
             userName: 'Guest User',
             bannerImagePath: 'images/kdr_logo.png',
@@ -25,132 +57,162 @@ class Homescreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildHeroSection(context, screenWidth),
-                  _buildKandaharUniversityInfoSection(),
+                  _buildUniversityInfo(),
+                  _buildFacultySection(),
                   _buildMapSection(),
-                  _buildWelcomeSection(),
                 ],
               ),
             ),
           ),
         ],
       ),
+      bottomNavigationBar: CustomBottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
     );
   }
 
-  Widget _buildHeroSection(BuildContext context, double screenWidth) {
-    return Container(
-      padding: const EdgeInsets.all(32.0),
-      decoration: const BoxDecoration(color: Colors.white),
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.blue[100],
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Image.asset(
-                'images/kdr_logo.png',
-                width: 64,
-                height: 64,
-                fit: BoxFit.cover,
-              ),
+  Widget _buildUniversityInfo() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: const [
+          Text(
+            'د کندهار پوهنتون تاریخي شالید',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'pashto',
             ),
-            const SizedBox(height: 24),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 12),
+          Text(
+            'کندهار پوهنتون د افغانستان په سویلي ولایت کندهار کې یو دولتي پوهنتون دی، چې په ۱۳۶۹ لمریز کال (۱۹۹۰ میلادي) د وخت د حکومت لخوا د کرنې پوهنځي په پرانیستلو سره تأسیس شو.'
+            'کندهار پوهنتون د افغانستان په سویلي ولایت کندهار کې یو دولتي پوهنتون دی، چې په ۱۳۶۹ لمریز کال (۱۹۹۰ میلادي) د وخت د حکومت لخوا د کرنې پوهنځي په پرانیستلو سره تأسیس شو.'
+            'کندهار پوهنتون د افغانستان په سویلي ولایت کندهار کې یو دولتي پوهنتون دی، چې په ۱۳۶۹ لمریز کال (۱۹۹۰ میلادي) د وخت د حکومت لخوا د کرنې پوهنځي په پرانیستلو سره تأسیس شو.',
+            style: TextStyle(
+              fontSize: 16,
+              height: 1.6,
+              fontFamily: 'pashto',
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 24),
+        ],
       ),
     );
   }
 
-  Widget _buildKandaharUniversityInfoSection() {
-    return Container(
-      height: 400,
-      decoration: const BoxDecoration(
-        color: Colors.blue,
-        image: DecorationImage(
-          image: NetworkImage(
-            'https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
-          ),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Center(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          color: Colors.black54,
-          child: const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'کندهار پوهنتون',
-                style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontFamily: 'pashto'),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'کندهار پوهنتون د افغانستان په سویلي ولایت کندهار کې یو دولتي پوهنتون دی، چې په ۱۳۶۹ لمریز کال (۱۹۹۰ میلادي) د وخت د حکومت لخوا د کرنې پوهنځي په پرانیستلو سره تأسیس شو',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 18, color: Colors.white, fontFamily: 'pashto'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMapSection() {
-    return Container(
-      height: 300,
-      padding: const EdgeInsets.all(8.0),
-      child: FlutterMap(
-        options: const MapOptions(
-          center: LatLng(31.6107, 65.6910), // Kandahar University coordinates
-          zoom: 15.0,
-        ),
+  Widget _buildFacultySection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
         children: [
-          TileLayer(
-            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            subdomains: ['a', 'b', 'c'],
+          const Text(
+            'پوهنځي',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'pashto',
+            ),
           ),
-          const MarkerLayer(
-            markers: [
-              Marker(
-                width: 80.0,
-                height: 80.0,
-                point: LatLng(31.6107, 65.6910),
-                child: Icon(
-                  Icons.location_pin,
-                  color: Colors.red,
-                  size: 40,
-                ),
-              ),
-            ],
+          const SizedBox(height: 16),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: faculties.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.2,
+            ),
+            itemBuilder: (context, index) {
+              return _buildFacultyCard(
+                title: faculties[index]['name']!,
+                imagePath: faculties[index]['image']!,
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildWelcomeSection() {
+  Widget _buildFacultyCard({
+    required String title,
+    required String imagePath,
+  }) {
     return Container(
-      padding: const EdgeInsets.all(32.0),
-      margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.white, Colors.blue[100]!],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.0),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
+      ),
+      margin: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(11.0),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              imagePath,
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'pashto',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMapSection() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SizedBox(
+        height: 200,
+        child: FlutterMap(
+          options: MapOptions(
+            center: LatLng(31.6289, 65.7372),
+            zoom: 13.0,
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'com.example.app',
+            ),
+            MarkerLayer(
+              markers: [
+                Marker(
+                  width: 80.0,
+                  height: 80.0,
+                  point: LatLng(31.6289, 65.7372),
+                  child: const Icon(
+                    Icons.location_pin,
+                    color: Colors.red,
+                    size: 40,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-        borderRadius: BorderRadius.circular(32),
       ),
     );
   }

@@ -40,20 +40,25 @@ class CustomBottomNavBar extends StatelessWidget {
             if (index == 0) {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const FirstHomescreen(),
+                ),
               );
             } else if (index == 1) {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const FacultyCard()),
+                MaterialPageRoute(
+                  builder: (context) => const FacultyCard(),
+                ),
               );
             } else if (index == 2) {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => Homescreen()),
+                MaterialPageRoute(
+                  builder: (context) => const Homescreen(selectedIndex: 2),
+                ),
               );
             }
-            // Future pages (e.g. for index == 2) can be added here.
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),

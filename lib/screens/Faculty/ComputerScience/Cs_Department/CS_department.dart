@@ -1,239 +1,254 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../../../../header.dart';
+import '../../../../widgets/buttom_header.dart';
 import '../Semesters/Cs_semesters.dart';
 import '../Teachers/Cs_teachers.dart';
-import 'package:Kdru_Guide_app/header.dart';
 
-class ComputerScienceDepartment extends StatelessWidget {
-  final String departmentName;
+// ستاسو د CustomBottomNavBar فایل ایمپورټ
+// دلته د خپلې فایل لاره ولیکئ
 
-  const ComputerScienceDepartment({super.key, required this.departmentName});
+class DepartmentScreen extends StatefulWidget {
+  final String facultyId;
+  final String departmentId;
+
+  DepartmentScreen({
+    Key? key,
+    required this.facultyId,
+    required this.departmentId,
+  }) : super(key: key);
+
+  @override
+  _DepartmentScreenState createState() => _DepartmentScreenState();
+}
+
+class _DepartmentScreenState extends State<DepartmentScreen> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  int _selectedIndex = 1;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // دلته د نیویګیشن یا کوم بل کار ترسره کړئ
+    // مثلا:
+    if (index == 0) {
+      // کوم صفحه ته لاړ شئ
+    } else if (index == 1) {
+      // اوسنی صفحه
+    } else if (index == 2) {
+      // بله صفحه
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:
-          Colors.lightBlue[50], // Set background color to light blue
-      body: Column(
-        children: [
-          // CustomHeader remains unaffected by RTL
-          const CustomHeader(
-            userName: 'Guest User',
-            bannerImagePath: 'images/kdr_logo.png',
-            fullText: 'کمپیوټر ساینس پوهنځي ته ښه راغلاست',
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Directionality(
-                  textDirection: TextDirection.rtl, // RTL for content only
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'د پوهنځي څانګه $departmentName',
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF0D3B66),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'د کمپیوټر ساینس پوهنځی د ټیکنالوژۍ او نوښت یو مهم مرکز دی.',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                          height: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        textDirection: TextDirection.rtl,
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const CsSemesters(),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.indigo[100],
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.calendar_today, size: 20),
-                                  SizedBox(width: 8),
-                                  Text('سمیسټرونه'),
-                                ],
-                              ),
+    return StreamBuilder<DocumentSnapshot>(
+      stream: _firestore
+          .collection('Kandahar University')
+          .doc('kdru')
+          .collection('faculties')
+          .doc(widget.facultyId)
+          .collection('departments')
+          .doc(widget.departmentId)
+          .snapshots(),
+      builder: (context, departmentSnapshot) {
+        if (departmentSnapshot.hasError) {
+          return const Scaffold(
+            body: Center(child: Text('د څانګې معلوماتو کې ستونزه پیدا شوه')),
+          );
+        }
+
+        if (departmentSnapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (!departmentSnapshot.hasData || !departmentSnapshot.data!.exists) {
+          return const Scaffold(
+            body: Center(child: Text('څانګه ونه موندل شوه')),
+          );
+        }
+
+        Map<String, dynamic> departmentData =
+            departmentSnapshot.data!.data() as Map<String, dynamic>;
+
+        return StreamBuilder<DocumentSnapshot>(
+          stream: _firestore
+              .collection('Kandahar University')
+              .doc('kdru')
+              .collection('faculties')
+              .doc(widget.facultyId)
+              .snapshots(),
+          builder: (context, facultySnapshot) {
+            if (facultySnapshot.hasError || !facultySnapshot.hasData) {
+              return const Scaffold(
+                body:
+                    Center(child: Text('د پوهنځي معلوماتو کې ستونزه پیدا شوه')),
+              );
+            }
+
+            Map<String, dynamic> facultyData =
+                facultySnapshot.data!.data() as Map<String, dynamic>;
+
+            return Directionality(
+              textDirection: TextDirection.rtl,
+              child: Scaffold(
+                backgroundColor: Colors.lightBlue[50],
+                body: Column(
+                  children: [
+                    CustomHeader(
+                      userName: 'Guest User',
+                      bannerImagePath: facultyData['backgroundUrl'] ??
+                          'images/department (2).png',
+                      fullText: '${departmentData['name']} څانګه',
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            _buildInfoCard(
+                              'معلومات',
+                              departmentData['description'] ?? '',
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ComputerScienceTeacherScreen(),
+                            const SizedBox(height: 20),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildNavigationCard(
+                                    context,
+                                    'استادان',
+                                    Icons.people,
+                                    () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AllTeachersScreen(
+                                          facultyData: {
+                                            'id': widget.facultyId,
+                                            'name': facultyData['name'],
+                                            'backgroundUrl':
+                                                facultyData['backgroundUrl'],
+                                          },
+                                          departmentData: {
+                                            'id': widget.departmentId,
+                                            'name': departmentData['name'],
+                                          },
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.indigo[100],
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                              ),
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.people, size: 20),
-                                  SizedBox(width: 8),
-                                  Text('استادان'),
-                                ],
-                              ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _buildNavigationCard(
+                                    context,
+                                    'سمسټرونه',
+                                    Icons.calendar_today,
+                                    () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CurriculumScreen(
+                                          facultyId: widget.facultyId,
+                                          departmentId: widget.departmentId,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 32),
-                      const Row(
-                        children: [
-                          _StatCard(
-                            icon: Icons.people,
-                            label: 'د پوهنځي استادان',
-                            value: '۲۰',
-                            color: Colors.indigo,
-                          ),
-                          SizedBox(width: 16),
-                          _StatCard(
-                            icon: Icons.book_sharp,
-                            label: 'کتابونه',
-                            value: '۳۰',
-                            color: Colors.brown,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 32),
-                      const Text(
-                        'پېشنهاد شوي پروګرامونه',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF0D3B66),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      _buildProgramCard(
-                        'لیسانس',
-                        'یوه څلور کلنه لېسانس دوره چې د کمپیوټر ساینس بنسټیز او پرمختللي مفاهیم پوښي.',
-                        Icons.computer,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+                bottomNavigationBar: CustomBottomNavBar(
+                  onItemTapped: _onItemTapped,
+                  selectedIndex: _selectedIndex,
                 ),
               ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoCard(String title, String content) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'pashto',
             ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            content,
+            style: const TextStyle(
+              fontSize: 16,
+              height: 1.5,
+              fontFamily: 'pashto',
+            ),
+            textAlign: TextAlign.right,
           ),
         ],
       ),
     );
   }
 
-  static Widget _buildProgramCard(
-      String title, String description, IconData icon) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(icon, color: const Color(0xFF0D3B66)),
-                  const SizedBox(width: 12),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0D3B66),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                description,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-
-  const _StatCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
+  Widget _buildNavigationCard(
+      BuildContext context, String title, IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           children: [
-            Icon(icon, color: color),
+            Icon(icon, size: 32, color: Colors.blue),
             const SizedBox(height: 8),
             Text(
-              value,
-              style: TextStyle(
-                fontSize: 24,
+              title,
+              style: const TextStyle(
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: color,
+                fontFamily: 'pashto',
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(fontSize: 12, color: color.withOpacity(0.8)),
-              textAlign: TextAlign.center,
             ),
           ],
         ),

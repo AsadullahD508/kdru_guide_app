@@ -1,26 +1,80 @@
 import 'package:flutter/material.dart';
-
-// Faculty screens
-
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../widgets/buttom_header.dart';
-// import '../faculties/agriculture/agriculture_faculty_screen.dart';
-// import '../faculties/computer_science/faculty_screen.dart';
-// import '../faculties/economics/Economics_screen.dart';
-// import '../faculties/education/Education_screen.dart';
+import '../../header.dart';
 import 'ComputerScience/CS_home.dart';
-import 'Engineering/Eng_home.dart';
 
-import 'package:Kdru_Guide_app/header.dart';
+class Faculty {
+  final String id;
+  final String name;
+  final String description;
+  final String iconUrl;
+  final int departments;
+  final int staff;
+  final String backgroundUrl;
+  final String type;
+
+  Faculty({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.iconUrl,
+    required this.departments,
+    required this.staff,
+    required this.backgroundUrl,
+    required this.type,
+  });
+
+  factory Faculty.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return Faculty(
+      id: doc.id,
+      name: data['name'] ?? '',
+      description: data['description'] ?? '',
+      iconUrl: data['logo'] ?? '',
+      departments: data['departments'] ?? 0,
+      staff: data['staff'] ?? 0,
+      backgroundUrl: data['logo'] ?? '',
+      type: data['type'] ?? '',
+    );
+  }
+}
 
 class FacultyCard extends StatefulWidget {
   const FacultyCard({super.key});
 
   @override
-  _FacultyCardState createState() => _FacultyCardState();
+  _FacultyCardScreenState createState() => _FacultyCardScreenState();
 }
 
-class _FacultyCardState extends State<FacultyCard> {
-  int _selectedIndex = 1; // Initially set to 'پوهنځي'
+class _FacultyCardScreenState extends State<FacultyCard>
+    with SingleTickerProviderStateMixin {
+  int _selectedIndex = 1;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  late AnimationController _controller;
+  late Animation<double> _hoverAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _hoverAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -28,132 +82,71 @@ class _FacultyCardState extends State<FacultyCard> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.lightBlue[50],
-        child: Column(
-          children: [
-            const CustomHeader(
-              userName: 'Guest User',
-              bannerImagePath: 'images/kdr_logo.png',
-              fullText: 'د کند هار پوهنتون پوهنځي',
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Directionality(
-                    // ✅ RTL only for inner content
-                    textDirection: TextDirection.rtl,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'زموږ پوهنځۍ',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF0D3B66),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        Wrap(
-                          spacing: 24,
-                          runSpacing: 24,
-                          children: [
-                            _buildFacultyCard(
-                              context,
-                              'کمپیوټر ساینس',
-                              'د ټکنالوژۍ او نوښت په برخه کې زده کړې وړاندې کوي.',
-                              'images/kdr_logo.png',
-                              4,
-                              28,
-                              'images/kdr.jpg',
-                              const CsFaculty(),
-                            ),
-                            _buildFacultyCard(
-                              context,
-                              'انجنیرۍ',
-                              'د انجنیري مختلفو برخو لکه ساختماني، برښنا، او اوبو او چاپېریال انجنیرۍ کې تخصص لري.',
-                              'images/kdr_logo.png',
-                              5,
-                              32,
-                              'images/kdr.jpg',
-                              const EngineeringFaculty(),
-                            ),
-                            _buildFacultyCard(
-                              context,
-                              'طب',
-                              'د روغتیا په برخه کې زده کړې وړاندې کوي.',
-                              'images/kdr_logo.png',
-                              6,
-                              45,
-                              'images/kdr.jpg',
-                              const EngineeringFaculty(),
-                            ),
-                            _buildFacultyCard(
-                              context,
-                              'زراعت',
-                              'د کرنې او زراعت په برخه کې زده کړې وړاندې کوي.',
-                              'images/kdr_logo.png',
-                              3,
-                              20,
-                              'images/kdr.jpg',
-                              const EngineeringFaculty(),
-                            ),
-                            _buildFacultyCard(
-                              context,
-                              'ښوونه او روزنه',
-                              'د ښوونکو لپاره د مسلکي زده کړو پروګرامونه وړاندې کوي.',
-                              'images/kdr_logo.png',
-                              3,
-                              20,
-                              'images/kdr.jpg',
-                              const EngineeringFaculty(),
-                            ),
-                            _buildFacultyCard(
-                              context,
-                              'اقتصاد',
-                              'د اقتصاد په برخه کې زده کړې وړاندې کوي.',
-                              'images/kdr_logo.png',
-                              3,
-                              20,
-                              'images/kdr.jpg',
-                              const EngineeringFaculty(),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+  Future<String> _getImageUrl(String path) async {
+    try {
+      return await _storage.ref(path).getDownloadURL();
+    } catch (e) {
+      print('Error getting image URL: $e');
+      return '';
+    }
+  }
+
+  Future<int> _getDepartmentCount(String facultyId) async {
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('Kandahar University')
+          .doc('kdru')
+          .collection('faculties')
+          .doc(facultyId)
+          .collection('departments')
+          .get();
+      return snapshot.docs.length;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  Future<int> _getTeacherCount(String facultyId) async {
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('Kandahar University')
+          .doc('kdru')
+          .collection('faculties')
+          .doc(facultyId)
+          .collection('teacher')
+          .get();
+      return snapshot.docs.length;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  Widget _countInfoItem(String title, int count) {
+    return Column(
+      children: [
+        Text(
+          '$count',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-      ),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.white70,
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildFacultyCard(
-    BuildContext context,
-    String title,
-    String description,
-    String iconImagePath,
-    int departments,
-    int staff,
-    String backgroundImage,
-    Widget facultyPage,
-  ) {
+  Widget _buildFacultyCard(BuildContext context, Faculty faculty) {
     return SizedBox(
       width: 300,
-      height: 400,
+      height: 460,
       child: Card(
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -161,11 +154,17 @@ class _FacultyCardState extends State<FacultyCard> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Image.asset(
-                backgroundImage,
+              child: CachedNetworkImage(
+                imageUrl: faculty.backgroundUrl,
                 width: double.infinity,
                 height: double.infinity,
                 fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => const Center(
+                  child:
+                      Icon(Icons.broken_image, size: 60, color: Colors.white),
+                ),
               ),
             ),
             Container(
@@ -194,127 +193,208 @@ class _FacultyCardState extends State<FacultyCard> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        iconImagePath,
+                      child: CachedNetworkImage(
+                        imageUrl: faculty.iconUrl ?? '',
                         width: 32,
                         height: 32,
                         fit: BoxFit.cover,
+                        placeholder: (context, url) => const SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (context, url, error) => const SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: Icon(Icons.broken_image,
+                              size: 24, color: Colors.grey),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    title,
+                  AutoSizeText(
+                    faculty.name,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    minFontSize: 16,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    description,
+                  AutoSizeText(
+                    faculty.description,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.white,
                       height: 1.5,
                     ),
-                    textAlign: TextAlign.right,
+                    maxLines: 3,
+                    minFontSize: 12,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              departments.toString(),
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const Text(
-                              'څانګې',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white70,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              staff.toString(),
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const Text(
-                              'کارمندان',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white70,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  FutureBuilder<int>(
+                    future: _getDepartmentCount(faculty.id),
+                    builder: (context, deptSnapshot) {
+                      if (!deptSnapshot.hasData) {
+                        return const CircularProgressIndicator();
+                      }
+                      return FutureBuilder<int>(
+                        future: _getTeacherCount(faculty.id),
+                        builder: (context, teacherSnapshot) {
+                          if (!teacherSnapshot.hasData) {
+                            return const CircularProgressIndicator();
+                          }
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _countInfoItem('څانګې', deptSnapshot.data!),
+                              _countInfoItem('استادان', teacherSnapshot.data!),
+                            ],
+                          );
+                        },
+                      );
+                    },
                   ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => facultyPage,
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      MouseRegion(
+                        onEnter: (_) => _controller.forward(),
+                        onExit: (_) => _controller.reverse(),
+                        child: ScaleTransition(
+                          scale: _hoverAnimation,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white.withOpacity(0.8),
+                              foregroundColor: Colors.blue,
+                            ),
+                            onPressed: () {
+                              _controller.forward(from: 0.0);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FacultyScreen(
+                                    facultyId: faculty.id,
+                                    galleryId: 'galleryId',
+                                    departmentId: 'departmentId',
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: Image.asset(
+                              'images/seo.png',
+                              width: 24,
+                              height: 24,
+                            ),
+                            label: const Text('د نورو معلوماتو لپاره'),
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'تفصیل وګورئ',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Icon(Icons.arrow_back_ios,
-                              color: Colors.black, size: 20),
-                        ],
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        color: Colors.lightBlue[50],
+        child: Column(
+          children: [
+            FutureBuilder<String>(
+              future: _getImageUrl('images/kdr_logo.png'),
+              builder: (context, snapshot) {
+                return const CustomHeader(
+                  userName: 'Guest User',
+                  bannerImagePath: 'images/department (2).png',
+                  fullText: 'د کند هار پوهنتون پوهنځي',
+                );
+              },
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'پوهنځۍ',
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0D3B66),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: _firestore
+                              .collection('Kandahar University')
+                              .doc('kdru')
+                              .collection('faculties')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return const Center(
+                                child: Text(
+                                  'خطا پېښه شوه. بیا هڅه وکړئ.',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              );
+                            }
+
+                            if (!snapshot.hasData ||
+                                snapshot.data!.docs.isEmpty) {
+                              return const Center(
+                                child: Text(
+                                  'هیڅ پوهنځی ونه موندل شو.',
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.black54),
+                                ),
+                              );
+                            }
+
+                            List<Faculty> faculties = snapshot.data!.docs
+                                .map((doc) => Faculty.fromFirestore(doc))
+                                .toList();
+
+                            return Wrap(
+                              spacing: 24,
+                              runSpacing: 24,
+                              children: faculties
+                                  .map((faculty) =>
+                                      _buildFacultyCard(context, faculty))
+                                  .toList(),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
       ),
     );
   }

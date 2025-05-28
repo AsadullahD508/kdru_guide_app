@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'header.dart';
 import 'package:Kdru_Guide_app/widgets/buttom_header.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class FirstHomescreen extends StatefulWidget {
+  const FirstHomescreen({super.key});
 
   static const Color kPrimaryColor = Color(0xFF20C0C7);
   static const Color kBackgroundColor = Color(0xFFE5F7FE);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<FirstHomescreen> createState() => _FirstHomescreen();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _FirstHomescreen extends State<FirstHomescreen> {
   int selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: HomeScreen.kBackgroundColor,
+      backgroundColor: FirstHomescreen.kBackgroundColor,
       bottomNavigationBar: CustomBottomNavBar(
         onItemTapped: _onItemTapped,
         selectedIndex: selectedIndex,
