@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// Import the fixed part
 
 class CategoryPage extends StatelessWidget {
   Widget _buildCategoryCard(String title, String emoji) {
@@ -24,7 +23,7 @@ class CategoryPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          FixedHeader(), // Stays fixed at top
+        //   FixedHeader(), Stays fixed at top
           Expanded(
             child: GridView.count(
               crossAxisCount: 3,
