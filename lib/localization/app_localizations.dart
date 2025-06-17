@@ -227,6 +227,37 @@ class AppLocalizations {
       'phone_number': 'شمېره',
       'email_address': 'برېښنالیک آدرس',
       'university_director': 'رئیس - کندهار پوهنتون',
+
+      // Directorate Screen
+      'directorate_title': 'اداري ریاستونه',
+      'no_administration_data': 'د اداري ریاستونو ډاټا شتون نلري',
+      'administration_error': 'خرابي',
+      'retry_button': 'بیا هڅه وکړئ',
+      'view_details': 'تفصیلات وګورئ',
+      'director_label': 'ریس',
+      'no_director': 'ریس نشته',
+      'no_name': 'نوم نشته',
+      'no_information': 'معلومات نشته',
+
+      // Administration Detail Screen
+      'general_information': 'عمومي معلومات',
+
+      'goals': 'اهداف',
+      'establishment_year': 'د تاسیس کال',
+      'innovative_projects': 'نوښتګر پروژې',
+      'international_relations': 'نړیوال اړیکې',
+      'quality_enhancement': 'د کیفیت ښه والی',
+      'additional_information': 'اضافي معلومات',
+      'administration_directorate': 'اداري ریاست',
+
+      // Additional localization for administrative unit model
+      'no_contact_info': 'د تماس معلومات نشته',
+      'no_vision': 'لرلید نشته',
+      'no_mission': 'رسالت نشته',
+      'no_goals': 'اهداف نشته',
+      'no_description': 'تشریح نشته',
+      'loading_data': 'ډاټا پورته کیږي...',
+
       'director_description':
           'د کندهار پوهنتون رئیس چې د پوهنتون د پراختیا او علمي معیار لوړولو لپاره ژمن دی.',
       'no_administrative_units': 'د اداری واحدونو معلومات نشته',
@@ -354,7 +385,7 @@ class AppLocalizations {
       'data_fetch_error': 'د معلوماتو په ترلاسه کولو کې ستونزه رامنځته شوه.',
       'connection_error': 'د انټرنیټ اتصال کې ستونزه شته.',
       'try_again': 'بیا هڅه وکړئ',
-      'retry_button': 'بیا هڅه',
+
 
       // Faculty History
       'faculty_history_title': 'د پوهنځي تاریخچه',
@@ -375,7 +406,7 @@ class AppLocalizations {
       'filter': 'فلټر',
       'sort': 'ترتیب',
       'view_all': 'ټول وګوره',
-      'view_details': 'تفصیلات وګوره',
+
       'show_more': 'نور وښایه',
       'show_less': 'لږ وښایه',
 
@@ -403,7 +434,7 @@ class AppLocalizations {
       'online': 'آنلاین',
       'syncing': 'د سینک کولو په انتظار کې',
       'documents_count': 'د اسنادو شمیر',
-      'loading_data': 'ډاټا د لوډولو په حال کې...',
+
       'loading_from_cache_if_available': '(د کیش څخه لوډ کیږي که شتون ولري)',
       'clear_cache': 'کیش پاک کړه',
       'cache_cleared': 'کیش پاک شو',
@@ -712,6 +743,38 @@ class AppLocalizations {
       // Riyasat Qadari
       'riyasat_qadari': 'Riyasat Qadari',
       'kandahar_university': 'Kandahar University',
+      'university_administration': 'University Administration',
+      'riyasat_qadari_title': 'Administrative Directorate',
+
+      // Directorate Screen
+      'directorate_title': 'Administrative Directorates',
+      'no_administration_data': 'No administrative directorate data available',
+      'administration_error': 'Error',
+      'retry_button': 'Try Again',
+      'view_details': 'View Details',
+      'director_label': 'Director',
+      'no_director': 'No Director',
+      'no_name': 'No Name',
+      'no_information': 'No Information',
+
+      // Administration Detail Screen
+      'general_information': 'General Information',
+
+      'goals': 'Goals',
+      'establishment_year': 'Establishment Year',
+      'innovative_projects': 'Innovative Projects',
+      'international_relations': 'International Relations',
+      'quality_enhancement': 'Quality Enhancement',
+      'additional_information': 'Additional Information',
+      'administration_directorate': 'Administrative Directorate',
+
+      // Additional localization for administrative unit model
+      'no_contact_info': 'No contact information available',
+      'no_vision': 'No vision available',
+      'no_mission': 'No mission available',
+      'no_goals': 'No goals available',
+      'no_description': 'No description available',
+      'loading_data': 'Loading data...',
 
       // Error Messages
       'teachers_fetch_error': 'Error retrieving teacher information.',
@@ -729,7 +792,7 @@ class AppLocalizations {
       'data_fetch_error': 'Error retrieving data.',
       'connection_error': 'Internet connection problem.',
       'try_again': 'Please try again',
-      'retry_button': 'Retry',
+
 
       // Teachers screen
       'all_teachers_title': 'All Teachers',
@@ -754,7 +817,7 @@ class AppLocalizations {
       'filter': 'Filter',
       'sort': 'Sort',
       'view_all': 'View All',
-      'view_details': 'View Details',
+
       'show_more': 'Show More',
       'show_less': 'Show Less',
 
@@ -786,7 +849,7 @@ class AppLocalizations {
       'online': 'Online',
       'syncing': 'Syncing...',
       'documents_count': 'Documents Count',
-      'loading_data': 'Loading data...',
+
       'loading_from_cache_if_available': '(Loading from cache if available)',
       'clear_cache': 'Clear Cache',
       'cache_cleared': 'Cache Cleared',
@@ -921,6 +984,38 @@ class AppLocalizations {
       // Riyasat Qadari
       'riyasat_qadari': 'ریاست قداری',
       'kandahar_university': 'د کندهار پوهنتون',
+      'university_administration': 'د پوهنتون اداره',
+      'riyasat_qadari_title': 'ریاست قداری',
+
+      // Directorate Screen
+      'directorate_title': 'اداري ریاستونه',
+      'no_administration_data': 'د اداري ریاستونو ډاټا شتون نلري',
+      'administration_error': 'خرابي',
+      'retry_button': 'بیا هڅه وکړئ',
+      'view_details': 'تفصیلات وګورئ',
+      'director_label': 'ریس',
+      'no_director': 'ریس نشته',
+      'no_name': 'نوم نشته',
+      'no_information': 'معلومات نشته',
+
+      // Administration Detail Screen
+      'general_information': 'عمومي معلومات',
+
+      'goals': 'اهداف',
+      'establishment_year': 'د تاسیس کال',
+      'innovative_projects': 'نوښتګر پروژې',
+      'international_relations': 'نړیوال اړیکې',
+      'quality_enhancement': 'د کیفیت ښه والی',
+      'additional_information': 'اضافي معلومات',
+      'administration_directorate': 'اداري ریاست',
+
+      // Additional localization for administrative unit model
+      'no_contact_info': 'د تماس معلومات نشته',
+      'no_vision': 'لرلید نشته',
+      'no_mission': 'رسالت نشته',
+      'no_goals': 'اهداف نشته',
+      'no_description': 'تشریح نشته',
+      'loading_data': 'ډاټا پورته کیږي...',
 
       // Error Messages
       'teachers_fetch_error': 'د ښوونکو د معلوماتو په ترلاسه کولو کې ستونزه.',
@@ -939,7 +1034,7 @@ class AppLocalizations {
       'data_fetch_error': 'د معلوماتو په ترلاسه کولو کې ستونزه.',
       'connection_error': 'د انټرنیټ اتصال کې ستونزه.',
       'try_again': 'بیا هڅه وکړئ',
-      'retry_button': 'بیا هڅه',
+
 
       // Faculty History
       'faculty_history_title': 'د پوهنځي پېښلیک',
@@ -960,7 +1055,7 @@ class AppLocalizations {
       'filter': 'فلټر',
       'sort': 'ترتیب',
       'view_all': 'ټول وګوره',
-      'view_details': 'تفصیلات وګوره',
+
       'show_more': 'نور وښایه',
       'show_less': 'لږ وښایه',
 

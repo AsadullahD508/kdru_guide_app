@@ -1,4 +1,4 @@
-import 'package:Kdru_Guide_app/screens/riast/Riasath.dart';
+import 'package:Kdru_Guide_app/screens/riast/directorate_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'header.dart';

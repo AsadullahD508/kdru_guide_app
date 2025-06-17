@@ -68,6 +68,38 @@ class FirebaseCacheService {
         });
   }
 
+  // Language-specific university data stream
+  Stream<DocumentSnapshot> getUniversityDataStreamByLanguage(String languageCode) {
+    String docId = _getDocumentIdFromLanguage(languageCode);
+
+    return FirebaseFirestore.instance
+        .collection('Kandahar University')
+        .doc(docId)
+        .snapshots(includeMetadataChanges: true)
+        .handleError((error) {
+          return _getFallbackUniversityStreamByLanguage(languageCode);
+        });
+  }
+
+  Stream<DocumentSnapshot> _getFallbackUniversityStreamByLanguage(String languageCode) {
+    String docId = _getDocumentIdFromLanguage(languageCode);
+
+    return FirebaseFirestore.instance
+        .collection('Kandahar University')
+        .doc(docId)
+        .collection('administrativeUnits')
+        .limit(1)
+        .snapshots(includeMetadataChanges: true)
+        .map((querySnapshot) {
+          if (querySnapshot.docs.isNotEmpty) {
+            final doc = querySnapshot.docs.first;
+            return doc;
+          } else {
+            throw Exception('No documents found in administrativeUnits for language: $languageCode');
+          }
+        });
+  }
+
   Stream<DocumentSnapshot> _getFallbackUniversityStream() {
     return FirebaseFirestore.instance
         .collection('Kandahar University')
@@ -93,6 +125,17 @@ class FirebaseCacheService {
         .snapshots(includeMetadataChanges: true);
   }
 
+  // Language-specific administrative units stream
+  Stream<QuerySnapshot> getAdministrativeUnitsStreamByLanguage(String languageCode) {
+    String docId = _getDocumentIdFromLanguage(languageCode);
+
+    return FirebaseFirestore.instance
+        .collection('Kandahar University')
+        .doc(docId)
+        .collection('administrativeUnits')
+        .snapshots(includeMetadataChanges: true);
+  }
+
   Stream<QuerySnapshot> getFacultiesStream() {
     return FirebaseFirestore.instance
         .collection('Kandahar University')
@@ -101,10 +144,53 @@ class FirebaseCacheService {
         .snapshots(includeMetadataChanges: true);
   }
 
+  // Language-specific faculties stream
+  Stream<QuerySnapshot> getFacultiesStreamByLanguage(String languageCode) {
+    String docId = _getDocumentIdFromLanguage(languageCode);
+
+    return FirebaseFirestore.instance
+        .collection('Kandahar University')
+        .doc(docId)
+        .collection('faculties')
+        .snapshots(includeMetadataChanges: true);
+  }
+
+  // Helper method to get document ID from language code
+  String _getDocumentIdFromLanguage(String languageCode) {
+    switch (languageCode.toLowerCase()) {
+      case 'fa':
+      case 'dari':
+        return 'fa';
+      case 'en':
+      case 'english':
+        return 'en';
+      case 'ps':
+      case 'pashto':
+        return 'ps';
+      case 'kdru':
+        return 'kdru';
+      default:
+        return 'kdru'; // Default fallback
+    }
+  }
+
   Stream<QuerySnapshot> getTeachersStream(String facultyId) {
     return FirebaseFirestore.instance
         .collection('Kandahar University')
         .doc('kdru')
+        .collection('faculties')
+        .doc(facultyId)
+        .collection('teachers')
+        .snapshots(includeMetadataChanges: true);
+  }
+
+  // Language-specific teachers stream
+  Stream<QuerySnapshot> getTeachersStreamByLanguage(String facultyId, String languageCode) {
+    String docId = _getDocumentIdFromLanguage(languageCode);
+
+    return FirebaseFirestore.instance
+        .collection('Kandahar University')
+        .doc(docId)
         .collection('faculties')
         .doc(facultyId)
         .collection('teachers')
