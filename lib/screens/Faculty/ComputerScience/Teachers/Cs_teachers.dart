@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../header.dart';
 import '../../../../widgets/buttom_header.dart';
+import '../../../../language_provider.dart';
 import 'TeacherProfileScreen.dart';
 
 class AllTeachersScreen extends StatefulWidget {
@@ -34,37 +36,44 @@ class _AllTeachersScreenState extends State<AllTeachersScreen> {
     final String facultyId = widget.facultyData['id'] ?? '';
     final String departmentId = widget.departmentData['id'] ?? '';
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Directionality(
+          textDirection: languageProvider.getTextDirection(),
+          child: Scaffold(
         backgroundColor: Colors.lightBlue[50],
         body: Column(
           children: [
-            CustomHeader(
-              userName: 'Guest User',
-              bannerImagePath:
-                  widget.facultyData['avatarUrl'] ?? 'images/kdr_logo.png',
-              fullText:
-                  '${widget.facultyData['name'] ?? 'پوهنځی'} - ${widget.departmentData['name'] ?? 'څانګه'}',
+            Consumer<LanguageProvider>(
+              builder: (context, languageProvider, child) {
+                return CustomHeader(
+                  userName: languageProvider.getLocalizedString('guest_user'),
+                  bannerImagePath:
+                      widget.facultyData['logo'] ?? 'images/kdr_logo.png',
+                  fullText:
+                      '${widget.facultyData['name'] ?? languageProvider.getLocalizedString('faculties')} - ${widget.departmentData['name'] ?? languageProvider.getLocalizedString('department')}',
+                );
+              },
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('Kandahar University')
-                    .doc('kdru')
-                    .collection('faculties')
-                    .doc(facultyId)
-                    .collection('departments')
-                    .doc(departmentId)
-                    .collection('teachers')
-                    .snapshots(),
+              child: Consumer<LanguageProvider>(
+                builder: (context, languageProvider, child) {
+                  return StreamBuilder<QuerySnapshot>(
+                    stream: languageProvider
+                        .getTeachersCollectionRef(facultyId, departmentId)
+                        .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return const Center(
-                      child: Text(
-                        'د استادانو په ترلاسه کولو کې ستونزه رامنځته شوه.',
-                        style: TextStyle(fontFamily: 'pashto'),
+                    return Center(
+                      child: Consumer<LanguageProvider>(
+                        builder: (context, langProvider, child) {
+                          return Text(
+                            langProvider.getLocalizedString('teachers_fetch_error'),
+                            style: TextStyle(fontFamily: langProvider.getFontFamily()),
+                            textDirection: langProvider.getTextDirection(),
+                          );
+                        },
                       ),
                     );
                   }
@@ -76,10 +85,15 @@ class _AllTeachersScreenState extends State<AllTeachersScreen> {
                   final teachers = snapshot.data!.docs;
 
                   if (teachers.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'هیڅ استاد ونه موندل شو.',
-                        style: TextStyle(fontFamily: 'pashto'),
+                    return Center(
+                      child: Consumer<LanguageProvider>(
+                        builder: (context, langProvider, child) {
+                          return Text(
+                            langProvider.getLocalizedString('no_teachers_found_error'),
+                            style: TextStyle(fontFamily: langProvider.getFontFamily()),
+                            textDirection: langProvider.getTextDirection(),
+                          );
+                        },
                       ),
                     );
                   }
@@ -168,6 +182,8 @@ class _AllTeachersScreenState extends State<AllTeachersScreen> {
                     },
                   );
                 },
+                  );
+                },
               ),
             ),
           ],
@@ -177,6 +193,8 @@ class _AllTeachersScreenState extends State<AllTeachersScreen> {
           selectedIndex: 1,
         ),
       ),
+        );
+      },
     );
   }
 }

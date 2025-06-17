@@ -1,246 +1,229 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../header.dart';
 
-void main() {
-  runApp(RiyasatQadariScreen());
-}
+class DirectorateScreen extends StatelessWidget {
+  const DirectorateScreen({super.key});
 
-class RiyasatQadariScreen extends StatelessWidget {
+  static const Color bgColor = Color(0xFFE1F5FE);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.grey[100],
+    return const Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: bgColor,
+        body: DirectorateContent(),
       ),
-      home: DepartmentOverviewScreen(),
     );
   }
 }
 
-class DepartmentOverviewScreen extends StatefulWidget {
-  @override
-  _DepartmentOverviewScreenState createState() =>
-      _DepartmentOverviewScreenState();
-}
-
-class _DepartmentOverviewScreenState extends State<DepartmentOverviewScreen> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => AchievementsScreen()),
-      );
-    }
-  }
+class DirectorateContent extends StatelessWidget {
+  const DirectorateContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(30)),
-                child: Image.asset(
-                  'assets/d.jpg',
-                  width: double.infinity,
-                  height: 200,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                bottom: 20,
-                left: 20,
-                child: Text(
-                  'Kandahar University',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    shadows: [
-                      Shadow(
-                          blurRadius: 10,
-                          color: Colors.black45,
-                          offset: Offset(0, 2))
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-            child: Text(
-              'Department Overview',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildCard(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 25,
-                        backgroundImage: AssetImage('assets/a.jpg'),
-                      ),
-                      title: Text('Dr. Ahmad Khan',
-                          style: TextStyle(fontWeight: FontWeight.w600)),
-                      subtitle: Text('Director',
-                          style: TextStyle(color: Colors.grey[600])),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Text('Objectives & Responsibilities',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 10),
-                  _buildObjectiveItem('1. Quality Education'),
-                  _buildObjectiveItem('2. Research & Development'),
-                  _buildObjectiveItem('3. Community Engagement'),
-                  _buildObjectiveItem(
-                      '4. Promotion of Innovation and Creativity'),
-                  _buildObjectiveItem(
-                      '5. Strengthening National and International Collaboration'),
-                  _buildObjectiveItem(
-                      '6. Development of Professional and Ethical Graduates'),
-                  _buildObjectiveItem(
-                      '7. Capacity Building for Staff and Faculty Members'),
-                  _buildObjectiveItem(
-                      '8. Supporting Sustainable Development Goals (SDGs)'),
-                  SizedBox(height: 20),
-                  Text('Staff',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 10),
-                  _buildCard(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: AssetImage('assets/a.jpg'),
-                      ),
-                      title: Text('John Smith'),
-                      subtitle: Text('Accountant'),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  _buildCard(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: AssetImage('assets/a.jpg'),
-                      ),
-                      title: Text('Jane Doe'),
-                      subtitle: Text('Administrator'),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Text('Contact',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 10),
-                  _buildCard(
-                    child: TextField(
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.phone, color: Colors.blue),
-                        hintText: 'Enter phone number',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  _buildCard(
-                    child: TextField(
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.email, color: Colors.blue),
-                        hintText: 'Enter email',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Text('Requirements',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 8),
-                  Text(
-                    'Applicants must meet the academic and professional criteria set by the department.',
-                    style: TextStyle(color: Colors.grey[700]),
-                  ),
-                  SizedBox(height: 20),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star),
-            label: 'Achievements',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        onTap: _onItemTapped,
-      ),
-    );
-  }
+    final Map<String, String> decorateData = {
+      'backgroundUrl': 'images/kdr_logo.png',
+      'name': 'اداري ریاستونه',
+    };
 
-  Widget _buildObjectiveItem(String text) {
-    return Row(
+    return Column(
       children: [
-        Icon(Icons.check_circle, color: Colors.blue, size: 20),
-        SizedBox(width: 8),
-        Expanded(child: Text(text, style: TextStyle(fontSize: 16))),
+        CustomHeader(
+          userName: 'Guest User',
+          bannerImagePath: decorateData['backgroundUrl']!,
+          fullText: decorateData['name']!,
+        ),
+        Expanded(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('Kandahar University')
+                .doc('kdru')
+                .collection('administrativeUnits')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('ډاټا شتون نلري'));
+              }
+
+              final documents = snapshot.data!.docs;
+
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: documents.length,
+                itemBuilder: (context, index) {
+                  final data = documents[index].data() as Map<String, dynamic>;
+
+                  final vision = data['vision'] ?? 'لرلي';
+                  final mission = data['mission'] ?? 'رسالت شتون نلري';
+                  final goals = data['goals'] ?? 'اهداف شتون نلري';
+                  final organ = data['organ']?.toString() ?? '';
+                  final info = data['information'] ?? 'معلومات نشته';
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 20),
+
+                      // Organ Image
+                      if (organ.isNotEmpty)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            organ,
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.broken_image, size: 100);
+                            },
+                          ),
+                        ),
+
+                      const SizedBox(height: 20),
+
+                      // General Info
+                      Text(
+                        info,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'pashto',
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // Vision Section
+                      _buildSectionTitleWithIcon('لرلید', 'images/view.png'),
+                      const SizedBox(height: 12),
+                      _buildInfoCard(vision),
+
+                      const SizedBox(height: 24),
+
+                      // Mission Section
+                      _buildSectionTitleWithIcon('رسالت', 'images/view.png'),
+                      const SizedBox(height: 12),
+                      _buildInfoCard(mission),
+
+                      const SizedBox(height: 24),
+
+                      // Goals Section
+                      _buildSectionTitleWithIcon('اهداف', 'images/view.png'),
+                      const SizedBox(height: 12),
+                      _buildInfoCard(goals),
+
+                      const SizedBox(height: 24),
+
+                      // Banner Section
+                      const Text(
+                        'دا د بینر برخه ده',
+                        style: TextStyle(fontFamily: 'pashto', fontSize: 16),
+                      ),
+                      const SizedBox(height: 24),
+                      Image.asset('images/seo.png'),
+
+                      const SizedBox(height: 24),
+
+                      // Contact Info Section
+                      const SectionTitle(title: 'د تماس معلومات'),
+                      const SizedBox(height: 12),
+
+                      if (data['contactInfo'] != null &&
+                          data['contactInfo'] is Map<String, dynamic>)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: (data['contactInfo']
+                          as Map<String, dynamic>)
+                              .entries
+                              .map((entry) => Padding(
+                            padding:
+                            const EdgeInsets.symmetric(vertical: 4),
+                            child: Text(
+                              '${entry.key}: ${entry.value}',
+                              style: const TextStyle(
+                                fontFamily: 'pashto',
+                                fontSize: 14,
+                              ),
+                            ),
+                          ))
+                              .toList(),
+                        )
+                      else
+                        const Text('د تماس معلومات شتون نلري'),
+
+                      const SizedBox(height: 24),
+                      const Divider(thickness: 1),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildCard({required Widget child}) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: child,
+  Widget _buildSectionTitleWithIcon(String title, String iconPath) {
+    return Row(
+      children: [
+        Image.asset(iconPath, width: 30, height: 30),
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'pashto',
+            color: Color(0xFF0D3B66),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoCard(String text) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 16, fontFamily: 'pashto'),
+        textDirection: TextDirection.rtl,
       ),
     );
   }
 }
 
-class AchievementsScreen extends StatelessWidget {
+class SectionTitle extends StatelessWidget {
+  final String title;
+
+  const SectionTitle({super.key, required this.title});
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Student Achievements')),
-      body: Center(
-        child: Text(
-          'List of outstanding students, awards, and certificates.',
-          style: TextStyle(fontSize: 16),
-        ),
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        fontFamily: 'pashto',
       ),
+      textDirection: TextDirection.rtl,
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import '../../../../header.dart';
+import '../../../../language_provider.dart';
 
 class CurriculumScreen extends StatefulWidget {
   final String facultyId;
@@ -26,22 +28,24 @@ class _CurriculumScreenState extends State<CurriculumScreen> {
       backgroundColor: Colors.lightBlue[50],
       body: Column(
         children: [
-          const CustomHeader(
-            userName: 'Guest User',
-            bannerImagePath: 'images/semesters.jpg',
-            fullText: 'سمسټرونه',
+          Consumer<LanguageProvider>(
+            builder: (context, languageProvider, child) {
+              return CustomHeader(
+                userName: languageProvider.getLocalizedString('guest_user'),
+                bannerImagePath: 'images/semesters.jpg',
+                fullText: languageProvider.getLocalizedString('semesters_title'),
+              );
+            },
           ),
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection('Kandahar University')
-                  .doc('kdru')
-                  .collection('faculties')
-                  .doc(widget.facultyId)
-                  .collection('departments')
-                  .doc(widget.departmentId)
-                  .collection('subjects')
-                  .snapshots(),
+            child: Consumer<LanguageProvider>(
+              builder: (context, languageProvider, child) {
+                return StreamBuilder<QuerySnapshot>(
+                  stream: languageProvider
+                      .getDepartmentsCollectionRef(widget.facultyId)
+                      .doc(widget.departmentId)
+                      .collection('subjects')
+                      .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const Center(
@@ -111,16 +115,16 @@ class _CurriculumScreenState extends State<CurriculumScreen> {
                                   defaultVerticalAlignment:
                                       TableCellVerticalAlignment.middle,
                                   columnWidths: const {
-                                    0: FixedColumnWidth(150), // Subject Name
-                                    1: FixedColumnWidth(80), // Code
-                                    2: FixedColumnWidth(100), // Category
-                                    3: FixedColumnWidth(80), // Credit Number
-                                    4: FixedColumnWidth(100), // Theory Hours
-                                    5: FixedColumnWidth(100), // Practical Hours
-                                    6: FixedColumnWidth(100), // Total Hours
-                                    7: FixedColumnWidth(150), // In Charge
-                                    8: FixedColumnWidth(150), // Prerequisites
-                                    9: FixedColumnWidth(100), // Semester
+                                    0: FixedColumnWidth(150),
+                                    1: FixedColumnWidth(80),
+                                    2: FixedColumnWidth(100),
+                                    3: FixedColumnWidth(80),
+                                    4: FixedColumnWidth(100),
+                                    5: FixedColumnWidth(100),
+                                    6: FixedColumnWidth(100),
+                                    7: FixedColumnWidth(150),
+                                    8: FixedColumnWidth(150),
+                                    9: FixedColumnWidth(100),
                                   },
                                   children: [
                                     TableRow(
@@ -418,6 +422,8 @@ class _CurriculumScreenState extends State<CurriculumScreen> {
                       ),
                     ),
                   ],
+                );
+              },
                 );
               },
             ),

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../header.dart';
 import '../../../../widgets/buttom_header.dart';
+import '../../../../language_provider.dart';
 import '../Semesters/Cs_semesters.dart';
 import '../Teachers/Cs_teachers.dart';
-
-// ستاسو د CustomBottomNavBar فایل ایمپورټ
-// دلته د خپلې فایل لاره ولیکئ
 
 class DepartmentScreen extends StatefulWidget {
   final String facultyId;
@@ -31,29 +30,17 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
     setState(() {
       _selectedIndex = index;
     });
-
-    // دلته د نیویګیشن یا کوم بل کار ترسره کړئ
-    // مثلا:
-    if (index == 0) {
-      // کوم صفحه ته لاړ شئ
-    } else if (index == 1) {
-      // اوسنی صفحه
-    } else if (index == 2) {
-      // بله صفحه
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-      stream: _firestore
-          .collection('Kandahar University')
-          .doc('kdru')
-          .collection('faculties')
-          .doc(widget.facultyId)
-          .collection('departments')
-          .doc(widget.departmentId)
-          .snapshots(),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return StreamBuilder<DocumentSnapshot>(
+          stream: languageProvider
+              .getDepartmentsCollectionRef(widget.facultyId)
+              .doc(widget.departmentId)
+              .snapshots(),
       builder: (context, departmentSnapshot) {
         if (departmentSnapshot.hasError) {
           return const Scaffold(
@@ -77,10 +64,8 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
             departmentSnapshot.data!.data() as Map<String, dynamic>;
 
         return StreamBuilder<DocumentSnapshot>(
-          stream: _firestore
-              .collection('Kandahar University')
-              .doc('kdru')
-              .collection('faculties')
+          stream: languageProvider
+              .getFacultiesCollectionRef()
               .doc(widget.facultyId)
               .snapshots(),
           builder: (context, facultySnapshot) {
@@ -97,14 +82,22 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
             return Directionality(
               textDirection: TextDirection.rtl,
               child: Scaffold(
+                bottomNavigationBar: CustomBottomNavBar(
+                  onItemTapped: _onItemTapped,
+                  selectedIndex: _selectedIndex,
+                ),
                 backgroundColor: Colors.lightBlue[50],
                 body: Column(
                   children: [
-                    CustomHeader(
-                      userName: 'Guest User',
-                      bannerImagePath: facultyData['backgroundUrl'] ??
-                          'images/department (2).png',
-                      fullText: '${departmentData['name']} څانګه',
+                    Consumer<LanguageProvider>(
+                      builder: (context, languageProvider, child) {
+                        return CustomHeader(
+                          userName: languageProvider.getLocalizedString('guest_user'),
+                          bannerImagePath: facultyData['logo'] ??
+                              'images/kdr_logo.png',
+                          fullText: '${departmentData['name']} ${languageProvider.getLocalizedString('department_name')}',
+                        );
+                      },
                     ),
                     Expanded(
                       child: SingleChildScrollView(
@@ -112,9 +105,14 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            _buildInfoCard(
-                              'معلومات',
-                              departmentData['description'] ?? '',
+                            Consumer<LanguageProvider>(
+                              builder: (context, languageProvider, child) {
+                                return _buildInfoCard(
+                                  languageProvider.getLocalizedString('information'),
+                                  departmentData['description'] ?? '',
+                                  languageProvider,
+                                );
+                              },
                             ),
                             const SizedBox(height: 20),
                             Row(
@@ -131,8 +129,7 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                                           facultyData: {
                                             'id': widget.facultyId,
                                             'name': facultyData['name'],
-                                            'backgroundUrl':
-                                                facultyData['backgroundUrl'],
+                                            'logo': facultyData['logo'],
                                           },
                                           departmentData: {
                                             'id': widget.departmentId,
@@ -168,19 +165,17 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                     ),
                   ],
                 ),
-                bottomNavigationBar: CustomBottomNavBar(
-                  onItemTapped: _onItemTapped,
-                  selectedIndex: _selectedIndex,
-                ),
               ),
             );
           },
         );
       },
+        );
+      },
     );
   }
 
-  Widget _buildInfoCard(String title, String content) {
+  Widget _buildInfoCard(String title, String content, LanguageProvider languageProvider) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -200,21 +195,25 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              fontFamily: 'pashto',
+              fontFamily: languageProvider.getFontFamily(),
             ),
+            textDirection: languageProvider.getTextDirection(),
           ),
           const SizedBox(height: 8),
           Text(
             content,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               height: 1.5,
-              fontFamily: 'pashto',
+              fontFamily: languageProvider.getFontFamily(),
             ),
-            textAlign: TextAlign.right,
+            textAlign: languageProvider.getTextDirection() == TextDirection.rtl
+                ? TextAlign.right
+                : TextAlign.left,
+            textDirection: languageProvider.getTextDirection(),
           ),
         ],
       ),

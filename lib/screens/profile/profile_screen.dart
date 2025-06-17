@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import '../../header.dart';
+import '../../language_provider.dart';
+import '../../widgets/buttom_header.dart';
 
 
 class TeamMember {
@@ -23,8 +25,21 @@ class TeamMember {
   });
 }
 
-class TeamProfilePage extends StatelessWidget {
+class TeamProfilePage extends StatefulWidget {
   const TeamProfilePage({super.key});
+
+  @override
+  State<TeamProfilePage> createState() => _TeamProfilePageState();
+}
+
+class _TeamProfilePageState extends State<TeamProfilePage> {
+  int _selectedIndex = 2;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   static final List<TeamMember> teamMembers = [
     TeamMember(
@@ -92,7 +107,17 @@ class TeamProfilePage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Contact ${member.name}'),
+        title: Consumer<LanguageProvider>(
+          builder: (context, languageProvider, child) {
+            return Text(
+              '${languageProvider.getLocalizedString('contact')} ${member.name}',
+              style: TextStyle(
+                fontFamily: languageProvider.getFontFamily(),
+              ),
+              textDirection: languageProvider.getTextDirection(),
+            );
+          },
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +130,16 @@ class TeamProfilePage extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Consumer<LanguageProvider>(
+              builder: (context, languageProvider, child) {
+                return Text(
+                  languageProvider.getLocalizedString('close'),
+                  style: TextStyle(
+                    fontFamily: languageProvider.getFontFamily(),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -115,12 +149,20 @@ class TeamProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: CustomBottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
       body: Column(
         children: [
-          const CustomHeader(
-            userName: 'Guest User',
-            bannerImagePath: 'images/kdr_logo.png',
-            fullText: 'د کند هار پوهنتون پوهنځي',
+          Consumer<LanguageProvider>(
+            builder: (context, languageProvider, child) {
+              return CustomHeader(
+                userName: languageProvider.getLocalizedString('guest_user'),
+                bannerImagePath: 'images/kdr_logo.png',
+                fullText: languageProvider.getLocalizedString('university_name'),
+              );
+            },
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -236,7 +278,16 @@ class TeamProfilePage extends StatelessWidget {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 12),
                                       ),
-                                      child: const Text('Contact'),
+                                      child: Consumer<LanguageProvider>(
+                                        builder: (context, languageProvider, child) {
+                                          return Text(
+                                            languageProvider.getLocalizedString('contact'),
+                                            style: TextStyle(
+                                              fontFamily: languageProvider.getFontFamily(),
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ),
                                 ],

@@ -3,8 +3,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/buttom_header.dart';
 import '../../header.dart';
+import '../../language_provider.dart';
 import 'ComputerScience/CS_home.dart';
 
 class Faculty {
@@ -37,7 +39,7 @@ class Faculty {
       iconUrl: data['logo'] ?? '',
       departments: data['departments'] ?? 0,
       staff: data['staff'] ?? 0,
-      backgroundUrl: data['logo'] ?? '',
+      backgroundUrl: data['logo'] ?? '', // Use logo for both icon and background
       type: data['type'] ?? '',
     );
   }
@@ -57,6 +59,7 @@ class _FacultyCardScreenState extends State<FacultyCard>
   final FirebaseStorage _storage = FirebaseStorage.instance;
   late AnimationController _controller;
   late Animation<double> _hoverAnimation;
+  String _currentLanguage = '';
 
   @override
   void initState() {
@@ -76,6 +79,17 @@ class _FacultyCardScreenState extends State<FacultyCard>
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    if (languageProvider.isInitialized && _currentLanguage != languageProvider.currentLanguage) {
+      _currentLanguage = languageProvider.currentLanguage;
+      // Trigger rebuild when language changes
+      setState(() {});
+    }
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -93,12 +107,9 @@ class _FacultyCardScreenState extends State<FacultyCard>
 
   Future<int> _getDepartmentCount(String facultyId) async {
     try {
-      QuerySnapshot snapshot = await _firestore
-          .collection('Kandahar University')
-          .doc('kdru')
-          .collection('faculties')
-          .doc(facultyId)
-          .collection('departments')
+      final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+      QuerySnapshot snapshot = await languageProvider
+          .getDepartmentsCollectionRef(facultyId)
           .get();
       return snapshot.docs.length;
     } catch (e) {
@@ -108,20 +119,104 @@ class _FacultyCardScreenState extends State<FacultyCard>
 
   Future<int> _getTeacherCount(String facultyId) async {
     try {
-      QuerySnapshot snapshot = await _firestore
-          .collection('Kandahar University')
-          .doc('kdru')
-          .collection('faculties')
-          .doc(facultyId)
-          .collection('teacher')
-          .get();
-      return snapshot.docs.length;
+      final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+      // Try both 'teachers' and 'teacher' collections for compatibility
+      try {
+        QuerySnapshot snapshot = await languageProvider
+            .getFacultiesCollectionRef()
+            .doc(facultyId)
+            .collection('teachers')
+            .get();
+        return snapshot.docs.length;
+      } catch (e) {
+        // Try alternative collection name
+        QuerySnapshot snapshot = await languageProvider
+            .getFacultiesCollectionRef()
+            .doc(facultyId)
+            .collection('teacher')
+            .get();
+        return snapshot.docs.length;
+      }
     } catch (e) {
       return 0;
     }
   }
 
-  Widget _countInfoItem(String title, int count) {
+  Future<Map<String, int>> _getCombinedCounts(String facultyId) async {
+    try {
+      final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+
+      // Get departments count
+      final departmentsSnapshot = await languageProvider.getDepartmentsCollectionRef(facultyId).get();
+      final departmentsCount = departmentsSnapshot.docs.length;
+
+      // Count teachers from multiple sources
+      int totalTeachers = 0;
+
+      // 1. First, try to get teachers directly from faculty level (like in CS_home.dart)
+      try {
+        final facultyTeachersSnapshot = await languageProvider
+            .getFacultiesCollectionRef()
+            .doc(facultyId)
+            .collection('teachers')
+            .get();
+        totalTeachers += facultyTeachersSnapshot.docs.length;
+        debugPrint('Found ${facultyTeachersSnapshot.docs.length} teachers at faculty level for $facultyId');
+      } catch (e) {
+        debugPrint('No teachers found at faculty level for $facultyId: $e');
+      }
+
+      // 2. Also try alternative faculty-level collection name
+      try {
+        final facultyTeacherSnapshot = await languageProvider
+            .getFacultiesCollectionRef()
+            .doc(facultyId)
+            .collection('teacher')
+            .get();
+        totalTeachers += facultyTeacherSnapshot.docs.length;
+        debugPrint('Found ${facultyTeacherSnapshot.docs.length} teachers in "teacher" collection at faculty level for $facultyId');
+      } catch (e) {
+        debugPrint('No "teacher" collection found at faculty level for $facultyId: $e');
+      }
+
+      // 3. Count teachers across all departments (in case some are stored there)
+      for (var departmentDoc in departmentsSnapshot.docs) {
+        try {
+          // Try 'teachers' collection first
+          final teachersSnapshot = await languageProvider
+              .getTeachersCollectionRef(facultyId, departmentDoc.id)
+              .get();
+          totalTeachers += teachersSnapshot.docs.length;
+          debugPrint('Found ${teachersSnapshot.docs.length} teachers in department ${departmentDoc.id}');
+        } catch (e) {
+          // If 'teachers' collection doesn't exist, try 'teacher' collection for compatibility
+          try {
+            final teacherSnapshot = await languageProvider
+                .getDepartmentsCollectionRef(facultyId)
+                .doc(departmentDoc.id)
+                .collection('teacher')
+                .get();
+            totalTeachers += teacherSnapshot.docs.length;
+            debugPrint('Found ${teacherSnapshot.docs.length} teachers in "teacher" collection for department ${departmentDoc.id}');
+          } catch (e2) {
+            // If neither collection exists, continue to next department
+            debugPrint('No teachers found in department ${departmentDoc.id}: $e2');
+          }
+        }
+      }
+
+      debugPrint('Total teachers found for faculty $facultyId: $totalTeachers');
+      return {
+        'departments': departmentsCount,
+        'teachers': totalTeachers,
+      };
+    } catch (e) {
+      debugPrint('Error getting combined counts: $e');
+      return {'departments': 0, 'teachers': 0};
+    }
+  }
+
+  Widget _countInfoItem(String title, int count, LanguageProvider languageProvider) {
     return Column(
       children: [
         Text(
@@ -134,16 +229,18 @@ class _FacultyCardScreenState extends State<FacultyCard>
         ),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             color: Colors.white70,
+            fontFamily: languageProvider.getFontFamily(),
           ),
+          textDirection: languageProvider.getTextDirection(),
         ),
       ],
     );
   }
 
-  Widget _buildFacultyCard(BuildContext context, Faculty faculty) {
+  Widget _buildFacultyCard(BuildContext context, Faculty faculty, LanguageProvider languageProvider) {
     return SizedBox(
       width: 300,
       height: 460,
@@ -154,16 +251,19 @@ class _FacultyCardScreenState extends State<FacultyCard>
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: CachedNetworkImage(
-                imageUrl: faculty.backgroundUrl,
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => const Center(
-                  child:
-                      Icon(Icons.broken_image, size: 60, color: Colors.white),
+              child: Hero(
+                tag: 'faculty_bg_${faculty.id}_${faculty.backgroundUrl.hashCode}',
+                child: CachedNetworkImage(
+                  imageUrl: faculty.backgroundUrl,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => const Center(
+                    child:
+                        Icon(Icons.broken_image, size: 60, color: Colors.white),
+                  ),
                 ),
               ),
             ),
@@ -193,21 +293,24 @@ class _FacultyCardScreenState extends State<FacultyCard>
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        imageUrl: faculty.iconUrl ?? '',
-                        width: 32,
-                        height: 32,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => const SizedBox(
+                      child: Hero(
+                        tag: 'faculty_icon_${faculty.id}_${(faculty.iconUrl ?? '').hashCode}',
+                        child: CachedNetworkImage(
+                          imageUrl: faculty.iconUrl ?? '',
                           width: 32,
                           height: 32,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                        errorWidget: (context, url, error) => const SizedBox(
-                          width: 32,
-                          height: 32,
-                          child: Icon(Icons.broken_image,
-                              size: 24, color: Colors.grey),
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => const SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          errorWidget: (context, url, error) => const SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: Icon(Icons.broken_image,
+                                size: 24, color: Colors.grey),
+                          ),
                         ),
                       ),
                     ),
@@ -237,26 +340,23 @@ class _FacultyCardScreenState extends State<FacultyCard>
                     overflow: TextOverflow.ellipsis,
                   ),
                   const Spacer(),
-                  FutureBuilder<int>(
-                    future: _getDepartmentCount(faculty.id),
-                    builder: (context, deptSnapshot) {
-                      if (!deptSnapshot.hasData) {
-                        return const CircularProgressIndicator();
+                  FutureBuilder<Map<String, int>>(
+                    future: _getCombinedCounts(faculty.id),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
                       }
-                      return FutureBuilder<int>(
-                        future: _getTeacherCount(faculty.id),
-                        builder: (context, teacherSnapshot) {
-                          if (!teacherSnapshot.hasData) {
-                            return const CircularProgressIndicator();
-                          }
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _countInfoItem('څانګې', deptSnapshot.data!),
-                              _countInfoItem('استادان', teacherSnapshot.data!),
-                            ],
-                          );
-                        },
+                      final data = snapshot.data!;
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _countInfoItem('څانګې', data['departments']!, languageProvider),
+                          _countInfoItem('استادان', data['teachers']!, languageProvider),
+                        ],
                       );
                     },
                   ),
@@ -292,7 +392,12 @@ class _FacultyCardScreenState extends State<FacultyCard>
                               width: 24,
                               height: 24,
                             ),
-                            label: const Text('د نورو معلوماتو لپاره'),
+                            label: Text(
+                              languageProvider.getLocalizedString('for_more_info'),
+                              style: TextStyle(
+                                fontFamily: languageProvider.getFontFamily(),
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -309,62 +414,99 @@ class _FacultyCardScreenState extends State<FacultyCard>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.lightBlue[50],
-        child: Column(
-          children: [
-            FutureBuilder<String>(
-              future: _getImageUrl('images/kdr_logo.png'),
-              builder: (context, snapshot) {
-                return const CustomHeader(
-                  userName: 'Guest User',
-                  bannerImagePath: 'images/department (2).png',
-                  fullText: 'د کند هار پوهنتون پوهنځي',
-                );
-              },
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'پوهنځۍ',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF0D3B66),
-                          ),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        if (!languageProvider.isInitialized || languageProvider.isLoading) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFE5F7FE),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Consumer<LanguageProvider>(
+                    builder: (context, languageProvider, child) {
+                      return Text(
+                        languageProvider.getLocalizedString('loading'),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontFamily: languageProvider.getFontFamily(),
                         ),
-                        const SizedBox(height: 24),
-                        StreamBuilder<QuerySnapshot>(
-                          stream: _firestore
-                              .collection('Kandahar University')
-                              .doc('kdru')
-                              .collection('faculties')
-                              .snapshots(),
+                        textDirection: languageProvider.getTextDirection(),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return Scaffold(
+          body: Container(
+            color: Colors.lightBlue[50],
+            child: Column(
+              children: [
+                FutureBuilder<String>(
+                  future: _getImageUrl('images/kdr_logo.png'),
+                  builder: (context, snapshot) {
+                    return const CustomHeader(
+                      userName: 'Guest User',
+                      bannerImagePath: 'images/department (2).png',
+                      fullText: 'د کند هار پوهنتون پوهنځي',
+                    );
+                  },
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              languageProvider.getLocalizedString('faculties'),
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF0D3B66),
+                                fontFamily: languageProvider.getFontFamily(),
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                            ),
+                            const SizedBox(height: 24),
+                            StreamBuilder<QuerySnapshot>(
+                              stream: languageProvider
+                                  .getFacultiesCollectionRef()
+                                  .snapshots(),
                           builder: (context, snapshot) {
                             if (snapshot.hasError) {
-                              return const Center(
+                              return Center(
                                 child: Text(
-                                  'خطا پېښه شوه. بیا هڅه وکړئ.',
-                                  style: TextStyle(color: Colors.red),
+                                  languageProvider.getLocalizedString('error_occurred'),
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontFamily: languageProvider.getFontFamily(),
+                                  ),
+                                  textDirection: languageProvider.getTextDirection(),
                                 ),
                               );
                             }
 
                             if (!snapshot.hasData ||
                                 snapshot.data!.docs.isEmpty) {
-                              return const Center(
+                              return Center(
                                 child: Text(
-                                  'هیڅ پوهنځی ونه موندل شو.',
+                                  languageProvider.getLocalizedString('no_faculty_found'),
                                   style: TextStyle(
-                                      fontSize: 18, color: Colors.black54),
+                                    fontSize: 18,
+                                    color: Colors.black54,
+                                    fontFamily: languageProvider.getFontFamily(),
+                                  ),
+                                  textDirection: languageProvider.getTextDirection(),
                                 ),
                               );
                             }
@@ -378,24 +520,26 @@ class _FacultyCardScreenState extends State<FacultyCard>
                               runSpacing: 24,
                               children: faculties
                                   .map((faculty) =>
-                                      _buildFacultyCard(context, faculty))
+                                      _buildFacultyCard(context, faculty, languageProvider))
                                   .toList(),
                             );
                           },
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-      ),
+          ),
+          bottomNavigationBar: CustomBottomNavBar(
+            selectedIndex: _selectedIndex,
+            onItemTapped: _onItemTapped,
+          ),
+        );
+      },
     );
   }
 }
