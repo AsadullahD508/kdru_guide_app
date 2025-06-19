@@ -49,7 +49,7 @@ class AppLocalizations {
       'students': 'زده کړیالان',
       'facilities': 'اسانتیاوې',
       'about': 'په اړه',
-      'history': 'پېښلیک',
+      'history': 'تاريخچه',
       'vision': 'لیدلوری',
       'mission': 'دنده',
       'objectives': 'موخې',
@@ -86,6 +86,8 @@ class AppLocalizations {
       'total': 'ټول',
       'prerequisites': 'پیش شرط',
       'semester': 'سمسټر',
+      'faculty_level': 'د پوهنځي کچه',
+      'teacher_profile_not_available': 'د دغه استاد پروفایل د لاسرسي وړ نه دی',
       'no_subjects_found': 'هیڅ مضمون ونه موندل شو',
       'data_error': 'د معلوماتو په راوړلو کې ستونزه پیدا شوه',
 
@@ -257,6 +259,16 @@ class AppLocalizations {
       'no_goals': 'اهداف نشته',
       'no_description': 'تشریح نشته',
       'loading_data': 'ډاټا پورته کیږي...',
+      'banner_section': 'د بینر برخه',
+      'banner_description': 'دا د بینر برخه ده چې د اداري ریاست د معلوماتو څخه وروسته ښودل کیږي',
+      'image_not_available': 'انځور شتون نلري',
+      'image_viewer_instructions': 'د لویولو لپاره ګوتې وکاروئ • د حرکت لپاره یې راښکته کړئ • د وتلو لپاره د تړلو تڼۍ ټک کړئ',
+
+      // Teacher Profile Screen
+      'teacher_data_error': 'د استاد د معلوماتو په لوستلو کې ستونزه رامنځته شوه',
+      'loading_teacher_data': 'د استاد معلومات پورته کیږي...',
+      'teacher_not_found': 'استاد ونه موندل شو',
+      'academic_rank': 'علمي رتبه',
 
       'director_description':
           'د کندهار پوهنتون رئیس چې د پوهنتون د پراختیا او علمي معیار لوړولو لپاره ژمن دی.',
@@ -386,6 +398,13 @@ class AppLocalizations {
       'connection_error': 'د انټرنیټ اتصال کې ستونزه شته.',
       'try_again': 'بیا هڅه وکړئ',
 
+      // Curriculum Screen
+      'curriculum_fetch_error': 'د نصاب د معلوماتو په لوستلو کې ستونزه رامنځته شوه',
+      'loading_curriculum': 'د نصاب معلومات پورته کیږي...',
+      'no_curriculum_found': 'هیڅ نصاب ونه موندل شو',
+      'theory_hours': 'نظري ساعتونه',
+      'practical_hours': 'عملي ساعتونه',
+      'total_hours': 'ټول ساعتونه',
 
       // Faculty History
       'faculty_history_title': 'د پوهنځي تاریخچه',
@@ -533,6 +552,8 @@ class AppLocalizations {
       'total': 'مجموع',
       'prerequisites': 'پیش‌نیاز',
       'semester': 'سمستر',
+      'faculty_level': 'سطح پوهنځی',
+      'teacher_profile_not_available': 'پروفایل این استاد در دسترس نیست',
       'no_subjects_found': 'هیچ مضمونی یافت نشد',
       'data_error': 'مشکل در دریافت اطلاعات',
 
@@ -567,6 +588,14 @@ class AppLocalizations {
       'connection_error': 'مشکل در اتصال اینترنت.',
       'try_again': 'دوباره تلاش کنید',
       'retry_button': 'تلاش مجدد',
+
+      // Curriculum Screen
+      'curriculum_fetch_error': 'مشکل در دریافت اطلاعات برنامه درسی',
+      'loading_curriculum': 'در حال بارگذاری برنامه درسی...',
+      'no_curriculum_found': 'هیچ برنامه درسی یافت نشد',
+      'theory_hours': 'ساعات نظری',
+      'practical_hours': 'ساعات عملی',
+      'total_hours': 'مجموع ساعات',
 
       // Faculty History
       'faculty_history_title': 'تاریخچه پوهنځی',
@@ -617,6 +646,12 @@ class AppLocalizations {
       // Contact Information
       'address': 'آدرس',
       'website': 'وب‌سایت',
+
+      // Banner Section
+      'banner_section': 'بخش بنر',
+      'banner_description': 'این بخش بنر است که پس از اطلاعات ریاست اداری نمایش داده می‌شود',
+      'image_not_available': 'تصویر در دسترس نیست',
+      'image_viewer_instructions': 'برای بزرگ‌نمایی انگشتان را فشار دهید • برای حرکت بکشید • برای خروج دکمه بستن را لمس کنید',
 
       // Common
       'unknown': 'نامعلوم',
@@ -703,6 +738,8 @@ class AppLocalizations {
       'total': 'Total',
       'prerequisites': 'Prerequisites',
       'semester': 'Semester',
+      'faculty_level': 'Faculty Level',
+      'teacher_profile_not_available': 'This teacher\'s profile is not available',
       'no_subjects_found': 'No subjects found',
       'data_error': 'Error retrieving data',
 
@@ -775,6 +812,16 @@ class AppLocalizations {
       'no_goals': 'No goals available',
       'no_description': 'No description available',
       'loading_data': 'Loading data...',
+      'banner_section': 'Banner Section',
+      'banner_description': 'This is the banner section that appears after the administrative directorate information',
+      'image_not_available': 'Image not available',
+      'image_viewer_instructions': 'Pinch to zoom • Drag to pan • Tap close button to exit',
+
+      // Teacher Profile Screen
+      'teacher_data_error': 'Error occurred while loading teacher data',
+      'loading_teacher_data': 'Loading teacher data...',
+      'teacher_not_found': 'Teacher not found',
+      'academic_rank': 'Academic Rank',
 
       // Error Messages
       'teachers_fetch_error': 'Error retrieving teacher information.',
@@ -793,6 +840,13 @@ class AppLocalizations {
       'connection_error': 'Internet connection problem.',
       'try_again': 'Please try again',
 
+      // Curriculum Screen
+      'curriculum_fetch_error': 'Error occurred while loading curriculum data',
+      'loading_curriculum': 'Loading curriculum...',
+      'no_curriculum_found': 'No curriculum found',
+      'theory_hours': 'Theory Hours',
+      'practical_hours': 'Practical Hours',
+      'total_hours': 'Total Hours',
 
       // Teachers screen
       'all_teachers_title': 'All Teachers',
@@ -950,6 +1004,8 @@ class AppLocalizations {
       'total': 'ټول',
       'prerequisites': 'مخکینۍ اړتیاوې',
       'semester': 'شپږمیاشتنۍ',
+      'faculty_level': 'د پوهنځي کچه',
+      'teacher_profile_not_available': 'د دغه ښوونکي پروفایل د لاسرسي وړ نه دی',
       'no_subjects_found': 'هیڅ مضمون ونه موندل شو',
       'data_error': 'د معلوماتو په راوړلو کې ستونزه',
 
@@ -1016,6 +1072,16 @@ class AppLocalizations {
       'no_goals': 'اهداف نشته',
       'no_description': 'تشریح نشته',
       'loading_data': 'ډاټا پورته کیږي...',
+      'banner_section': 'د بینر برخه',
+      'banner_description': 'دا د بینر برخه ده چې د اداري ریاست د معلوماتو څخه وروسته ښودل کیږي',
+      'image_not_available': 'انځور شتون نلري',
+      'image_viewer_instructions': 'د لویولو لپاره ګوتې وکاروئ • د حرکت لپاره یې راښکته کړئ • د وتلو لپاره د تړلو تڼۍ ټک کړئ',
+
+      // Teacher Profile Screen
+      'teacher_data_error': 'د استاد د معلوماتو په لوستلو کې ستونزه رامنځته شوه',
+      'loading_teacher_data': 'د استاد معلومات پورته کیږي...',
+      'teacher_not_found': 'استاد ونه موندل شو',
+      'academic_rank': 'علمي رتبه',
 
       // Error Messages
       'teachers_fetch_error': 'د ښوونکو د معلوماتو په ترلاسه کولو کې ستونزه.',
@@ -1035,6 +1101,13 @@ class AppLocalizations {
       'connection_error': 'د انټرنیټ اتصال کې ستونزه.',
       'try_again': 'بیا هڅه وکړئ',
 
+      // Curriculum Screen
+      'curriculum_fetch_error': 'د نصاب د معلوماتو په لوستلو کې ستونزه رامنځته شوه',
+      'loading_curriculum': 'د نصاب معلومات پورته کیږي...',
+      'no_curriculum_found': 'هیڅ نصاب ونه موندل شو',
+      'theory_hours': 'نظري ساعتونه',
+      'practical_hours': 'عملي ساعتونه',
+      'total_hours': 'ټول ساعتونه',
 
       // Faculty History
       'faculty_history_title': 'د پوهنځي پېښلیک',

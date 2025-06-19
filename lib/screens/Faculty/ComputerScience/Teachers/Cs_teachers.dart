@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../header.dart';
 import '../../../../widgets/buttom_header.dart';
 import '../../../../language_provider.dart';
-import 'TeacherProfileScreen.dart';
+import '../../teacher_profile_screen.dart';
 
 class AllTeachersScreen extends StatefulWidget {
   final Map<String, dynamic> facultyData;
@@ -145,31 +145,46 @@ class _AllTeachersScreenState extends State<AllTeachersScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        teacherData['fullName'] ?? 'نامعلوم',
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'pashto',
-                                        ),
+                                      Consumer<LanguageProvider>(
+                                        builder: (context, langProvider, child) {
+                                          return Text(
+                                            teacherData['fullName'] ?? langProvider.getLocalizedString('unknown'),
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: langProvider.getFontFamily(),
+                                            ),
+                                            textDirection: langProvider.getTextDirection(),
+                                          );
+                                        },
                                       ),
                                       const SizedBox(height: 6),
-                                      Text(
-                                        'ټیلفون: ${teacherData['phone'] ?? '؟'} ',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey[700],
-                                          fontFamily: 'pashto',
-                                        ),
+                                      Consumer<LanguageProvider>(
+                                        builder: (context, langProvider, child) {
+                                          return Text(
+                                            '${langProvider.getLocalizedString('phone')}: ${teacherData['phone'] ?? langProvider.getLocalizedString('unknown')}',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey[700],
+                                              fontFamily: langProvider.getFontFamily(),
+                                            ),
+                                            textDirection: langProvider.getTextDirection(),
+                                          );
+                                        },
                                       ),
                                       const SizedBox(height: 4),
-                                      Text(
-                                        'ایمیل: ${teacherData['email'] ?? '؟'} ',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[600],
-                                          fontFamily: 'pashto',
-                                        ),
+                                      Consumer<LanguageProvider>(
+                                        builder: (context, langProvider, child) {
+                                          return Text(
+                                            '${langProvider.getLocalizedString('email')}: ${teacherData['email'] ?? langProvider.getLocalizedString('unknown')}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey[600],
+                                              fontFamily: langProvider.getFontFamily(),
+                                            ),
+                                            textDirection: langProvider.getTextDirection(),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),

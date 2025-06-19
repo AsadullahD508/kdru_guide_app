@@ -32,6 +32,101 @@ class _AllFacultyTeachersScreenState extends State<AllFacultyTeachersScreen> {
     });
   }
 
+  // Fetch all teachers from all departments within the faculty
+  Future<List<Map<String, dynamic>>> _getAllFacultyTeachers(LanguageProvider languageProvider) async {
+    try {
+      final facultyId = widget.facultyData['id'] ?? '';
+      debugPrint('🔍 Fetching all teachers for faculty: $facultyId');
+
+      List<Map<String, dynamic>> allTeachers = [];
+
+      // First, get all departments in this faculty
+      final departmentsSnapshot = await languageProvider
+          .getDepartmentsCollectionRef(facultyId)
+          .get();
+
+      debugPrint('📚 Found ${departmentsSnapshot.docs.length} departments in faculty $facultyId');
+
+      // Then, get teachers from each department
+      for (var departmentDoc in departmentsSnapshot.docs) {
+        try {
+          final teachersSnapshot = await languageProvider
+              .getTeachersCollectionRef(facultyId, departmentDoc.id)
+              .get();
+
+          debugPrint('👨‍🏫 Found ${teachersSnapshot.docs.length} teachers in department ${departmentDoc.id}');
+
+          // Add teachers with department info
+          for (var teacherDoc in teachersSnapshot.docs) {
+            final teacherData = teacherDoc.data() as Map<String, dynamic>;
+            allTeachers.add({
+              ...teacherData,
+              'id': teacherDoc.id,
+              'departmentId': departmentDoc.id,
+              'departmentName': (departmentDoc.data() as Map<String, dynamic>)['name'] ?? departmentDoc.id,
+              'facultyId': facultyId,
+            });
+          }
+        } catch (e) {
+          debugPrint('❌ Error fetching teachers from department ${departmentDoc.id}: $e');
+          // Try alternative collection name for compatibility
+          try {
+            final teachersSnapshot = await languageProvider
+                .getDepartmentsCollectionRef(facultyId)
+                .doc(departmentDoc.id)
+                .collection('teacher')
+                .get();
+
+            debugPrint('👨‍🏫 Found ${teachersSnapshot.docs.length} teachers in "teacher" collection for department ${departmentDoc.id}');
+
+            for (var teacherDoc in teachersSnapshot.docs) {
+              final teacherData = teacherDoc.data() as Map<String, dynamic>;
+              allTeachers.add({
+                ...teacherData,
+                'id': teacherDoc.id,
+                'departmentId': departmentDoc.id,
+                'departmentName': (departmentDoc.data() as Map<String, dynamic>)['name'] ?? departmentDoc.id,
+                'facultyId': facultyId,
+              });
+            }
+          } catch (e2) {
+            debugPrint('❌ Error fetching from "teacher" collection in department ${departmentDoc.id}: $e2');
+          }
+        }
+      }
+
+      // Also try faculty-level teachers collection for compatibility
+      try {
+        final facultyTeachersSnapshot = await languageProvider
+            .getFacultiesCollectionRef()
+            .doc(facultyId)
+            .collection('teachers')
+            .get();
+
+        debugPrint('👨‍🏫 Found ${facultyTeachersSnapshot.docs.length} teachers at faculty level');
+
+        for (var teacherDoc in facultyTeachersSnapshot.docs) {
+          final teacherData = teacherDoc.data() as Map<String, dynamic>;
+          allTeachers.add({
+            ...teacherData,
+            'id': teacherDoc.id,
+            'departmentId': '', // No specific department
+            'departmentName': languageProvider.getLocalizedString('faculty_level'),
+            'facultyId': facultyId,
+          });
+        }
+      } catch (e) {
+        debugPrint('ℹ️ No faculty-level teachers collection found: $e');
+      }
+
+      debugPrint('✅ Total teachers found: ${allTeachers.length}');
+      return allTeachers;
+    } catch (e) {
+      debugPrint('❌ Error fetching faculty teachers: $e');
+      return [];
+    }
+  }
+
 
 
   @override
@@ -54,8 +149,8 @@ class _AllFacultyTeachersScreenState extends State<AllFacultyTeachersScreen> {
                   fullText: '${widget.facultyData['name'] ?? languageProvider.getLocalizedString('faculty')} - ${languageProvider.getLocalizedString('all_teachers_title')}',
                 ),
                 Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseCacheService.instance.getTeachersStream(widget.facultyData['id'] ?? ''),
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
+                    future: _getAllFacultyTeachers(languageProvider),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const LoadingWithCacheWidget();
@@ -76,7 +171,7 @@ class _AllFacultyTeachersScreenState extends State<AllFacultyTeachersScreen> {
                         );
                       }
 
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -101,14 +196,8 @@ class _AllFacultyTeachersScreenState extends State<AllFacultyTeachersScreen> {
                         );
                       }
 
-                      // Convert QuerySnapshot to List<Map<String, dynamic>>
-                      final teachers = snapshot.data!.docs.map((doc) {
-                        final data = doc.data() as Map<String, dynamic>;
-                        return {
-                          ...data,
-                          'id': doc.id,
-                        };
-                      }).toList();
+                      // Get teachers list from future
+                      final teachers = snapshot.data!;
 
                       return Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -116,7 +205,8 @@ class _AllFacultyTeachersScreenState extends State<AllFacultyTeachersScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Cache Status Indicator
-                            CacheStatusWidget(query: snapshot.data),
+                            // CacheStatusWidget not applicable for FutureBuilder
+                            const SizedBox.shrink(),
 
                             // Header with count
                             Container(
@@ -182,16 +272,33 @@ class _AllFacultyTeachersScreenState extends State<AllFacultyTeachersScreen> {
   Widget _buildTeacherCard(Map<String, dynamic> teacher, LanguageProvider languageProvider) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TeacherProfileScreen(
-              teacherId: teacher['id'] ?? '',
-              facultyId: widget.facultyData['id'] ?? '',
-              departmentId: teacher['departmentId'] ?? '',
+        // Only navigate if we have a valid departmentId
+        final departmentId = teacher['departmentId'] ?? '';
+        if (departmentId.isNotEmpty) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TeacherProfileScreen(
+                teacherId: teacher['id'] ?? '',
+                facultyId: widget.facultyData['id'] ?? '',
+                departmentId: departmentId,
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          // Show message for faculty-level teachers
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                languageProvider.getLocalizedString('teacher_profile_not_available'),
+                style: TextStyle(
+                  fontFamily: languageProvider.getFontFamily(),
+                ),
+                textDirection: languageProvider.getTextDirection(),
+              ),
+            ),
+          );
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),

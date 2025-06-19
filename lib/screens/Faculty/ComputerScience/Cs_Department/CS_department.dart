@@ -84,7 +84,7 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
               child: Scaffold(
                 bottomNavigationBar: CustomBottomNavBar(
                   onItemTapped: _onItemTapped,
-                  selectedIndex: _selectedIndex,
+                  selectedIndex: 1,
                 ),
                 backgroundColor: Colors.lightBlue[50],
                 body: Column(

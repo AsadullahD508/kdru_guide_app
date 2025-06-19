@@ -180,28 +180,53 @@ class _HomescreenState extends State<Homescreen> {
       for (var facultyDoc in facultiesSnapshot.docs) {
         final facultyId = facultyDoc.id;
 
+        // Count departments
         final deptSnapshot =
             await languageProvider.getDepartmentsCollectionRef(facultyId).get();
         deptTotal += deptSnapshot.size.toInt();
 
-        // Check for both 'teachers' and 'teacher' collections for compatibility
-        try {
-          final teacherSnapshot = await languageProvider
-              .getFacultiesCollectionRef()
-              .doc(facultyId)
-              .collection('teachers')
-              .get();
-          teacherTotal += teacherSnapshot.size.toInt();
-        } catch (e) {
-          // Try alternative collection name
-          final teacherSnapshot = await languageProvider
-              .getFacultiesCollectionRef()
-              .doc(facultyId)
-              .collection('teacher')
-              .get();
-          teacherTotal += teacherSnapshot.size.toInt();
+        // Count teachers from each department
+        for (var departmentDoc in deptSnapshot.docs) {
+          final departmentId = departmentDoc.id;
+
+          try {
+            // Try 'teachers' collection first
+            final teacherSnapshot = await languageProvider
+                .getDepartmentsCollectionRef(facultyId)
+                .doc(departmentId)
+                .collection('teachers')
+                .get();
+            teacherTotal += teacherSnapshot.size.toInt();
+            debugPrint('Found ${teacherSnapshot.size} teachers in faculty $facultyId, department $departmentId (teachers collection)');
+          } catch (e1) {
+            try {
+              // Try 'teacher' collection as fallback
+              final teacherSnapshot = await languageProvider
+                  .getDepartmentsCollectionRef(facultyId)
+                  .doc(departmentId)
+                  .collection('teacher')
+                  .get();
+              teacherTotal += teacherSnapshot.size.toInt();
+              debugPrint('Found ${teacherSnapshot.size} teachers in faculty $facultyId, department $departmentId (teacher collection)');
+            } catch (e2) {
+              // Try faculty-level teachers collection as final fallback
+              try {
+                final facultyTeacherSnapshot = await languageProvider
+                    .getFacultiesCollectionRef()
+                    .doc(facultyId)
+                    .collection('teachers')
+                    .get();
+                teacherTotal += facultyTeacherSnapshot.size.toInt();
+                debugPrint('Found ${facultyTeacherSnapshot.size} teachers in faculty $facultyId (faculty-level teachers collection)');
+              } catch (e3) {
+                debugPrint('No teachers found in faculty $facultyId, department $departmentId: $e1, $e2, $e3');
+              }
+            }
+          }
         }
       }
+
+      debugPrint('Total departments: $deptTotal, Total teachers: $teacherTotal');
 
       if (mounted) {
         setState(() {

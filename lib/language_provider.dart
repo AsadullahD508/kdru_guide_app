@@ -76,7 +76,7 @@ class LanguageProvider extends ChangeNotifier {
   String _getLanguageKey(String languageCode) {
     switch (languageCode) {
       case 'ps':
-        return 'pashto';
+        return 'kdru';
       case 'fa':
         return 'dari';
       case 'en':

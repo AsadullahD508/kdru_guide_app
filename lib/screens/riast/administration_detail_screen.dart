@@ -3,27 +3,42 @@ import 'package:provider/provider.dart';
 import '../../header.dart';
 import '../../language_provider.dart';
 import '../../models/administrative_unit_model.dart';
+import '../../widgets/buttom_header.dart';
 
 class AdministrationDetailScreen extends StatefulWidget {
   final AdministrativeUnitModel adminUnit;
 
+
   const AdministrationDetailScreen({
     super.key,
     required this.adminUnit,
+
   });
 
   static const Color bgColor = Color(0xFFE1F5FE);
 
   @override
   State<AdministrationDetailScreen> createState() => _AdministrationDetailScreenState();
+
 }
 
 class _AdministrationDetailScreenState extends State<AdministrationDetailScreen> {
+  int selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        bottomNavigationBar: CustomBottomNavBar(
+          onItemTapped: _onItemTapped,
+          selectedIndex: 1,
+        ),
         backgroundColor: AdministrationDetailScreen.bgColor,
         body: AdministrationDetailContent(
           adminUnit: widget.adminUnit,
@@ -180,6 +195,11 @@ class AdministrationDetailContent extends StatelessWidget {
                         Icons.description,
                         languageProvider,
                       ),
+
+                    const SizedBox(height: 32),
+
+                    // Banner Section
+                    _buildBannerSection(context, languageProvider),
 
                     const SizedBox(height: 40),
                   ],
@@ -395,6 +415,345 @@ class AdministrationDetailContent extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildBannerSection(BuildContext context, LanguageProvider languageProvider) {
+    return Column(
+      children: [
+        // Banner Title
+        Row(
+          children: [
+            const Icon(
+              Icons.campaign,
+              color: Color(0xFF0D3B66),
+              size: 24,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              languageProvider.getLocalizedString('banner_section'),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                fontFamily: languageProvider.getFontFamily(),
+                color: const Color(0xFF0D3B66),
+              ),
+              textDirection: languageProvider.getTextDirection(),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 16),
+
+        // Banner Description
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Colors.blue.shade200,
+              width: 1,
+            ),
+          ),
+          child: Text(
+            languageProvider.getLocalizedString('banner_description'),
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: languageProvider.getFontFamily(),
+              height: 1.6,
+            ),
+            textAlign: TextAlign.center,
+            textDirection: languageProvider.getTextDirection(),
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
+        // Banner Image from Database (organ field)
+        if (adminUnit.organ.isNotEmpty)
+          GestureDetector(
+            onTap: () => _showExpandedImage(context, adminUnit.organ, languageProvider),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      adminUnit.organ,
+                      fit: BoxFit.cover,
+                      height: 200,
+                      width: double.infinity,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.image_not_supported,
+                                size: 48,
+                                color: Colors.grey.shade400,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                languageProvider.getLocalizedString('image_not_available'),
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontFamily: languageProvider.getFontFamily(),
+                                ),
+                                textDirection: languageProvider.getTextDirection(),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  // Expand icon overlay
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(
+                        Icons.zoom_in,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else
+          Container(
+            height: 200,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.grey.shade300,
+                width: 2,
+                style: BorderStyle.solid,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.image_outlined,
+                  size: 48,
+                  color: Colors.grey.shade400,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  languageProvider.getLocalizedString('image_not_available'),
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontFamily: languageProvider.getFontFamily(),
+                  ),
+                  textDirection: languageProvider.getTextDirection(),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _showExpandedImage(BuildContext context, String imageUrl, LanguageProvider languageProvider) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black87,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(16),
+          child: Stack(
+            children: [
+              // Full screen image
+              Center(
+                child: InteractiveViewer(
+                  panEnabled: true,
+                  boundaryMargin: const EdgeInsets.all(20),
+                  minScale: 0.5,
+                  maxScale: 4.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.contain,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            width: 300,
+                            height: 300,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                    color: Colors.blue,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    languageProvider.getLocalizedString('loading'),
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontFamily: languageProvider.getFontFamily(),
+                                    ),
+                                    textDirection: languageProvider.getTextDirection(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 300,
+                            height: 300,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 64,
+                                  color: Colors.red.shade400,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  languageProvider.getLocalizedString('image_not_available'),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontFamily: languageProvider.getFontFamily(),
+                                  ),
+                                  textDirection: languageProvider.getTextDirection(),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // Close button
+              Positioned(
+                top: 40,
+                right: 20,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ),
+              // Instructions text
+              Positioned(
+                bottom: 40,
+                left: 20,
+                right: 20,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.7),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    languageProvider.getLocalizedString('image_viewer_instructions') ??
+                    'Pinch to zoom • Drag to pan • Tap close button to exit',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontFamily: languageProvider.getFontFamily(),
+                    ),
+                    textAlign: TextAlign.center,
+                    textDirection: languageProvider.getTextDirection(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

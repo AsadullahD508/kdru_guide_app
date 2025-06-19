@@ -70,7 +70,7 @@ class FirebaseCacheService {
 
   // Language-specific university data stream
   Stream<DocumentSnapshot> getUniversityDataStreamByLanguage(String languageCode) {
-    String docId = _getDocumentIdFromLanguage(languageCode);
+    String docId = getDocumentIdFromLanguage(languageCode);
 
     return FirebaseFirestore.instance
         .collection('Kandahar University')
@@ -82,7 +82,7 @@ class FirebaseCacheService {
   }
 
   Stream<DocumentSnapshot> _getFallbackUniversityStreamByLanguage(String languageCode) {
-    String docId = _getDocumentIdFromLanguage(languageCode);
+    String docId = getDocumentIdFromLanguage(languageCode);
 
     return FirebaseFirestore.instance
         .collection('Kandahar University')
@@ -127,7 +127,7 @@ class FirebaseCacheService {
 
   // Language-specific administrative units stream
   Stream<QuerySnapshot> getAdministrativeUnitsStreamByLanguage(String languageCode) {
-    String docId = _getDocumentIdFromLanguage(languageCode);
+    String docId = getDocumentIdFromLanguage(languageCode);
 
     return FirebaseFirestore.instance
         .collection('Kandahar University')
@@ -146,7 +146,7 @@ class FirebaseCacheService {
 
   // Language-specific faculties stream
   Stream<QuerySnapshot> getFacultiesStreamByLanguage(String languageCode) {
-    String docId = _getDocumentIdFromLanguage(languageCode);
+    String docId = getDocumentIdFromLanguage(languageCode);
 
     return FirebaseFirestore.instance
         .collection('Kandahar University')
@@ -156,7 +156,7 @@ class FirebaseCacheService {
   }
 
   // Helper method to get document ID from language code
-  String _getDocumentIdFromLanguage(String languageCode) {
+  String getDocumentIdFromLanguage(String languageCode) {
     switch (languageCode.toLowerCase()) {
       case 'fa':
       case 'dari':
@@ -174,19 +174,31 @@ class FirebaseCacheService {
     }
   }
 
-  Stream<QuerySnapshot> getTeachersStream(String facultyId) {
+  // Get teachers from a specific department
+  Stream<QuerySnapshot> getTeachersStream(String facultyId, String departmentId) {
     return FirebaseFirestore.instance
         .collection('Kandahar University')
         .doc('kdru')
         .collection('faculties')
         .doc(facultyId)
+        .collection('departments')
+        .doc(departmentId)
         .collection('teachers')
+        .snapshots(includeMetadataChanges: true);
+  }
+
+  // Get all teachers from all departments in a faculty (for AllFacultyTeachersScreen)
+  Stream<QuerySnapshot> getAllFacultyTeachersStream(String facultyId) {
+    // This will use collectionGroup to get all teachers from all departments
+    return FirebaseFirestore.instance
+        .collectionGroup('teachers')
+        .where('facultyId', isEqualTo: facultyId)
         .snapshots(includeMetadataChanges: true);
   }
 
   // Language-specific teachers stream
   Stream<QuerySnapshot> getTeachersStreamByLanguage(String facultyId, String languageCode) {
-    String docId = _getDocumentIdFromLanguage(languageCode);
+    String docId = getDocumentIdFromLanguage(languageCode);
 
     return FirebaseFirestore.instance
         .collection('Kandahar University')
