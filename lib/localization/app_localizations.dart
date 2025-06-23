@@ -486,6 +486,7 @@ class AppLocalizations {
       // Common
       'unknown': 'نامعلوم',
       'guest_user': 'میلمه کارونکی',
+      'university_dean': 'د پوهنتون ریس',
     },
 
     // Dari (fa)
@@ -689,6 +690,7 @@ class AppLocalizations {
       'unknown': 'نامعلوم',
       'guest_user': 'کاربر مهمان',
       'information': 'اطلاعات',
+      'university_dean': 'رئیس پوهنتون',
     },
 
     // English (en)
@@ -969,6 +971,7 @@ class AppLocalizations {
       'unknown': 'Unknown',
       'guest_user': 'Guest User',
       'information': 'Information',
+      'university_dean': 'University Dean',
     },
 
     // KDRU (kdru) - Mixed Pashto/Dari for Kandahar University
@@ -1205,6 +1208,7 @@ class AppLocalizations {
       'unknown': 'نامعلوم',
       'guest_user': 'میلمه کارونکی',
       'information': 'معلومات',
+      'university_dean': 'د پوهنتون ریس',
     },
   };
 }

@@ -45,52 +45,53 @@ class _TeamProfilePageState extends State<TeamProfilePage> {
     TeamMember(
       id: 1,
       name: "Engineer Fared Ahmad",
-      title: "Manager",
+      title: "Project Manager",
       bio:
           "Experienced engineer leading technical development and system architecture.",
-      phone: "+93 700 111 111",
-      email: "fared@gmail.com",
-      imageUrl: "images/darwish.jpg",
+      phone: "+93 794165052",
+      email: "faredbarak222@gmail.com",
+      imageUrl: "images/fared.jpg",
     ),
     TeamMember(
       id: 2,
-      name: "Qudratullah",
+      name: " Engineer  Qudratullah Afghan",
       title: "Software Developer",
       bio:
           "Skilled software developer with expertise in building robust applications.",
-      phone: "+93 700 222 222",
-      email: "qudratullah@gmail.com",
-      imageUrl: "images/darwish.jpg",
+      phone: "+93 707787597",
+      email: "qudratullahafghan048@gmail.com",
+      imageUrl: "images/qudrat.jpg",
     ),
     TeamMember(
       id: 3,
       name: "Engineer Asadullah Darwish",
-      title: "Software Developer",
+      title: "Full Stack Developer",
       bio:
-          "Specialized in designing and implementing complex system solutions.",
-      phone: "+93 700 333 333",
-      email: "asadullah@gmail.com",
-      imageUrl: "images/darwish.jpg",
+          "Skilled in both frontend and backend development. Builds complete, scalable, and user-friendly web and mobile apps using modern technologies like Flutter, Firebase, and REST APIs",
+      phone: "+93 796223247",
+      email: "asadullahdarwish29@gmail.com",
+      imageUrl: "images/asad.jpg",
     ),
+
     TeamMember(
       id: 4,
-      name: "Hamidullah",
-      title: "UI/UX Designer",
-      bio:
-          "Creative designer focused on creating intuitive and engaging user experiences.",
-      phone: "+93 700 444 444",
-      email: "hamidullah@gmail.com",
-      imageUrl: "images/darwish.jpg",
-    ),
-    TeamMember(
-      id: 5,
       name: "Shabir Ahmad",
       title: "Backend Developer",
       bio:
           "Dedicated backend developer ensuring robust and scalable server-side logic.",
-      phone: "+93 700 555 555",
-      email: "shabir@gmail.com",
+      phone: "+93 770883246",
+      email: "shabirahmadsadaat04@gmail.com",
       imageUrl: "images/darwish.jpg",
+    ),
+    TeamMember(
+      id: 5,
+      name: "Hamidullah",
+      title: "UI/UX Designer and Scientific Writer ",
+      bio:
+      "Creative designer focused on creating intuitive and engaging user experiences.",
+      phone: "+93 708294078",
+      email: "hamidullahrohani0101@gmail.com",
+      imageUrl: "images/hamid.jpg",
     ),
   ];
 
@@ -228,7 +229,7 @@ class _TeamProfilePageState extends State<TeamProfilePage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   CircleAvatar(
-                                    radius: 50,
+                                    radius: 100,
                                     backgroundImage:
                                         AssetImage(member.imageUrl),
                                     child: member.imageUrl.isEmpty
@@ -242,7 +243,7 @@ class _TeamProfilePageState extends State<TeamProfilePage> {
                                           )
                                         : null,
                                   ),
-                                  const SizedBox(height: 12),
+                                  const SizedBox(height: 16),
                                   Text(
                                     member.name,
                                     style: const TextStyle(

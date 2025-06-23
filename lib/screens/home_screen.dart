@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../widgets/buttom_header.dart';
 import '../header.dart';
 import '../language_provider.dart';
@@ -23,6 +24,10 @@ class _HomescreenState extends State<Homescreen> {
   List<Map<String, String>> faculties = [];
   String aboutTitle = '';
   String aboutDescription = '';
+  String universityDean = '';
+  String universityYear = '';
+  String universityEmail = '';
+  String universityMobile = '';
   int departmentsCount = 0;
   int teachersCount = 0;
   String _currentLanguage = '';
@@ -172,13 +177,28 @@ class _HomescreenState extends State<Homescreen> {
 
   Future<void> _fetchUniversityInfo(LanguageProvider languageProvider) async {
     try {
-      final doc = await languageProvider.getBaseDocRef().get();
+      // Get the first university document from the university collection
+      final snapshot = await languageProvider.getUniversityCollectionRef().limit(1).get();
 
-      if (doc.exists && mounted) {
-        setState(() {
-          aboutTitle = doc['name'] ?? '';
-          aboutDescription = doc['history'] ?? '';
-        });
+      if (snapshot.docs.isNotEmpty && mounted) {
+        final doc = snapshot.docs.first;
+        final data = doc.data() as Map<String, dynamic>?;
+        if (data != null) {
+          setState(() {
+            aboutTitle = data['name'] ?? '';
+            aboutDescription = data['information'] ?? '';
+            universityYear = data['year'] ?? '';
+            universityDean = data['dean'] ?? '';
+
+            // Extract contact information
+            final contactInfo = data['contactInfo'] as Map<String, dynamic>?;
+            if (contactInfo != null) {
+
+              universityEmail = contactInfo['email'] ?? '';
+              universityMobile = contactInfo['mobile'] ?? '';
+            }
+          });
+        }
       }
     } catch (e) {
       debugPrint('Error fetching university info: $e');
@@ -333,6 +353,7 @@ class _HomescreenState extends State<Homescreen> {
         builder: (context, languageProvider, child) {
           return Column(
             children: [
+              // University Name
               Text(
                 aboutTitle,
                 style: TextStyle(
@@ -343,7 +364,61 @@ class _HomescreenState extends State<Homescreen> {
                 textAlign: TextAlign.center,
                 textDirection: languageProvider.getTextDirection(),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
+              // University Year
+              if (universityYear.isNotEmpty)
+                Text(
+                  universityYear,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade700,
+                    fontFamily: languageProvider.getFontFamily(),
+                  ),
+                  textAlign: TextAlign.center,
+                  textDirection: languageProvider.getTextDirection(),
+                ),
+              const SizedBox(height: 16),
+              // Dean Section
+              if (universityDean.isNotEmpty)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blue.shade200),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        languageProvider.getLocalizedString('university_dean'),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blue.shade700,
+                          fontFamily: languageProvider.getFontFamily(),
+                        ),
+                        textAlign: TextAlign.center,
+                        textDirection: languageProvider.getTextDirection(),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        universityDean,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue.shade800,
+                          fontFamily: languageProvider.getFontFamily(),
+                        ),
+                        textAlign: TextAlign.center,
+                        textDirection: languageProvider.getTextDirection(),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 16),
+              // University Description
               Text(
                 aboutDescription,
                 style: TextStyle(
@@ -655,15 +730,19 @@ class _HomescreenState extends State<Homescreen> {
                 _buildContactItem(
                   icon: Icons.phone,
                   title: languageProvider.getLocalizedString('phone'),
-                  content: '+93 30 222 4444',
+                  content: universityMobile.isNotEmpty ? universityMobile : '+93 30 222 4444',
                   languageProvider: languageProvider,
+                  isClickable: true,
+                  onTap: () => _launchPhone(universityMobile.isNotEmpty ? universityMobile : '+93 30 222 4444'),
                 ),
                 const SizedBox(height: 12),
                 _buildContactItem(
                   icon: Icons.email,
                   title: languageProvider.getLocalizedString('email'),
-                  content: 'info@kdru.edu.af',
+                  content: universityEmail.isNotEmpty ? universityEmail : 'info@kdru.edu.af',
                   languageProvider: languageProvider,
+                  isClickable: true,
+                  onTap: () => _launchEmail(universityEmail.isNotEmpty ? universityEmail : 'info@kdru.edu.af'),
                 ),
                 const SizedBox(height: 12),
                 _buildContactItem(
@@ -671,6 +750,8 @@ class _HomescreenState extends State<Homescreen> {
                   title: languageProvider.getLocalizedString('website'),
                   content: 'www.kdru.edu.af',
                   languageProvider: languageProvider,
+                  isClickable: true,
+                  onTap: () => _launchWebsite('www.kdru.edu.af'),
                 ),
               ],
             ),
@@ -685,6 +766,8 @@ class _HomescreenState extends State<Homescreen> {
     required String title,
     required String content,
     required LanguageProvider languageProvider,
+    bool isClickable = false,
+    VoidCallback? onTap,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -710,20 +793,82 @@ class _HomescreenState extends State<Homescreen> {
                 textDirection: languageProvider.getTextDirection(),
               ),
               const SizedBox(height: 4),
-              Text(
-                content,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade800,
-                  fontFamily: languageProvider.getFontFamily(),
-                ),
-                textDirection: languageProvider.getTextDirection(),
-              ),
+              isClickable && onTap != null
+                  ? GestureDetector(
+                      onTap: onTap,
+                      child: Text(
+                        content,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.blue.shade600,
+                          fontFamily: languageProvider.getFontFamily(),
+                          decoration: TextDecoration.underline,
+                        ),
+                        textDirection: languageProvider.getTextDirection(),
+                      ),
+                    )
+                  : Text(
+                      content,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade800,
+                        fontFamily: languageProvider.getFontFamily(),
+                      ),
+                      textDirection: languageProvider.getTextDirection(),
+                    ),
             ],
           ),
         ),
       ],
     );
+  }
+
+  // Helper method to launch phone dialer
+  Future<void> _launchPhone(String phoneNumber) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+    try {
+      if (await canLaunchUrl(phoneUri)) {
+        await launchUrl(phoneUri);
+      } else {
+        debugPrint('Could not launch phone dialer for $phoneNumber');
+      }
+    } catch (e) {
+      debugPrint('Error launching phone dialer: $e');
+    }
+  }
+
+  // Helper method to launch email client
+  Future<void> _launchEmail(String email) async {
+    final Uri emailUri = Uri(scheme: 'mailto', path: email);
+    try {
+      if (await canLaunchUrl(emailUri)) {
+        await launchUrl(emailUri);
+      } else {
+        debugPrint('Could not launch email client for $email');
+      }
+    } catch (e) {
+      debugPrint('Error launching email client: $e');
+    }
+  }
+
+  // Helper method to launch website
+  Future<void> _launchWebsite(String website) async {
+    // Add https:// if not present
+    String url = website;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://$url';
+    }
+
+    final Uri websiteUri = Uri.parse(url);
+    try {
+      if (await canLaunchUrl(websiteUri)) {
+        await launchUrl(websiteUri, mode: LaunchMode.externalApplication);
+      } else {
+        debugPrint('Could not launch website $url');
+      }
+    } catch (e) {
+      debugPrint('Error launching website: $e');
+    }
   }
 
   Widget _buildMapSection() {

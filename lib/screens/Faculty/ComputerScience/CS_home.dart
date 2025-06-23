@@ -650,55 +650,59 @@ class _FacultyScreenState extends State<FacultyScreen> {
       String facultyId, Map<String, dynamic> facultyData) {
     bool showAllImages = false;
 
-    return StatefulBuilder(
-      builder: (context, setState) {
-        void _showFullImage(BuildContext context, String imageUrl, int index) {
-          showDialog(
-            context: context,
-            builder: (_) => Dialog(
-              backgroundColor: Colors.transparent,
-              child: GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Hero(
-                  tag: 'gallery_thumb_${imageUrl.hashCode}_$index',
-                  child: CachedNetworkImage(
-                    imageUrl: imageUrl,
-                    fit: BoxFit.contain,
-                    placeholder: (context, url) =>
-                        const Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            void _showFullImage(BuildContext context, String imageUrl, int index) {
+              showDialog(
+                context: context,
+                builder: (_) => Dialog(
+                  backgroundColor: Colors.transparent,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Hero(
+                      tag: 'gallery_thumb_${imageUrl.hashCode}_$index',
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.contain,
+                        placeholder: (context, url) =>
+                            const Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          );
-        }
+              );
+            }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const Center(
-              child: Text(
-                'ګالري',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'pashto',
-                  color: Color(0xFF0D3B66),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Center(
+                  child: Text(
+                    languageProvider.getLocalizedString('gallery'),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: languageProvider.getFontFamily(),
+                      color: const Color(0xFF0D3B66),
+                    ),
+                    textDirection: languageProvider.getTextDirection(),
+                  ),
                 ),
-                textDirection: TextDirection.rtl,
-              ),
-            ),
             const SizedBox(height: 12),
             Builder(
               builder: (context) {
                 List<dynamic>? galleryList = facultyData['gellery'];
                 if (galleryList == null || galleryList.isEmpty) {
-                  return const Text(
-                    'انځورونه نشته',
-                    style: TextStyle(fontFamily: 'pashto'),
-                    textDirection: TextDirection.rtl,
+                  return Text(
+                    languageProvider.getLocalizedString('no_images'),
+                    style: TextStyle(
+                      fontFamily: languageProvider.getFontFamily(),
+                    ),
+                    textDirection: languageProvider.getTextDirection(),
                   );
                 }
 
@@ -758,14 +762,14 @@ class _FacultyScreenState extends State<FacultyScreen> {
                           },
                           child: Text(
                             showAllImages
-                                ? 'کم انځورونه وښایه'
-                                : 'ډیر انځورونه وښایه',
-                            style: const TextStyle(
-                              fontFamily: 'pashto',
+                                ? languageProvider.getLocalizedString('show_less_images')
+                                : languageProvider.getLocalizedString('show_more_images'),
+                            style: TextStyle(
+                              fontFamily: languageProvider.getFontFamily(),
                               fontSize: 16,
                               color: Colors.blue,
                             ),
-                            textDirection: TextDirection.rtl,
+                            textDirection: languageProvider.getTextDirection(),
                           ),
                         ),
                       ),
@@ -775,6 +779,8 @@ class _FacultyScreenState extends State<FacultyScreen> {
             ),
           ],
         );
+      },
+    );
       },
     );
   }

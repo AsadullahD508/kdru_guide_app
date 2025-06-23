@@ -71,4 +71,14 @@ class LanguageProvider extends ChangeNotifier {
   CollectionReference getSemestersCollectionRef(String facultyId, String departmentId) {
     return getDepartmentsCollectionRef(facultyId).doc(departmentId).collection('semesters');
   }
+
+  // Get university collection reference
+  CollectionReference getUniversityCollectionRef() {
+    return getBaseDocRef().collection('university');
+  }
+
+  // Get university document reference by ID
+  DocumentReference getUniversityDocRef(String universityId) {
+    return getUniversityCollectionRef().doc(universityId);
+  }
 }

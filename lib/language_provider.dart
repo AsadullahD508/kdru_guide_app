@@ -76,7 +76,7 @@ class LanguageProvider extends ChangeNotifier {
   String _getLanguageKey(String languageCode) {
     switch (languageCode) {
       case 'ps':
-        return 'kdru';
+        return 'pashto';
       case 'fa':
         return 'dari';
       case 'en':
@@ -126,6 +126,16 @@ class LanguageProvider extends ChangeNotifier {
   // Get administrative units collection reference
   CollectionReference getAdministrativeUnitsCollectionRef() {
     return getBaseDocRef().collection('administrativeUnits');
+  }
+
+  // Get university collection reference
+  CollectionReference getUniversityCollectionRef() {
+    return getBaseDocRef().collection('university');
+  }
+
+  // Get university document reference by ID
+  DocumentReference getUniversityDocRef(String universityId) {
+    return getUniversityCollectionRef().doc(universityId);
   }
 
   // Get localized string
