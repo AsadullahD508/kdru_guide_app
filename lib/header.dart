@@ -5,6 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'home.dart';
 import 'language_provider.dart';
 import 'utils/responsive_utils.dart';
+import 'screens/profile/profile_screen.dart';
+import 'screens/search/teacher_search_screen.dart';
 
 class CustomHeader extends StatefulWidget {
   final String userName;
@@ -168,63 +170,20 @@ class _CustomHeaderState extends State<CustomHeader>
           textDirection: languageProvider.getTextDirection(),
           child: Container(
             color: Colors.lightBlue[50],
-            padding: ResponsiveUtils.getResponsivePadding(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        const HeaderMenu(),
-                        SizedBox(
-                            width:
-                                ResponsiveUtils.getResponsiveSpacing(context)),
-                        CircleAvatar(
-                          radius: context.responsiveValue(
-                            mobile: 15.0,
-                            tablet: 18.0,
-                            desktop: 20.0,
-                          ),
-                          backgroundColor: Colors.grey[300],
-                        ),
-                      ],
-                    ),
-                    Consumer<LanguageProvider>(
-                      builder: (context, languageProvider, child) {
-                        return Text(
-                          languageProvider
-                              .getLocalizedString('university_name'),
-                          style: TextStyle(
-                            fontSize: ResponsiveUtils.getResponsiveFontSize(
-                              context,
-                              mobile: 16,
-                              tablet: 18,
-                              desktop: 20,
-                            ),
-                            fontFamily: languageProvider.getFontFamily(),
-                          ),
-                          textDirection: languageProvider.getTextDirection(),
-                        );
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        languageProvider.getTextDirection() == TextDirection.rtl
-                            ? Icons.arrow_forward
-                            : Icons.arrow_back,
-                        color: Colors.blue.shade700,
-                      ),
-                      tooltip: languageProvider.getLocalizedString('go_back'),
-                      onPressed: () =>
-                          _handleBackNavigation(context, languageProvider),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                    height: ResponsiveUtils.getResponsiveSpacing(context,
-                        mobile: 20)),
+                // AppBar Section
+                _buildAppBar(context, languageProvider),
+
+                // Main Header Content
+                Padding(
+                  padding: ResponsiveUtils.getResponsivePadding(context),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                          height: ResponsiveUtils.getResponsiveSpacing(context,
+                              mobile: 20)),
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -291,11 +250,126 @@ class _CustomHeaderState extends State<CustomHeader>
                     ],
                   ),
                 ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context, LanguageProvider languageProvider) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.lightBlue[200],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Container(
+          height: 56,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              // Menu Button (moved from header)
+              const HeaderMenu(),
+
+              const SizedBox(width: 12),
+
+              // User Avatar (moved from header) - Clickable
+              GestureDetector(
+                onTap: () => _navigateToProfile(context),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.white.withOpacity(0.2),
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Center - University Name
+              Expanded(
+                child: Center(
+                  child: Text(
+                    languageProvider.getLocalizedString('university_name'),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: languageProvider.getFontFamily(),
+                    ),
+                    textDirection: languageProvider.getTextDirection(),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+
+              // Search Button
+              IconButton(
+                icon: const Icon(
+                  Icons.search,
+                  color: Colors.white,
+                  size: 24,
+                ),
+                tooltip: languageProvider.getLocalizedString('search'),
+                onPressed: () => _navigateToSearch(context, languageProvider),
+              ),
+
+              // Back Button (moved from header)
+              IconButton(
+                icon: Icon(
+                  languageProvider.getTextDirection() == TextDirection.rtl
+                      ? Icons.arrow_forward
+                      : Icons.arrow_back,
+                  color: Colors.white,
+                  size: 24,
+                ),
+                tooltip: languageProvider.getLocalizedString('go_back'),
+                onPressed: () => _handleBackNavigation(context, languageProvider),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _navigateToProfile(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TeamProfilePage(),
+      ),
+    );
+  }
+
+  void _navigateToSearch(BuildContext context, LanguageProvider languageProvider) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TeacherSearchScreen(),
+      ),
     );
   }
 

@@ -8,6 +8,7 @@ import '../../widgets/buttom_header.dart';
 import '../../header.dart';
 import '../../language_provider.dart';
 import 'ComputerScience/CS_home.dart';
+import '../../home.dart';
 
 class Faculty {
   final String id;
@@ -94,6 +95,15 @@ class _FacultyCardScreenState extends State<FacultyCard>
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<bool> _onWillPop() async {
+    // Navigate back to Home screen instead of exiting app
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const FirstHomescreen()),
+      (Route<dynamic> route) => false,
+    );
+    return false; // Prevent default back behavior
   }
 
   Future<String> _getImageUrl(String path) async {
@@ -443,21 +453,23 @@ class _FacultyCardScreenState extends State<FacultyCard>
           );
         }
 
-        return Scaffold(
-          body: Container(
-            color: Colors.lightBlue[50],
-            child: Column(
-              children: [
-                FutureBuilder<String>(
-                  future: _getImageUrl('images/kdr_logo.png'),
-                  builder: (context, snapshot) {
-                    return const CustomHeader(
-                      userName: 'Guest User',
-                      bannerImagePath: 'images/department (2).png',
-                      fullText: 'د کند هار پوهنتون پوهنځي',
-                    );
-                  },
-                ),
+        return WillPopScope(
+          onWillPop: _onWillPop,
+          child: Scaffold(
+            body: Container(
+              color: Colors.lightBlue[50],
+              child: Column(
+                children: [
+                  FutureBuilder<String>(
+                    future: _getImageUrl('images/kdr_logo.png'),
+                    builder: (context, snapshot) {
+                      return const CustomHeader(
+                        userName: 'Guest User',
+                        bannerImagePath: 'images/department (2).png',
+                        fullText: 'د کند هار پوهنتون پوهنځي',
+                      );
+                    },
+                  ),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Padding(
@@ -534,9 +546,10 @@ class _FacultyCardScreenState extends State<FacultyCard>
               ],
             ),
           ),
-          bottomNavigationBar: CustomBottomNavBar(
-            selectedIndex: _selectedIndex,
-            onItemTapped: _onItemTapped,
+            bottomNavigationBar: CustomBottomNavBar(
+              selectedIndex: _selectedIndex,
+              onItemTapped: _onItemTapped,
+            ),
           ),
         );
       },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../header.dart';
 import '../../language_provider.dart';
 import '../../models/administrative_unit_model.dart';
@@ -32,18 +33,22 @@ class _AdministrationDetailScreenState extends State<AdministrationDetailScreen>
   }
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        bottomNavigationBar: CustomBottomNavBar(
-          onItemTapped: _onItemTapped,
-          selectedIndex: 1,
-        ),
-        backgroundColor: AdministrationDetailScreen.bgColor,
-        body: AdministrationDetailContent(
-          adminUnit: widget.adminUnit,
-        ),
-      ),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Directionality(
+          textDirection: languageProvider.getTextDirection(),
+          child: Scaffold(
+            bottomNavigationBar: CustomBottomNavBar(
+              onItemTapped: _onItemTapped,
+              selectedIndex: 1,
+            ),
+            backgroundColor: AdministrationDetailScreen.bgColor,
+            body: AdministrationDetailContent(
+              adminUnit: widget.adminUnit,
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -219,26 +224,38 @@ class AdministrationDetailContent extends StatelessWidget {
         if (adminUnit.imageUrl.isNotEmpty)
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.network(
-              adminUnit.imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: adminUnit.imageUrl,
               width: 120,
               height: 120,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(
-                    Icons.business,
-                    size: 60,
+              placeholder: (context, url) => Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
                     color: Color(0xFF0D3B66),
                   ),
-                );
-              },
+                ),
+              ),
+              errorWidget: (context, url, error) => Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.business,
+                  size: 60,
+                  color: Color(0xFF0D3B66),
+                ),
+              ),
             ),
           )
         else
@@ -492,57 +509,65 @@ class AdministrationDetailContent extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      adminUnit.organ,
+                    child: CachedNetworkImage(
+                      imageUrl: adminUnit.organ,
                       fit: BoxFit.cover,
                       height: 200,
                       width: double.infinity,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          ),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                      placeholder: (context, url) => Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.image_not_supported,
-                                size: 48,
-                                color: Colors.grey.shade400,
+                              const CircularProgressIndicator(
+                                strokeWidth: 3,
+                                color: Colors.blue,
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 12),
                               Text(
-                                languageProvider.getLocalizedString('image_not_available'),
+                                languageProvider.getLocalizedString('loading'),
                                 style: TextStyle(
                                   color: Colors.grey.shade600,
                                   fontFamily: languageProvider.getFontFamily(),
+                                  fontSize: 14,
                                 ),
                                 textDirection: languageProvider.getTextDirection(),
                               ),
                             ],
                           ),
-                        );
-                      },
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.image_not_supported,
+                              size: 48,
+                              color: Colors.grey.shade400,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              languageProvider.getLocalizedString('image_not_available'),
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontFamily: languageProvider.getFontFamily(),
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                   // Expand icon overlay
@@ -634,73 +659,67 @@ class AdministrationDetailContent extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        imageUrl,
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
                         fit: BoxFit.contain,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Container(
-                            width: 300,
-                            height: 300,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes != null
-                                        ? loadingProgress.cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
-                                    color: Colors.blue,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    languageProvider.getLocalizedString('loading'),
-                                    style: TextStyle(
-                                      color: Colors.grey.shade600,
-                                      fontFamily: languageProvider.getFontFamily(),
-                                    ),
-                                    textDirection: languageProvider.getTextDirection(),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: 300,
-                            height: 300,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                        placeholder: (context, url) => Container(
+                          width: 300,
+                          height: 300,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
-                                  Icons.error_outline,
-                                  size: 64,
-                                  color: Colors.red.shade400,
+                                const CircularProgressIndicator(
+                                  color: Colors.blue,
+                                  strokeWidth: 3,
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  languageProvider.getLocalizedString('image_not_available'),
+                                  languageProvider.getLocalizedString('loading'),
                                   style: TextStyle(
                                     color: Colors.grey.shade600,
                                     fontFamily: languageProvider.getFontFamily(),
+                                    fontSize: 16,
                                   ),
                                   textDirection: languageProvider.getTextDirection(),
-                                  textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
-                          );
-                        },
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: 300,
+                          height: 300,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                size: 64,
+                                color: Colors.red.shade400,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                languageProvider.getLocalizedString('image_not_available'),
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontFamily: languageProvider.getFontFamily(),
+                                  fontSize: 16,
+                                ),
+                                textDirection: languageProvider.getTextDirection(),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),

@@ -1,5 +1,6 @@
 import 'package:Kdru_Guide_app/screens/riast/directorate_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'header.dart';
 import 'package:Kdru_Guide_app/widgets/buttom_header.dart';
@@ -9,7 +10,7 @@ import 'utils/responsive_utils.dart';
 class FirstHomescreen extends StatefulWidget {
   const FirstHomescreen({super.key});
 
-  static const Color kPrimaryColor = Color(0xFF20C0C7);
+  static const Color kPrimaryColor = Color(0xFF036991);
   static const Color kBackgroundColor = Color(0xFFE5F7FE);
 
   @override
@@ -25,15 +26,126 @@ class _FirstHomescreen extends State<FirstHomescreen> {
     });
   }
 
+  Future<bool> _onWillPop() async {
+    try {
+      final result = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext dialogContext) {
+          return Consumer<LanguageProvider>(
+            builder: (context, languageProvider, child) {
+              return WillPopScope(
+                onWillPop: () async => false, // Prevent dialog dismissal
+                child: AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  title: Row(
+                    children: [
+                      Icon(
+                        Icons.exit_to_app,
+                        color: Colors.red.shade600,
+                        size: 28,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          languageProvider.getLocalizedString('exit_app'),
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: languageProvider.getFontFamily(),
+                            color: Colors.red.shade600,
+                          ),
+                          textDirection: languageProvider.getTextDirection(),
+                        ),
+                      ),
+                    ],
+                  ),
+                  content: Text(
+                    languageProvider.getLocalizedString('exit_app_confirmation'),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: languageProvider.getFontFamily(),
+                      color: Colors.grey.shade700,
+                    ),
+                    textDirection: languageProvider.getTextDirection(),
+                  ),
+                  actions: [
+                    // Cancel Button
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop(false);
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        languageProvider.getLocalizedString('cancel'),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontFamily: languageProvider.getFontFamily(),
+                          color: Colors.grey.shade600,
+                        ),
+                        textDirection: languageProvider.getTextDirection(),
+                      ),
+                    ),
+
+                    // OK Button (Exit)
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop(true);
+                        SystemNavigator.pop(); // Exit the app
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade600,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        languageProvider.getLocalizedString('ok'),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: languageProvider.getFontFamily(),
+                        ),
+                        textDirection: languageProvider.getTextDirection(),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+
+      // Always return false to prevent default back behavior
+      // Only exit when user explicitly taps OK
+      return false;
+    } catch (e) {
+      // If there's any error, don't exit
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: FirstHomescreen.kBackgroundColor,
-      bottomNavigationBar: CustomBottomNavBar(
-        onItemTapped: _onItemTapped,
-        selectedIndex: selectedIndex,
-      ),
-      body: Column(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        backgroundColor: FirstHomescreen.kBackgroundColor,
+        bottomNavigationBar: CustomBottomNavBar(
+          onItemTapped: _onItemTapped,
+          selectedIndex: selectedIndex,
+        ),
+        body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Consumer<LanguageProvider>(
@@ -91,6 +203,7 @@ class _FirstHomescreen extends State<FirstHomescreen> {
           ),
         ],
       ),
+    ),
     );
   }
 
@@ -323,7 +436,7 @@ class _FirstHomescreen extends State<FirstHomescreen> {
     return Container(
       width: double.infinity,
       height: context.responsiveValue(
-        mobile: 80.0,
+        mobile: 60.0,
         tablet: 90.0,
         desktop: 100.0,
       ),
@@ -370,7 +483,7 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                     desktop: 64.0,
                   ),
                   height: context.responsiveValue(
-                    mobile: 48.0,
+                    mobile: 35.0,
                     tablet: 56.0,
                     desktop: 64.0,
                   ),
@@ -410,22 +523,8 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                         ),
                         textDirection: languageProvider.getTextDirection(),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        languageProvider
-                            .getLocalizedString('university_administration'),
-                        style: TextStyle(
-                          fontSize: ResponsiveUtils.getResponsiveFontSize(
-                            context,
-                            mobile: 12,
-                            tablet: 14,
-                            desktop: 16,
-                          ),
-                          color: Colors.white.withOpacity(0.9),
-                          fontFamily: languageProvider.getFontFamily(),
-                        ),
-                        textDirection: languageProvider.getTextDirection(),
-                      ),
+                      const SizedBox(height: 1),
+
                     ],
                   ),
                 ),

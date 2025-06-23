@@ -10,6 +10,7 @@ import 'Cs_Department/CS_department.dart';
 import 'Teachers/Cs_teachers.dart';
 import '../../../utils/responsive_utils.dart';
 import '../all_faculty_teachers.dart';
+import '../../../home.dart';
 
 class FacultyScreen extends StatefulWidget {
   final String facultyId;
@@ -116,9 +117,20 @@ class _FacultyScreenState extends State<FacultyScreen> {
     };
   }
 
+  Future<bool> _onWillPop() async {
+    // Navigate back to Home screen instead of exiting app
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const FirstHomescreen()),
+      (Route<dynamic> route) => false,
+    );
+    return false; // Prevent default back behavior
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
       backgroundColor: Colors.lightBlue[50],
       bottomNavigationBar: CustomBottomNavBar(
         onItemTapped: _onItemTapped,
@@ -210,13 +222,18 @@ class _FacultyScreenState extends State<FacultyScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 12),
-                                  Text(
-                                    facultyData['name'] ?? '',
-                                    style: const TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'pashto',
-                                        color: Color(0xFF0D3B66)),
+                                  Expanded(
+                                    child: Text(
+                                      facultyData['name'] ?? '',
+                                      style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'pashto',
+                                          color: Color(0xFF0D3B66)),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: true,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -357,6 +374,13 @@ class _FacultyScreenState extends State<FacultyScreen> {
                                 ),
                               ),
                               const SizedBox(height: 30),
+
+                              // Organ Picture Section
+                              if (facultyData['organPictureUrl'] != null &&
+                                  facultyData['organPictureUrl'].toString().isNotEmpty)
+                                _buildOrganPictureSection(facultyData['organPictureUrl']),
+
+                              const SizedBox(height: 30),
                               Consumer<LanguageProvider>(
                                 builder: (context, languageProvider, child) {
                                   return _buildSectionTitleWithIcon(
@@ -431,7 +455,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
           );
         },
       ),
-    );
+    ));
   }
 
   Widget _buildSectionTitleWithIcon(
@@ -440,14 +464,19 @@ class _FacultyScreenState extends State<FacultyScreen> {
       children: [
         Image.asset(iconPath, width: 40, height: 40),
         const SizedBox(width: 12),
-        Text(
-          title,
-          style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              fontFamily: languageProvider.getFontFamily(),
-              color: const Color(0xFF0D3B66)),
-          textDirection: languageProvider.getTextDirection(),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                fontFamily: languageProvider.getFontFamily(),
+                color: const Color(0xFF0D3B66)),
+            textDirection: languageProvider.getTextDirection(),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            softWrap: true,
+          ),
         ),
       ],
     );
@@ -504,15 +533,21 @@ class _FacultyScreenState extends State<FacultyScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black,
-                  fontFamily: languageProvider.getFontFamily(),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontFamily: languageProvider.getFontFamily(),
+                  ),
+                  textDirection: languageProvider.getTextDirection(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                 ),
-                textDirection: languageProvider.getTextDirection(),
               ),
+              const SizedBox(width: 8),
               Image.asset(
                 'images/seo.png',
                 width: 24,
@@ -583,7 +618,10 @@ class _FacultyScreenState extends State<FacultyScreen> {
                             style: const TextStyle(
                                 fontFamily: 'pashto',
                                 fontWeight: FontWeight.w600,
-                                fontSize: 18)),
+                                fontSize: 18),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true),
                         trailing: const Icon(Icons.arrow_forward_ios),
                         onTap: () {
                           Navigator.push(
@@ -736,6 +774,274 @@ class _FacultyScreenState extends State<FacultyScreen> {
               },
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Widget _buildOrganPictureSection(String organPictureUrl) {
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Column(
+          children: [
+            // Section Title
+            Row(
+              children: [
+                Icon(
+                  Icons.account_balance,
+                  color: const Color(0xFF0D3B66),
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  languageProvider.getLocalizedString('faculty_organ'),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: languageProvider.getFontFamily(),
+                    color: const Color(0xFF0D3B66),
+                  ),
+                  textDirection: languageProvider.getTextDirection(),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            // Organ Picture
+            GestureDetector(
+              onTap: () => _showExpandedOrganImage(context, organPictureUrl, languageProvider),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: CachedNetworkImage(
+                    imageUrl: organPictureUrl,
+                    fit: BoxFit.cover,
+                    height: 250,
+                    width: double.infinity,
+                    placeholder: (context, url) => Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const CircularProgressIndicator(
+                              strokeWidth: 3,
+                              color: Color(0xFF0D3B66),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              languageProvider.getLocalizedString('loading'),
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontFamily: languageProvider.getFontFamily(),
+                                fontSize: 14,
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.image_not_supported,
+                            size: 48,
+                            color: Colors.grey.shade400,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            languageProvider.getLocalizedString('image_not_available'),
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontFamily: languageProvider.getFontFamily(),
+                            ),
+                            textDirection: languageProvider.getTextDirection(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Tap to expand hint
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0D3B66).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.zoom_in,
+                    size: 16,
+                    color: const Color(0xFF0D3B66),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    languageProvider.getLocalizedString('tap_to_expand'),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: const Color(0xFF0D3B66),
+                      fontFamily: languageProvider.getFontFamily(),
+                    ),
+                    textDirection: languageProvider.getTextDirection(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showExpandedOrganImage(BuildContext context, String imageUrl, LanguageProvider languageProvider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(20),
+          child: Stack(
+            children: [
+              // Background tap to close
+              GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Colors.transparent,
+                ),
+              ),
+
+              // Image content
+              Center(
+                child: InteractiveViewer(
+                  panEnabled: true,
+                  boundaryMargin: const EdgeInsets.all(20),
+                  minScale: 0.5,
+                  maxScale: 4.0,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: BoxFit.contain,
+                      placeholder: (context, url) => Container(
+                        width: 300,
+                        height: 300,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const CircularProgressIndicator(
+                                color: Color(0xFF0D3B66),
+                                strokeWidth: 3,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                languageProvider.getLocalizedString('loading'),
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontFamily: languageProvider.getFontFamily(),
+                                  fontSize: 16,
+                                ),
+                                textDirection: languageProvider.getTextDirection(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        width: 300,
+                        height: 300,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 64,
+                              color: Colors.red.shade400,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              languageProvider.getLocalizedString('image_not_available'),
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontFamily: languageProvider.getFontFamily(),
+                                fontSize: 16,
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Close button
+              Positioned(
+                top: 40,
+                right: 20,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

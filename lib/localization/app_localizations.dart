@@ -130,7 +130,7 @@ class AppLocalizations {
       'university_facilities': 'د پوهنتون اسانتیاوې',
 
       // Riyasat Qadari
-      'riyasat_qadari': 'ریاست قداری',
+      'riyasat_qadari': 'ریاست واحدونه',
       'kandahar_university': 'د کندهار پوهنتون',
 
       // Common Actions
@@ -208,7 +208,7 @@ class AppLocalizations {
       'course_count': 'کورسونه',
 
       // Riyasat Qadari
-      'riyasat_qadari_title': 'ریاست قداری',
+      'riyasat_qadari_title': 'اداری واحدونه',
       'director': 'رئیس',
       'director_name': 'مولوي عبدالرحمن طیبی',
 
@@ -467,6 +467,22 @@ class AppLocalizations {
       'cache_size': 'د کیش اندازه',
       'unlimited_cache': 'لامحدود کیش',
 
+      // Search functionality
+      'search_teachers': 'د ښوونکو لټون',
+      'search_teacher_hint': 'د ښوونکي نوم یا ایمیل ولیکئ...',
+      'searching': 'لټون کیږي...',
+      'search_teachers_instruction': 'د ښوونکو د لټون لپاره د ښوونکي نوم یا ایمیل ولیکئ',
+      'try_different_search': 'د بل ډول لټون هڅه وکړئ',
+      'found_teachers': 'موندل شوي ښوونکي',
+      'unknown_teacher': 'نامعلوم ښوونکی',
+      'tap_to_expand': 'د لویولو لپاره ټک کړئ',
+      'faculty_organ': 'د پوهنځي ارګان',
+
+      // Exit confirmation
+      'exit_app': 'د اپلیکیشن پریښودل',
+      'exit_app_confirmation': 'ایا تاسو ډاډه یاست چې غواړئ د اپلیکیشن څخه ووځئ؟',
+      'exit': 'ووځه',
+
       // Common
       'unknown': 'نامعلوم',
       'guest_user': 'میلمه کارونکی',
@@ -652,6 +668,22 @@ class AppLocalizations {
       'banner_description': 'این بخش بنر است که پس از اطلاعات ریاست اداری نمایش داده می‌شود',
       'image_not_available': 'تصویر در دسترس نیست',
       'image_viewer_instructions': 'برای بزرگ‌نمایی انگشتان را فشار دهید • برای حرکت بکشید • برای خروج دکمه بستن را لمس کنید',
+
+      // Search functionality
+      'search_teachers': 'جستجوی استادان',
+      'search_teacher_hint': 'نام یا ایمیل استاد را بنویسید...',
+      'searching': 'در حال جستجو...',
+      'search_teachers_instruction': 'برای جستجوی استادان، نام یا ایمیل استاد را بنویسید',
+      'try_different_search': 'جستجوی متفاوتی امتحان کنید',
+      'found_teachers': 'استادان یافت شده',
+      'unknown_teacher': 'استاد نامعلوم',
+      'tap_to_expand': 'برای بزرگ کردن ضربه بزنید',
+      'faculty_organ': 'ارگان پوهنځی',
+
+      // Exit confirmation
+      'exit_app': 'خروج از برنامه',
+      'exit_app_confirmation': 'آیا مطمئن هستید که می‌خواهید از برنامه خارج شوید؟',
+      'exit': 'خروج',
 
       // Common
       'unknown': 'نامعلوم',
@@ -917,6 +949,22 @@ class AppLocalizations {
       'cache_size': 'Cache Size',
       'unlimited_cache': 'Unlimited Cache',
 
+      // Search functionality
+      'search_teachers': 'Search Teachers',
+      'search_teacher_hint': 'Enter teacher name or email...',
+      'searching': 'Searching...',
+      'search_teachers_instruction': 'To search for teachers, enter teacher name or email',
+      'try_different_search': 'Try a different search',
+      'found_teachers': 'Teachers found',
+      'unknown_teacher': 'Unknown Teacher',
+      'tap_to_expand': 'Tap to expand',
+      'faculty_organ': 'Faculty Organ',
+
+      // Exit confirmation
+      'exit_app': 'Exit App',
+      'exit_app_confirmation': 'Are you sure you want to exit the application?',
+      'exit': 'Exit',
+
       // Common
       'unknown': 'Unknown',
       'guest_user': 'Guest User',
@@ -1038,10 +1086,10 @@ class AppLocalizations {
       'university_facilities': 'د پوهنتون اسانتیاوې',
 
       // Riyasat Qadari
-      'riyasat_qadari': 'ریاست قداری',
+      'riyasat_qadari': 'اداری واحدونه',
       'kandahar_university': 'د کندهار پوهنتون',
       'university_administration': 'د پوهنتون اداره',
-      'riyasat_qadari_title': 'ریاست قداری',
+      'riyasat_qadari_title': 'اداری واحدونه',
 
       // Directorate Screen
       'directorate_title': 'اداري ریاستونه',

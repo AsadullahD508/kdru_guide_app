@@ -1,10 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'home.dart';
 import 'language_provider.dart';
 import 'services/firebase_cache_service.dart';
+import 'widgets/exit_confirmation_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +59,8 @@ class MyApp extends StatelessWidget {
         return 'pashto';
     }
   }
+
+
 }
 
 

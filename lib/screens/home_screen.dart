@@ -8,6 +8,7 @@ import '../widgets/buttom_header.dart';
 import '../header.dart';
 import '../language_provider.dart';
 import '../utils/responsive_utils.dart';
+import 'Faculty/ComputerScience/CS_home.dart';
 
 class Homescreen extends StatefulWidget {
   final int selectedIndex;
@@ -53,6 +54,20 @@ class _HomescreenState extends State<Homescreen> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void _navigateToFaculty(String facultyId, String facultyName) {
+    // Navigate to the faculty page with the provided faculty ID
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FacultyScreen(
+          facultyId: facultyId,
+          galleryId: facultyId, // Using facultyId as galleryId for now
+          departmentId: '', // Empty string for now, will be handled in the faculty screen
+        ),
+      ),
+    );
   }
 
   static Widget _buildStatCard(String title, String value,
@@ -139,6 +154,7 @@ class _HomescreenState extends State<Homescreen> {
 
       final data = snapshot.docs.map((doc) {
         return {
+          'id': doc.id,
           'name': doc['name'].toString(),
           'logo': doc['logo'].toString(),
         };
@@ -432,7 +448,7 @@ class _HomescreenState extends State<Homescreen> {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
-                            // TODO: Navigate to faculty details page
+                            _navigateToFaculty(faculties[index]['id']!, faculties[index]['name']!);
                           },
                           child: _buildFacultyCard(
                             title: faculties[index]['name']!,
@@ -508,6 +524,9 @@ class _HomescreenState extends State<Homescreen> {
                 fontFamily: languageProvider.getFontFamily(),
               ),
               textDirection: languageProvider.getTextDirection(),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
             ),
           ),
         ],

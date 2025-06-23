@@ -39,12 +39,16 @@ class _DirectorateScreenState extends State<DirectorateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: DirectorateScreen.bgColor,
-        body: DirectorateContent(),
-      ),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Directionality(
+          textDirection: languageProvider.getTextDirection(),
+          child: const Scaffold(
+            backgroundColor: DirectorateScreen.bgColor,
+            body: DirectorateContent(),
+          ),
+        );
+      },
     );
   }
 }
