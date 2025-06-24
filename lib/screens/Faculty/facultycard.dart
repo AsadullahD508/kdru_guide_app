@@ -97,14 +97,7 @@ class _FacultyCardScreenState extends State<FacultyCard>
     });
   }
 
-  Future<bool> _onWillPop() async {
-    // Navigate back to Home screen instead of exiting app
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const FirstHomescreen()),
-      (Route<dynamic> route) => false,
-    );
-    return false; // Prevent default back behavior
-  }
+
 
   Future<String> _getImageUrl(String path) async {
     try {
@@ -422,9 +415,20 @@ class _FacultyCardScreenState extends State<FacultyCard>
     );
   }
 
+  Future<bool> _onWillPop() async {
+    // Navigate back to Home screen when hardware back button is pressed
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const FirstHomescreen()),
+      (Route<dynamic> route) => false,
+    );
+    return false; // Prevent default back behavior
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Consumer<LanguageProvider>(
       builder: (context, languageProvider, child) {
         if (!languageProvider.isInitialized || languageProvider.isLoading) {
           return Scaffold(
@@ -453,9 +457,7 @@ class _FacultyCardScreenState extends State<FacultyCard>
           );
         }
 
-        return WillPopScope(
-          onWillPop: _onWillPop,
-          child: Scaffold(
+        return Scaffold(
             body: Container(
               color: Colors.lightBlue[50],
               child: Column(
@@ -550,9 +552,9 @@ class _FacultyCardScreenState extends State<FacultyCard>
               selectedIndex: _selectedIndex,
               onItemTapped: _onItemTapped,
             ),
-          ),
         );
       },
+    ),
     );
   }
 }

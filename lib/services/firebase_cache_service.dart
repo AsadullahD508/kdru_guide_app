@@ -155,6 +155,36 @@ class FirebaseCacheService {
         .snapshots(includeMetadataChanges: true);
   }
 
+  // Get university information from the new structure
+  Stream<QuerySnapshot> getUniversityInfoStreamByLanguage(String languageCode) {
+    String docId = getDocumentIdFromLanguage(languageCode);
+
+    return FirebaseFirestore.instance
+        .collection('Kandahar University')
+        .doc(docId)
+        .collection('university')
+        .snapshots(includeMetadataChanges: true);
+  }
+
+  // Get university information with fallback
+  Future<QuerySnapshot> getUniversityInfoByLanguage(String languageCode) async {
+    String docId = getDocumentIdFromLanguage(languageCode);
+
+    return FirebaseFirestore.instance
+        .collection('Kandahar University')
+        .doc(docId)
+        .collection('university')
+        .get(const GetOptions(source: Source.cache))
+        .catchError((error) async {
+          // If cache fails, try server
+          return FirebaseFirestore.instance
+              .collection('Kandahar University')
+              .doc(docId)
+              .collection('university')
+              .get(const GetOptions(source: Source.server));
+        });
+  }
+
   // Helper method to get document ID from language code
   String getDocumentIdFromLanguage(String languageCode) {
     switch (languageCode.toLowerCase()) {

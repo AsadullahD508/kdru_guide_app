@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:Kdru_Guide_app/localization/app_localizations.dart';
+import 'package:kdru_guide_app/localization/app_localizations.dart';
 
 void main() {
   group('AppLocalizations Tests', () {

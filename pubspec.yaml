@@ -1,4 +1,4 @@
-name: Kdru_Guide_app
+name: kdru_guide_app
 description: this is the kandahar university Guide App
 publish_to: 'none'
 version: 1.0.0+1
@@ -27,6 +27,9 @@ dependencies:
 flutter_icon:
   android: true
   ios: true
+  windows: true
+  macos: true
+  linux: true
   image_path: "images/kdr_logo.png"
 dev_dependencies:
   flutter_test:

@@ -51,7 +51,7 @@ class AppLocalizations {
       'about': 'په اړه',
       'history': 'تاريخچه',
       'vision': 'لیدلوری',
-      'mission': 'دنده',
+      'mission': 'ریسالت',
       'objectives': 'موخې',
       'loading': 'پورته کیږي...',
 
@@ -140,6 +140,10 @@ class AppLocalizations {
       'title': 'سرلیک',
       'address': 'پته',
       'website': 'ویب پاڼه',
+      'university_address': 'د کندهار ښار، افغانستان',
+      'university_website': 'www.kdru.edu.af',
+      'default_phone': '+۹۳ ۷۰۰۴۵۰۴۰۲',
+      'default_email': 'info@kdru.edu.af',
       'contact': 'اړیکه',
       'more': 'نور',
       'less': 'لږ',
@@ -184,8 +188,10 @@ class AppLocalizations {
       'teacher_department': 'څانګه',
       'contact_info': 'د اړیکو معلومات',
       'academic_info': 'علمي معلومات',
+      'research': 'څیړنه',
       'research_areas': 'د څېړنې ساحې',
-      'no_research_available': 'هیڅ څېړنه شتون نلري',
+      'no_research_available': 'هیڅ څېړنه نشته',
+      'view_research': 'څېړنه وګوره',
       'researchers': 'څېړونکي',
       'year': 'کال',
       'view_journal': 'ژورنال وګورئ',
@@ -362,7 +368,7 @@ class AppLocalizations {
 
       // Academic Programs
       'programs_offered': 'وړاندې شوي پروګرامونه',
-      'bachelor_degree': 'لیسانس',
+      'degree': 'درجه',
       'master_degree': 'ماسټري',
       'phd_degree': 'دوکتورا',
 
@@ -544,10 +550,13 @@ class AppLocalizations {
       'total_teachers': 'همه استادا',
       'teacher_profile': 'پروفایل استاد',
       'academic_info': 'اطلاعات علمی',
+      'research': 'تحقیق',
       'research_areas': 'حوزه‌های تحقیق',
       'no_research_available': 'هیچ تحقیقی موجود نیست',
+      'view_research': 'مشاهده تحقیق',
       'researchers': 'محققان',
       'year': 'سال',
+      'degree': 'درجه',
       'view_journal': 'مشاهده ژورنال',
       'age': 'سن',
       'years_old': 'ساله',
@@ -623,6 +632,7 @@ class AppLocalizations {
       'courses_title': 'دوره‌ها',
       'laboratories_title': 'آزمایشگاه‌ها',
 
+
       // Navigation and UI
       'go_back': 'بازگشت',
       'continue': 'ادامه',
@@ -641,7 +651,7 @@ class AppLocalizations {
       'laboratory': 'لابراتوار',
       'conference_hall': 'د غونډو تالار',
       'library': 'کتابتون',
-      'research_office': 'ریسرچ معاونیت',
+     
 
       // Settings and About Dialog
       'settings_coming_soon': 'بخش تنظیمات در آینده اضافه خواهد شد.',
@@ -660,9 +670,15 @@ class AppLocalizations {
       'no_reviews': 'هیچ بررسی‌ای وجود ندارد.',
       'no_payments': 'هیچ پرداختی وجود ندارد.',
 
+
       // Contact Information
       'address': 'آدرس',
+
       'website': 'وب‌سایت',
+      'university_address': 'شهر کندهار، افغانستان',
+      'university_website': 'www.kdru.edu.af',
+      'default_phone': '+۹۳ ۷۰۰۴۵۰۴۰۲',
+      'default_email': 'info@kdru.edu.af',
 
       // Banner Section
       'banner_section': 'بخش بنر',
@@ -747,8 +763,10 @@ class AppLocalizations {
       'all_teachers': 'All Teachers',
       'teacher_profile': 'Teacher Profile',
       'academic_info': 'Academic Information',
+      'research': 'Research',
       'research_areas': 'Research Areas',
       'no_research_available': 'No research available',
+      'view_research': 'View Research',
       'researchers': 'Researchers',
       'year': 'Year',
       'view_journal': 'View Journal',
@@ -802,7 +820,8 @@ class AppLocalizations {
       'laboratory': 'Laboratory',
       'conference_hall': 'Conference Hall',
       'library': 'Library',
-      'research_office': 'Reasearch Office',
+      'research_office': 'Research Office',
+
 
       // University Info
       'university_history': 'University History',
@@ -856,6 +875,7 @@ class AppLocalizations {
       'loading_teacher_data': 'Loading teacher data...',
       'teacher_not_found': 'Teacher not found',
       'academic_rank': 'Academic Rank',
+      'degree': 'degree',
 
       // Error Messages
       'teachers_fetch_error': 'Error retrieving teacher information.',
@@ -929,6 +949,10 @@ class AppLocalizations {
       // Contact Information
       'address': 'Address',
       'website': 'Website',
+      'university_address': 'Kandahar City, Afghanistan',
+      'university_website': 'www.kdru.edu.af',
+      'default_phone': '+93 700450402',
+      'default_email': 'info@kdru.edu.af',
 
       // Cache and Offline Status
       'loaded_from_cache': 'Loaded from Cache (Offline)',
@@ -1030,8 +1054,10 @@ class AppLocalizations {
       'total_teachers': 'ټول ښوونکي',
       'teacher_profile': 'د ښوونکي پېژندنه',
       'academic_info': 'علمي معلومات',
+      'research': 'څیړني',
       'research_areas': 'د څېړنې ساحې',
       'no_research_available': 'هیڅ څېړنه شتون نلري',
+      'view_research': 'څېړنه وګوره',
       'researchers': 'څېړونکي',
       'year': 'کال',
       'view_journal': 'ژورنال وګورئ',
@@ -1203,6 +1229,10 @@ class AppLocalizations {
       // Contact Information
       'address': 'پته',
       'website': 'ویب پاڼه',
+      'university_address': 'د کندهار ښار، افغانستان',
+      'university_website': 'www.kdru.edu.af',
+      'default_phone': '+۹۳ ۷۰۰۴۵۰۴۰۲',
+      'default_email': 'info@kdru.edu.af',
 
       // Common
       'unknown': 'نامعلوم',

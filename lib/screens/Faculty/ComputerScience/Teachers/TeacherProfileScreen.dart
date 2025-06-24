@@ -159,14 +159,14 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                               ),
                               const SizedBox(height: 12),
                               Text(
-                                teacherData['fullName'] ?? 'نامعلوم',
+                                teacherData['fullName'] ?? '',
                                 style: const TextStyle(
                                     fontSize: 22, fontWeight: FontWeight.bold),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
-                                teacherData['address'] ?? 'استاد',
+                                teacherData['address'] ?? '',
                                 style: const TextStyle(
                                     fontSize: 16, color: Colors.grey),
                                 maxLines: 1,
@@ -181,7 +181,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                                   const SizedBox(width: 6),
                                   Expanded(
                                     child: Text(
-                                      'علمي رتبه : ${teacherData['departmentName'] ?? 'نامعلوم'}',
+                                      'علمي رتبه : ${teacherData['educationRank'] ?? ''}',
                                       style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold),

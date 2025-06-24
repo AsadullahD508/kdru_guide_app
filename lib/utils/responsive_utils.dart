@@ -5,6 +5,7 @@ class ResponsiveUtils {
   // Breakpoints
   static const double mobileBreakpoint = 600;
   static const double tabletBreakpoint = 1200;
+  static const double desktopBreakpoint = 1440;
   
   // Screen size categories
   static bool isMobile(BuildContext context) {

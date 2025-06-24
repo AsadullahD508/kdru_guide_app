@@ -146,8 +146,8 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                       }
 
             final teacherData = snapshot.data!.data() as Map<String, dynamic>;
-            final List<dynamic> researchAreas =
-                teacherData['researchAreas'] ?? [];
+            final List<dynamic> researchEntries =
+                teacherData['researchEntries'] ?? [];
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
@@ -223,7 +223,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
-                                '${languageProvider.getLocalizedString('academic_rank')}: ${teacherData['departmentName'] ?? languageProvider.getLocalizedString('unknown')}',
+                                '${languageProvider.getLocalizedString('academic_rank')}: ${teacherData['educationRank'] ?? languageProvider.getLocalizedString('unknown')}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -305,17 +305,31 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                           textDirection: languageProvider.getTextDirection(),
                         ),
                         const SizedBox(height: 12),
-                        ...researchAreas.map((research) {
-                          final Map<String, dynamic> r =
-                              Map<String, dynamic>.from(research);
-                          return _buildResearchItem(
-                            title: '${languageProvider.getLocalizedString('title')}: ${r['title'] ?? languageProvider.getLocalizedString('unknown')}',
-                            publishYear: '${languageProvider.getLocalizedString('year')}: ${r['year'] ?? languageProvider.getLocalizedString('unknown')}',
-                            publishLink: r['journalUrl'] ?? '',
-                            researchers: '${languageProvider.getLocalizedString('researchers')}: ${r['researchers'] ?? languageProvider.getLocalizedString('unknown')}',
-                            languageProvider: languageProvider,
-                          );
-                        }).toList(),
+                        researchEntries.isEmpty
+                            ? Text(
+                                languageProvider.getLocalizedString('no_research_available'),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.grey.shade600,
+                                  fontFamily: languageProvider.getFontFamily(),
+                                ),
+                                textDirection: languageProvider.getTextDirection(),
+                              )
+                            : Column(
+                                children: researchEntries.map((research) {
+                                  final Map<String, dynamic> r =
+                                      Map<String, dynamic>.from(research);
+                                  return _buildResearchItem(
+                                    id: r['id'] ?? '',
+                                    title: r['title'] ?? languageProvider.getLocalizedString('unknown'),
+                                    publishYear: r['year'] ?? languageProvider.getLocalizedString('unknown'),
+                                    publishLink: r['journalUrl'] ?? '',
+                                    groupWorker: r['groupWorker'] ?? '',
+                                    languageProvider: languageProvider,
+                                  );
+                                }).toList(),
+                              ),
                       ],
                     ),
                   ),
@@ -435,62 +449,196 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
   }
 
   Widget _buildResearchItem({
+    required String id,
     required String title,
     required String publishYear,
     required String publishLink,
-    required String researchers,
+    required String groupWorker,
     required LanguageProvider languageProvider,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: languageProvider.getTextDirection() == TextDirection.rtl
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
+          // Research Title
           Text(
             title,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
+              color: const Color(0xFF0D3B66),
               fontFamily: languageProvider.getFontFamily(),
             ),
             textDirection: languageProvider.getTextDirection(),
           ),
-          Text(
-            publishYear,
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey,
-              fontFamily: languageProvider.getFontFamily(),
-            ),
-            textDirection: languageProvider.getTextDirection(),
+          const SizedBox(height: 8),
+
+          // Publication Year
+          Row(
+            children: languageProvider.getTextDirection() == TextDirection.rtl
+                ? [
+                    Expanded(
+                      child: Text(
+                        '${languageProvider.getLocalizedString('year')}: $publishYear',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                          fontFamily: languageProvider.getFontFamily(),
+                        ),
+                        textDirection: languageProvider.getTextDirection(),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.calendar_today,
+                      size: 16,
+                      color: Colors.grey.shade600,
+                    ),
+                  ]
+                : [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 16,
+                      color: Colors.grey.shade600,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${languageProvider.getLocalizedString('year')}: $publishYear',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                          fontFamily: languageProvider.getFontFamily(),
+                        ),
+                        textDirection: languageProvider.getTextDirection(),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ],
           ),
-          if (publishLink.isNotEmpty)
-            InkWell(
+
+          // Group Worker (if available)
+          if (groupWorker.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: languageProvider.getTextDirection() == TextDirection.rtl
+                  ? [
+                      Expanded(
+                        child: Text(
+                          '${languageProvider.getLocalizedString('researchers')}: $groupWorker',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade700,
+                            fontFamily: languageProvider.getFontFamily(),
+                          ),
+                          textDirection: languageProvider.getTextDirection(),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.group,
+                        size: 16,
+                        color: Colors.grey.shade600,
+                      ),
+                    ]
+                  : [
+                      Icon(
+                        Icons.group,
+                        size: 16,
+                        color: Colors.grey.shade600,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '${languageProvider.getLocalizedString('researchers')}: $groupWorker',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade700,
+                            fontFamily: languageProvider.getFontFamily(),
+                          ),
+                          textDirection: languageProvider.getTextDirection(),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ],
+            ),
+          ],
+
+          // Journal Link (if available)
+          if (publishLink.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            GestureDetector(
               onTap: () => _launchUrlInBrowser(publishLink),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Text(
-                  publishLink,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                    fontFamily: languageProvider.getFontFamily(),
-                  ),
-                  textDirection: languageProvider.getTextDirection(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: languageProvider.getTextDirection() == TextDirection.rtl
+                      ? [
+                          Text(
+                            languageProvider.getLocalizedString('view_research'),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.blue.shade700,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: languageProvider.getFontFamily(),
+                            ),
+                            textDirection: languageProvider.getTextDirection(),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.open_in_new,
+                            size: 16,
+                            color: Colors.blue.shade700,
+                          ),
+                        ]
+                      : [
+                          Icon(
+                            Icons.open_in_new,
+                            size: 16,
+                            color: Colors.blue.shade700,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            languageProvider.getLocalizedString('view_research'),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.blue.shade700,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: languageProvider.getFontFamily(),
+                            ),
+                            textDirection: languageProvider.getTextDirection(),
+                          ),
+                        ],
                 ),
               ),
             ),
-          Text(
-            researchers,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              fontFamily: languageProvider.getFontFamily(),
-            ),
-            textDirection: languageProvider.getTextDirection(),
-          ),
-          const Divider(),
+          ],
         ],
       ),
     );

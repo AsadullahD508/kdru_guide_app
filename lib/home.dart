@@ -1,9 +1,9 @@
-import 'package:Kdru_Guide_app/screens/riast/directorate_screen.dart';
+import 'package:kdru_guide_app/screens/riast/directorate_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'header.dart';
-import 'package:Kdru_Guide_app/widgets/buttom_header.dart';
+import 'package:kdru_guide_app/widgets/buttom_header.dart';
 import 'language_provider.dart';
 import 'utils/responsive_utils.dart';
 
@@ -126,11 +126,10 @@ class _FirstHomescreen extends State<FirstHomescreen> {
         },
       );
 
-      // Always return false to prevent default back behavior
-      // Only exit when user explicitly taps OK
+
       return false;
     } catch (e) {
-      // If there's any error, don't exit
+
       return false;
     }
   }
@@ -159,7 +158,7 @@ class _FirstHomescreen extends State<FirstHomescreen> {
             },
           ),
 
-          // Riyasat Qadari Button
+          // Riyasat Button
           Consumer<LanguageProvider>(
             builder: (context, languageProvider, child) {
               return Padding(
@@ -475,71 +474,137 @@ class _FirstHomescreen extends State<FirstHomescreen> {
               desktop: const EdgeInsets.all(24.0),
             ),
             child: Row(
-              children: [
-                Container(
-                  width: context.responsiveValue(
-                    mobile: 48.0,
-                    tablet: 56.0,
-                    desktop: 64.0,
-                  ),
-                  height: context.responsiveValue(
-                    mobile: 35.0,
-                    tablet: 56.0,
-                    desktop: 64.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.account_balance,
-                    color: Colors.white,
-                    size: context.responsiveValue(
-                      mobile: 24.0,
-                      tablet: 28.0,
-                      desktop: 32.0,
-                    ),
-                  ),
-                ),
-                SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context)),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        languageProvider
-                            .getLocalizedString('riyasat_qadari_title'),
-                        style: TextStyle(
-                          fontSize: ResponsiveUtils.getResponsiveFontSize(
-                            context,
-                            mobile: 16,
-                            tablet: 18,
-                            desktop: 20,
-                          ),
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontFamily: languageProvider.getFontFamily(),
+              children: languageProvider.getTextDirection() == TextDirection.rtl
+                  ? [
+                      // RTL Layout: Arrow on left, text in middle, icon on right
+                      Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                        size: context.responsiveValue(
+                          mobile: 20.0,
+                          tablet: 24.0,
+                          desktop: 28.0,
                         ),
-                        textDirection: languageProvider.getTextDirection(),
                       ),
-                      const SizedBox(height: 1),
-
+                      SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context)),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              languageProvider
+                                  .getLocalizedString('riyasat_qadari_title'),
+                              style: TextStyle(
+                                fontSize: ResponsiveUtils.getResponsiveFontSize(
+                                  context,
+                                  mobile: 16,
+                                  tablet: 18,
+                                  desktop: 20,
+                                ),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontFamily: languageProvider.getFontFamily(),
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 1),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context)),
+                      Container(
+                        width: context.responsiveValue(
+                          mobile: 48.0,
+                          tablet: 56.0,
+                          desktop: 64.0,
+                        ),
+                        height: context.responsiveValue(
+                          mobile: 35.0,
+                          tablet: 56.0,
+                          desktop: 64.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.account_balance,
+                          color: Colors.white,
+                          size: context.responsiveValue(
+                            mobile: 24.0,
+                            tablet: 28.0,
+                            desktop: 32.0,
+                          ),
+                        ),
+                      ),
+                    ]
+                  : [
+                      // LTR Layout: Icon on left, text in middle, arrow on right
+                      Container(
+                        width: context.responsiveValue(
+                          mobile: 48.0,
+                          tablet: 56.0,
+                          desktop: 64.0,
+                        ),
+                        height: context.responsiveValue(
+                          mobile: 35.0,
+                          tablet: 56.0,
+                          desktop: 64.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.account_balance,
+                          color: Colors.white,
+                          size: context.responsiveValue(
+                            mobile: 24.0,
+                            tablet: 28.0,
+                            desktop: 32.0,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context)),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              languageProvider
+                                  .getLocalizedString('riyasat_qadari_title'),
+                              style: TextStyle(
+                                fontSize: ResponsiveUtils.getResponsiveFontSize(
+                                  context,
+                                  mobile: 16,
+                                  tablet: 18,
+                                  desktop: 20,
+                                ),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontFamily: languageProvider.getFontFamily(),
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 1),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context)),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: context.responsiveValue(
+                          mobile: 20.0,
+                          tablet: 24.0,
+                          desktop: 28.0,
+                        ),
+                      ),
                     ],
-                  ),
-                ),
-                Icon(
-                  languageProvider.getTextDirection() == TextDirection.rtl
-                      ? Icons.arrow_back_ios
-                      : Icons.arrow_forward_ios,
-                  color: Colors.white,
-                  size: context.responsiveValue(
-                    mobile: 20.0,
-                    tablet: 24.0,
-                    desktop: 28.0,
-                  ),
-                ),
-              ],
             ),
           ),
         ),

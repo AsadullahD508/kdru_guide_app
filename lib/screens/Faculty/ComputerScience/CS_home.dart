@@ -117,20 +117,11 @@ class _FacultyScreenState extends State<FacultyScreen> {
     };
   }
 
-  Future<bool> _onWillPop() async {
-    // Navigate back to Home screen instead of exiting app
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const FirstHomescreen()),
-      (Route<dynamic> route) => false,
-    );
-    return false; // Prevent default back behavior
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
+    return Scaffold(
       backgroundColor: Colors.lightBlue[50],
       bottomNavigationBar: CustomBottomNavBar(
         onItemTapped: _onItemTapped,
@@ -455,7 +446,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
           );
         },
       ),
-    ));
+    );
   }
 
   Widget _buildSectionTitleWithIcon(

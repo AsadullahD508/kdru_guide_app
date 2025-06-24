@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -5,11 +6,13 @@ import 'package:latlong2/latlong.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../services/firebase_cache_service.dart';
 import '../widgets/buttom_header.dart';
 import '../header.dart';
 import '../language_provider.dart';
 import '../utils/responsive_utils.dart';
 import 'Faculty/ComputerScience/CS_home.dart';
+import '../home.dart';
 
 class Homescreen extends StatefulWidget {
   final int selectedIndex;
@@ -31,6 +34,7 @@ class _HomescreenState extends State<Homescreen> {
   int departmentsCount = 0;
   int teachersCount = 0;
   String _currentLanguage = '';
+  StreamSubscription<QuerySnapshot>? _universitySubscription;
 
   @override
   void initState() {
@@ -39,12 +43,30 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   @override
+  void dispose() {
+    _universitySubscription?.cancel();
+    super.dispose();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final languageProvider = Provider.of<LanguageProvider>(context);
     if (languageProvider.isInitialized &&
         _currentLanguage != languageProvider.currentLanguage) {
+      debugPrint('Language changed from $_currentLanguage to ${languageProvider.currentLanguage}');
       _currentLanguage = languageProvider.currentLanguage;
+
+      // Clear current data to show loading state
+      setState(() {
+        aboutTitle = '';
+        aboutDescription = '';
+        universityDean = '';
+        universityYear = '';
+        universityEmail = '';
+        universityMobile = '';
+      });
+
       _fetchData(languageProvider);
     }
   }
@@ -52,7 +74,50 @@ class _HomescreenState extends State<Homescreen> {
   void _fetchData(LanguageProvider languageProvider) {
     _fetchFaculties(languageProvider);
     _fetchUniversityInfo(languageProvider);
+    _setupUniversityStream(languageProvider);
     _fetchStats(languageProvider);
+  }
+
+  void _setupUniversityStream(LanguageProvider languageProvider) {
+    // Cancel previous subscription
+    _universitySubscription?.cancel();
+    debugPrint('Setting up university stream for language: ${languageProvider.currentLanguage}');
+
+    // Set up new stream for real-time updates with offline support
+    _universitySubscription = FirebaseCacheService.instance
+        .getUniversityInfoStreamByLanguage(languageProvider.currentLanguage)
+        .listen((snapshot) {
+      debugPrint('University stream update - Language: ${languageProvider.currentLanguage}, Size: ${snapshot.docs.length}');
+      debugPrint('Stream source: ${snapshot.metadata.isFromCache ? "Cache (Offline)" : "Server (Online)"}');
+
+      if (snapshot.docs.isNotEmpty && mounted) {
+        final doc = snapshot.docs.first;
+        final data = doc.data() as Map<String, dynamic>?;
+        debugPrint('University document data: $data');
+
+        if (data != null) {
+          setState(() {
+            aboutTitle = data['name'] ?? '';
+            aboutDescription = data['information'] ?? '';
+            universityYear = data['year'] ?? '';
+
+            // Extract contact information
+            final contactInfo = data['contactInfo'] as Map<String, dynamic>?;
+            debugPrint('Contact info from stream: $contactInfo');
+            if (contactInfo != null) {
+              universityDean = contactInfo['dean'] ?? '';
+              universityEmail = contactInfo['email'] ?? '';
+              universityMobile = contactInfo['mobile'] ?? '';
+            }
+          });
+          debugPrint('University info updated from stream for ${languageProvider.currentLanguage}: title=$aboutTitle, dean=$universityDean');
+        }
+      } else {
+        debugPrint('No university documents found in stream for language: ${languageProvider.currentLanguage}');
+      }
+    }, onError: (error) {
+      debugPrint('University stream error for language ${languageProvider.currentLanguage}: $error');
+    });
   }
 
   void _onItemTapped(int index) {
@@ -177,31 +242,51 @@ class _HomescreenState extends State<Homescreen> {
 
   Future<void> _fetchUniversityInfo(LanguageProvider languageProvider) async {
     try {
-      // Get the first university document from the university collection
-      final snapshot = await languageProvider.getUniversityCollectionRef().limit(1).get();
+      debugPrint('Fetching university info for language: ${languageProvider.currentLanguage}');
+
+      // Use cache service to get university info with offline support
+      final snapshot = await FirebaseCacheService.instance
+          .getUniversityInfoByLanguage(languageProvider.currentLanguage);
+
+      debugPrint('University collection snapshot size: ${snapshot.docs.length}');
+      debugPrint('Data source: ${snapshot.metadata.isFromCache ? "Cache (Offline)" : "Server (Online)"}');
+
+      if (snapshot.docs.isNotEmpty) {
+        // Print all document IDs to help debug
+        for (var doc in snapshot.docs) {
+          debugPrint('Found university document ID: ${doc.id}');
+        }
+      }
 
       if (snapshot.docs.isNotEmpty && mounted) {
         final doc = snapshot.docs.first;
         final data = doc.data() as Map<String, dynamic>?;
+        debugPrint('University document data for ${languageProvider.currentLanguage}: $data');
+
         if (data != null) {
           setState(() {
             aboutTitle = data['name'] ?? '';
             aboutDescription = data['information'] ?? '';
             universityYear = data['year'] ?? '';
-            universityDean = data['dean'] ?? '';
 
             // Extract contact information
             final contactInfo = data['contactInfo'] as Map<String, dynamic>?;
+            debugPrint('Contact info for ${languageProvider.currentLanguage}: $contactInfo');
             if (contactInfo != null) {
-
+              universityDean = contactInfo['dean'] ?? '';
               universityEmail = contactInfo['email'] ?? '';
               universityMobile = contactInfo['mobile'] ?? '';
             }
           });
+          debugPrint('University info loaded for ${languageProvider.currentLanguage}: title=$aboutTitle, dean=$universityDean, year=$universityYear');
+          debugPrint('Source: ${snapshot.metadata.isFromCache ? "Cached data" : "Fresh data"}');
         }
+      } else {
+        debugPrint('No university documents found for language ${languageProvider.currentLanguage} or widget not mounted');
       }
     } catch (e) {
-      debugPrint('Error fetching university info: $e');
+      debugPrint('Error fetching university info for language ${languageProvider.currentLanguage}: $e');
+      debugPrint('Error details: ${e.toString()}');
     }
   }
 
@@ -275,10 +360,21 @@ class _HomescreenState extends State<Homescreen> {
     }
   }
 
+  Future<bool> _onWillPop() async {
+    // Navigate back to Home screen when hardware back button is pressed
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const FirstHomescreen()),
+      (Route<dynamic> route) => false,
+    );
+    return false; // Prevent default back behavior
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context, languageProvider, child) {
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Consumer<LanguageProvider>(
+        builder: (context, languageProvider, child) {
         if (!languageProvider.isInitialized || languageProvider.isLoading) {
           return Scaffold(
             backgroundColor: const Color(0xFFE5F7FE),
@@ -343,6 +439,7 @@ class _HomescreenState extends State<Homescreen> {
           ),
         );
       },
+      ),
     );
   }
 
@@ -697,49 +794,78 @@ class _HomescreenState extends State<Homescreen> {
               ],
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: languageProvider.getTextDirection() == TextDirection.rtl
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 Row(
-                  children: [
-                    Icon(
-                      Icons.contact_phone,
-                      color: Colors.blue.shade700,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      languageProvider.getLocalizedString('contact_us'),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue.shade700,
-                        fontFamily: languageProvider.getFontFamily(),
-                      ),
-                      textDirection: languageProvider.getTextDirection(),
-                    ),
-                  ],
+                  children: languageProvider.getTextDirection() == TextDirection.rtl
+                      ? [
+                          // RTL: Text first, then icon
+                          Expanded(
+                            child: Text(
+                              languageProvider.getLocalizedString('contact_us'),
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade700,
+                                fontFamily: languageProvider.getFontFamily(),
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                              textAlign: TextAlign.right,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Icon(
+                            Icons.contact_phone,
+                            color: Colors.blue.shade700,
+                            size: 24,
+                          ),
+                        ]
+                      : [
+                          // LTR: Icon first, then text
+                          Icon(
+                            Icons.contact_phone,
+                            color: Colors.blue.shade700,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              languageProvider.getLocalizedString('contact_us'),
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade700,
+                                fontFamily: languageProvider.getFontFamily(),
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ],
                 ),
                 const SizedBox(height: 16),
                 _buildContactItem(
                   icon: Icons.location_on,
                   title: languageProvider.getLocalizedString('address'),
-                  content: 'Kandahar City, Afghanistan',
+                  content: languageProvider.getLocalizedString('university_address'),
                   languageProvider: languageProvider,
                 ),
                 const SizedBox(height: 12),
                 _buildContactItem(
                   icon: Icons.phone,
                   title: languageProvider.getLocalizedString('phone'),
-                  content: universityMobile.isNotEmpty ? universityMobile : '+93 30 222 4444',
+                  content: universityMobile.isNotEmpty ? universityMobile : languageProvider.getLocalizedString('default_phone'),
                   languageProvider: languageProvider,
                   isClickable: true,
-                  onTap: () => _launchPhone(universityMobile.isNotEmpty ? universityMobile : '+93 30 222 4444'),
+                  onTap: () => _launchPhone(universityMobile.isNotEmpty ? universityMobile : '+93 700450402'),
                 ),
                 const SizedBox(height: 12),
                 _buildContactItem(
                   icon: Icons.email,
                   title: languageProvider.getLocalizedString('email'),
-                  content: universityEmail.isNotEmpty ? universityEmail : 'info@kdru.edu.af',
+                  content: universityEmail.isNotEmpty ? universityEmail : languageProvider.getLocalizedString('default_email'),
                   languageProvider: languageProvider,
                   isClickable: true,
                   onTap: () => _launchEmail(universityEmail.isNotEmpty ? universityEmail : 'info@kdru.edu.af'),
@@ -748,7 +874,7 @@ class _HomescreenState extends State<Homescreen> {
                 _buildContactItem(
                   icon: Icons.web,
                   title: languageProvider.getLocalizedString('website'),
-                  content: 'www.kdru.edu.af',
+                  content: languageProvider.getLocalizedString('university_website'),
                   languageProvider: languageProvider,
                   isClickable: true,
                   onTap: () => _launchWebsite('www.kdru.edu.af'),
@@ -771,55 +897,113 @@ class _HomescreenState extends State<Homescreen> {
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          icon,
-          color: Colors.grey.shade600,
-          size: 20,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade700,
-                  fontFamily: languageProvider.getFontFamily(),
-                ),
-                textDirection: languageProvider.getTextDirection(),
-              ),
-              const SizedBox(height: 4),
-              isClickable && onTap != null
-                  ? GestureDetector(
-                      onTap: onTap,
-                      child: Text(
-                        content,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue.shade600,
-                          fontFamily: languageProvider.getFontFamily(),
-                          decoration: TextDecoration.underline,
-                        ),
-                        textDirection: languageProvider.getTextDirection(),
-                      ),
-                    )
-                  : Text(
-                      content,
+      children: languageProvider.getTextDirection() == TextDirection.rtl
+          ? [
+              // RTL: Content first, then icon
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      title,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey.shade800,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey.shade700,
                         fontFamily: languageProvider.getFontFamily(),
                       ),
                       textDirection: languageProvider.getTextDirection(),
+                      textAlign: TextAlign.right,
                     ),
+                    const SizedBox(height: 4),
+                    isClickable && onTap != null
+                        ? GestureDetector(
+                            onTap: onTap,
+                            child: Text(
+                              content,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.blue.shade600,
+                                fontFamily: languageProvider.getFontFamily(),
+                                decoration: TextDecoration.underline,
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                              textAlign: TextAlign.right,
+                            ),
+                          )
+                        : Text(
+                            content,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade800,
+                              fontFamily: languageProvider.getFontFamily(),
+                            ),
+                            textDirection: languageProvider.getTextDirection(),
+                            textAlign: TextAlign.right,
+                          ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Icon(
+                icon,
+                color: Colors.grey.shade600,
+                size: 20,
+              ),
+            ]
+          : [
+              // LTR: Icon first, then content
+              Icon(
+                icon,
+                color: Colors.grey.shade600,
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey.shade700,
+                        fontFamily: languageProvider.getFontFamily(),
+                      ),
+                      textDirection: languageProvider.getTextDirection(),
+                      textAlign: TextAlign.left,
+                    ),
+                    const SizedBox(height: 4),
+                    isClickable && onTap != null
+                        ? GestureDetector(
+                            onTap: onTap,
+                            child: Text(
+                              content,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.blue.shade600,
+                                fontFamily: languageProvider.getFontFamily(),
+                                decoration: TextDecoration.underline,
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                              textAlign: TextAlign.left,
+                            ),
+                          )
+                        : Text(
+                            content,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade800,
+                              fontFamily: languageProvider.getFontFamily(),
+                            ),
+                            textDirection: languageProvider.getTextDirection(),
+                            textAlign: TextAlign.left,
+                          ),
+                  ],
+                ),
+              ),
             ],
-          ),
-        ),
-      ],
     );
   }
 
