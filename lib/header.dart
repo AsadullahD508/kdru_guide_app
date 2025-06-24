@@ -205,24 +205,24 @@ class _CustomHeaderState extends State<CustomHeader>
                           children: [
                             Consumer<LanguageProvider>(
                               builder: (context, languageProvider, child) {
-                                return Text(
+                                return ResponsiveUtils.createOverflowSafeText(
                                   languageProvider
                                       .getLocalizedString('welcome_message'),
+                                  context: context,
+                                  currentLanguage: languageProvider.currentLanguage,
                                   textDirection:
                                       languageProvider.getTextDirection(),
                                   style: TextStyle(
-                                    fontSize:
-                                        ResponsiveUtils.getResponsiveFontSize(
-                                      context,
-                                      mobile: 14,
-                                      tablet: 16,
-                                      desktop: 18,
-                                    ),
                                     color: Colors.black87,
                                     fontFamily:
                                         languageProvider.getFontFamily(),
                                   ),
-                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: ResponsiveUtils.getResponsiveFontSize(
+                                    context,
+                                    mobile: 14,
+                                    tablet: 16,
+                                    desktop: 18,
+                                  ),
                                   maxLines: 3,
                                 );
                               },

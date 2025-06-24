@@ -463,28 +463,7 @@ class AdministrationDetailContent extends StatelessWidget {
         const SizedBox(height: 16),
 
         // Banner Description
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.blue.shade50,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.blue.shade200,
-              width: 1,
-            ),
-          ),
-          child: Text(
-            languageProvider.getLocalizedString('banner_description'),
-            style: TextStyle(
-              fontSize: 16,
-              fontFamily: languageProvider.getFontFamily(),
-              height: 1.6,
-            ),
-            textAlign: TextAlign.center,
-            textDirection: languageProvider.getTextDirection(),
-          ),
-        ),
+
 
         const SizedBox(height: 20),
 
@@ -757,7 +736,7 @@ class AdministrationDetailContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    languageProvider.getLocalizedString('image_viewer_instructions') ??
+                    languageProvider.getLocalizedString('') ??
                     'Pinch to zoom • Drag to pan • Tap close button to exit',
                     style: TextStyle(
                       color: Colors.white,

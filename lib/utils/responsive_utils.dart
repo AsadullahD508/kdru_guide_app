@@ -82,6 +82,37 @@ class ResponsiveUtils {
       desktop: desktop ?? mobile + 4,
     );
   }
+
+  // Language-aware responsive font size to prevent overflow
+  static double getLanguageAwareFontSize(BuildContext context, {
+    required String currentLanguage,
+    double mobile = 14,
+    double? tablet,
+    double? desktop,
+  }) {
+    double baseFontSize = getResponsiveFontSize(
+      context,
+      mobile: mobile,
+      tablet: tablet,
+      desktop: desktop,
+    );
+
+    // Reduce font size by 2 for English to prevent overflow
+    if (currentLanguage == 'en') {
+      return (baseFontSize - 2.0).clamp(8.0, double.infinity); // 2 points smaller for English, minimum 8
+    }
+
+    return baseFontSize;
+  }
+
+  // Adjust any font size based on language
+  static double adjustFontSizeForLanguage(double fontSize, String currentLanguage) {
+    if (currentLanguage == 'en') {
+      // Reduce by exactly 2 points for English, but ensure minimum of 8
+      return (fontSize - 2.0).clamp(8.0, double.infinity);
+    }
+    return fontSize;
+  }
   
   // Responsive spacing
   static double getResponsiveSpacing(BuildContext context, {
@@ -141,6 +172,32 @@ class ResponsiveUtils {
       mobile: 2.0,
       tablet: 4.0,
       desktop: 6.0,
+    );
+  }
+
+  // Create overflow-safe text widget
+  static Widget createOverflowSafeText(
+    String text, {
+    required BuildContext context,
+    required String currentLanguage,
+    TextStyle? style,
+    TextDirection? textDirection,
+    TextAlign? textAlign,
+    int? maxLines,
+    double? fontSize,
+  }) {
+    final safeFontSize = fontSize != null
+        ? adjustFontSizeForLanguage(fontSize, currentLanguage)
+        : getLanguageAwareFontSize(context, currentLanguage: currentLanguage);
+
+    return Text(
+      text,
+      style: (style ?? const TextStyle()).copyWith(fontSize: safeFontSize),
+      textDirection: textDirection,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: TextOverflow.ellipsis,
+      softWrap: true,
     );
   }
   

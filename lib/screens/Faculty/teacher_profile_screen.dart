@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../header.dart';
 import '../../widgets/buttom_header.dart';
 import '../../language_provider.dart';
+import '../../utils/responsive_utils.dart';
 import '../../services/firebase_cache_service.dart';
 
 class TeacherProfileScreen extends StatefulWidget {
@@ -195,7 +196,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                         Text(
                           teacherData['fullName'] ?? languageProvider.getLocalizedString('unknown'),
                           style: TextStyle(
-                            fontSize: 22,
+                            fontSize: ResponsiveUtils.adjustFontSizeForLanguage(14, languageProvider.currentLanguage),
                             fontWeight: FontWeight.bold,
                             fontFamily: languageProvider.getFontFamily(),
                           ),
@@ -225,7 +226,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                               child: Text(
                                 '${languageProvider.getLocalizedString('academic_rank')}: ${teacherData['educationRank'] ?? languageProvider.getLocalizedString('unknown')}',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: ResponsiveUtils.adjustFontSizeForLanguage(12, languageProvider.currentLanguage),
                                   fontWeight: FontWeight.bold,
                                   fontFamily: languageProvider.getFontFamily(),
                                 ),
@@ -247,7 +248,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                               child: Text(
                                 '${languageProvider.getLocalizedString('degree')}: ${teacherData['degree'] ?? languageProvider.getLocalizedString('unknown')}',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: ResponsiveUtils.adjustFontSizeForLanguage(12, languageProvider.currentLanguage),
                                   fontWeight: FontWeight.bold,
                                   fontFamily: languageProvider.getFontFamily(),
                                 ),
@@ -269,7 +270,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                               child: Text(
                                 '${languageProvider.getLocalizedString('department')}: ${teacherData['departmentName'] ?? languageProvider.getLocalizedString('unknown')}',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: ResponsiveUtils.adjustFontSizeForLanguage(12, languageProvider.currentLanguage),
                                   fontWeight: FontWeight.bold,
                                   fontFamily: languageProvider.getFontFamily(),
                                 ),
@@ -298,7 +299,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                         Text(
                           languageProvider.getLocalizedString('research'),
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: ResponsiveUtils.adjustFontSizeForLanguage(18, languageProvider.currentLanguage),
                             fontWeight: FontWeight.bold,
                             fontFamily: languageProvider.getFontFamily(),
                           ),

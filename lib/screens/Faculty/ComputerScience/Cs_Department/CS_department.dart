@@ -43,8 +43,20 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
               .snapshots(),
       builder: (context, departmentSnapshot) {
         if (departmentSnapshot.hasError) {
-          return const Scaffold(
-            body: Center(child: Text('د څانګې معلوماتو کې ستونزه پیدا شوه')),
+          return Scaffold(
+            body: Center(
+              child: Consumer<LanguageProvider>(
+                builder: (context, languageProvider, child) {
+                  return Text(
+                    languageProvider.getLocalizedString('departments_fetch_error'),
+                    style: TextStyle(
+                      fontFamily: languageProvider.getFontFamily(),
+                    ),
+                    textDirection: languageProvider.getTextDirection(),
+                  );
+                },
+              ),
+            ),
           );
         }
 
@@ -55,8 +67,20 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
         }
 
         if (!departmentSnapshot.hasData || !departmentSnapshot.data!.exists) {
-          return const Scaffold(
-            body: Center(child: Text('څانګه ونه موندل شوه')),
+          return Scaffold(
+            body: Center(
+              child: Consumer<LanguageProvider>(
+                builder: (context, languageProvider, child) {
+                  return Text(
+                    languageProvider.getLocalizedString('no_departments_found'),
+                    style: TextStyle(
+                      fontFamily: languageProvider.getFontFamily(),
+                    ),
+                    textDirection: languageProvider.getTextDirection(),
+                  );
+                },
+              ),
+            ),
           );
         }
 
@@ -70,9 +94,20 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
               .snapshots(),
           builder: (context, facultySnapshot) {
             if (facultySnapshot.hasError || !facultySnapshot.hasData) {
-              return const Scaffold(
-                body:
-                    Center(child: Text('د پوهنځي معلوماتو کې ستونزه پیدا شوه')),
+              return Scaffold(
+                body: Center(
+                  child: Consumer<LanguageProvider>(
+                    builder: (context, languageProvider, child) {
+                      return Text(
+                        languageProvider.getLocalizedString('faculties_fetch_error'),
+                        style: TextStyle(
+                          fontFamily: languageProvider.getFontFamily(),
+                        ),
+                        textDirection: languageProvider.getTextDirection(),
+                      );
+                    },
+                  ),
+                ),
               );
             }
 
@@ -118,43 +153,51 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: _buildNavigationCard(
-                                    context,
-                                    'استادان',
-                                    Icons.people,
-                                    () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AllTeachersScreen(
-                                          facultyData: {
-                                            'id': widget.facultyId,
-                                            'name': facultyData['name'],
-                                            'logo': facultyData['logo'],
-                                          },
-                                          departmentData: {
-                                            'id': widget.departmentId,
-                                            'name': departmentData['name'],
-                                          },
+                                  child: Consumer<LanguageProvider>(
+                                    builder: (context, languageProvider, child) {
+                                      return _buildNavigationCard(
+                                        context,
+                                        languageProvider.getLocalizedString('teachers'),
+                                        Icons.people,
+                                        () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => AllTeachersScreen(
+                                              facultyData: {
+                                                'id': widget.facultyId,
+                                                'name': facultyData['name'],
+                                                'logo': facultyData['logo'],
+                                              },
+                                              departmentData: {
+                                                'id': widget.departmentId,
+                                                'name': departmentData['name'],
+                                              },
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    },
                                   ),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
-                                  child: _buildNavigationCard(
-                                    context,
-                                    'سمسټرونه',
-                                    Icons.calendar_today,
-                                    () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => CurriculumScreen(
-                                          facultyId: widget.facultyId,
-                                          departmentId: widget.departmentId,
+                                  child: Consumer<LanguageProvider>(
+                                    builder: (context, languageProvider, child) {
+                                      return _buildNavigationCard(
+                                        context,
+                                        languageProvider.getLocalizedString('semesters'),
+                                        Icons.calendar_today,
+                                        () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => CurriculumScreen(
+                                              facultyId: widget.facultyId,
+                                              departmentId: widget.departmentId,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],

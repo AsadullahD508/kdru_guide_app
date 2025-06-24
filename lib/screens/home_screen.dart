@@ -803,16 +803,19 @@ class _HomescreenState extends State<Homescreen> {
                       ? [
                           // RTL: Text first, then icon
                           Expanded(
-                            child: Text(
+                            child: ResponsiveUtils.createOverflowSafeText(
                               languageProvider.getLocalizedString('contact_us'),
+                              context: context,
+                              currentLanguage: languageProvider.currentLanguage,
                               style: TextStyle(
-                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue.shade700,
                                 fontFamily: languageProvider.getFontFamily(),
                               ),
+                              fontSize: 20,
                               textDirection: languageProvider.getTextDirection(),
                               textAlign: TextAlign.right,
+                              maxLines: 1,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -831,16 +834,19 @@ class _HomescreenState extends State<Homescreen> {
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: Text(
+                            child: ResponsiveUtils.createOverflowSafeText(
                               languageProvider.getLocalizedString('contact_us'),
+                              context: context,
+                              currentLanguage: languageProvider.currentLanguage,
                               style: TextStyle(
-                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue.shade700,
                                 fontFamily: languageProvider.getFontFamily(),
                               ),
+                              fontSize: 20,
                               textDirection: languageProvider.getTextDirection(),
                               textAlign: TextAlign.left,
+                              maxLines: 1,
                             ),
                           ),
                         ],

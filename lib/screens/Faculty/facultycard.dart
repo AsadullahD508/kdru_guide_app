@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../widgets/buttom_header.dart';
 import '../../header.dart';
 import '../../language_provider.dart';
+import '../../utils/responsive_utils.dart';
 import 'ComputerScience/CS_home.dart';
 import '../../home.dart';
 
@@ -224,8 +225,8 @@ class _FacultyCardScreenState extends State<FacultyCard>
       children: [
         Text(
           '$count',
-          style: const TextStyle(
-            fontSize: 18,
+          style: TextStyle(
+            fontSize: ResponsiveUtils.adjustFontSizeForLanguage(18, languageProvider.currentLanguage),
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -233,7 +234,7 @@ class _FacultyCardScreenState extends State<FacultyCard>
         Text(
           title,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: ResponsiveUtils.adjustFontSizeForLanguage(14, languageProvider.currentLanguage),
             color: Colors.white70,
             fontFamily: languageProvider.getFontFamily(),
           ),
@@ -321,25 +322,25 @@ class _FacultyCardScreenState extends State<FacultyCard>
                   const SizedBox(height: 16),
                   AutoSizeText(
                     faculty.name,
-                    style: const TextStyle(
-                      fontSize: 24,
+                    style: TextStyle(
+                      fontSize: ResponsiveUtils.adjustFontSizeForLanguage(24, languageProvider.currentLanguage),
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                     maxLines: 1,
-                    minFontSize: 16,
+                    minFontSize: ResponsiveUtils.adjustFontSizeForLanguage(16, languageProvider.currentLanguage),
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
                   AutoSizeText(
                     faculty.description,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: TextStyle(
+                      fontSize: ResponsiveUtils.adjustFontSizeForLanguage(16, languageProvider.currentLanguage),
                       color: Colors.white,
                       height: 1.5,
                     ),
                     maxLines: 3,
-                    minFontSize: 12,
+                    minFontSize: ResponsiveUtils.adjustFontSizeForLanguage(12, languageProvider.currentLanguage),
                     overflow: TextOverflow.ellipsis,
                   ),
                   const Spacer(),
@@ -444,7 +445,7 @@ class _FacultyCardScreenState extends State<FacultyCard>
                       return Text(
                         languageProvider.getLocalizedString('loading'),
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: ResponsiveUtils.adjustFontSizeForLanguage(16, languageProvider.currentLanguage),
                           fontFamily: languageProvider.getFontFamily(),
                         ),
                         textDirection: languageProvider.getTextDirection(),
@@ -484,7 +485,7 @@ class _FacultyCardScreenState extends State<FacultyCard>
                             Text(
                               languageProvider.getLocalizedString('faculties'),
                               style: TextStyle(
-                                fontSize: 32,
+                                fontSize: ResponsiveUtils.adjustFontSizeForLanguage(32, languageProvider.currentLanguage),
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF0D3B66),
                                 fontFamily: languageProvider.getFontFamily(),
@@ -516,7 +517,7 @@ class _FacultyCardScreenState extends State<FacultyCard>
                                 child: Text(
                                   languageProvider.getLocalizedString('no_faculty_found'),
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: ResponsiveUtils.adjustFontSizeForLanguage(18, languageProvider.currentLanguage),
                                     color: Colors.black54,
                                     fontFamily: languageProvider.getFontFamily(),
                                   ),

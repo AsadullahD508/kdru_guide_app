@@ -492,22 +492,25 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            ResponsiveUtils.createOverflowSafeText(
                               languageProvider
                                   .getLocalizedString('riyasat_qadari_title'),
+                              context: context,
+                              currentLanguage: languageProvider.currentLanguage,
                               style: TextStyle(
-                                fontSize: ResponsiveUtils.getResponsiveFontSize(
-                                  context,
-                                  mobile: 16,
-                                  tablet: 18,
-                                  desktop: 20,
-                                ),
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                                 fontFamily: languageProvider.getFontFamily(),
                               ),
+                              fontSize: ResponsiveUtils.getResponsiveFontSize(
+                                context,
+                                mobile: 16,
+                                tablet: 18,
+                                desktop: 20,
+                              ),
                               textDirection: languageProvider.getTextDirection(),
                               textAlign: TextAlign.center,
+                              maxLines: 2,
                             ),
                             const SizedBox(height: 1),
                           ],
@@ -573,22 +576,25 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            ResponsiveUtils.createOverflowSafeText(
                               languageProvider
                                   .getLocalizedString('riyasat_qadari_title'),
+                              context: context,
+                              currentLanguage: languageProvider.currentLanguage,
                               style: TextStyle(
-                                fontSize: ResponsiveUtils.getResponsiveFontSize(
-                                  context,
-                                  mobile: 16,
-                                  tablet: 18,
-                                  desktop: 20,
-                                ),
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                                 fontFamily: languageProvider.getFontFamily(),
                               ),
+                              fontSize: ResponsiveUtils.getResponsiveFontSize(
+                                context,
+                                mobile: 16,
+                                tablet: 18,
+                                desktop: 20,
+                              ),
                               textDirection: languageProvider.getTextDirection(),
                               textAlign: TextAlign.center,
+                              maxLines: 2,
                             ),
                             const SizedBox(height: 1),
                           ],

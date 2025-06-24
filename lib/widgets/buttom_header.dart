@@ -130,18 +130,19 @@ class CustomBottomNavBar extends StatelessWidget {
                 child: Container(
                   constraints: const BoxConstraints(minHeight: 28),
                   alignment: Alignment.center,
-                  child: Text(
+                  child: ResponsiveUtils.createOverflowSafeText(
                     label,
+                    context: context,
+                    currentLanguage: languageProvider.currentLanguage,
                     style: TextStyle(
                       color: isSelected ? Colors.lightBlue : Colors.black,
                       fontFamily: languageProvider.getFontFamily(),
-                      fontSize: fontSize,
                       fontWeight:
                           isSelected ? FontWeight.w600 : FontWeight.normal,
                       height: 1.0,
                     ),
+                    fontSize: fontSize,
                     textDirection: languageProvider.getTextDirection(),
-                    overflow: TextOverflow.visible,
                     maxLines: 2,
                     textAlign: TextAlign.center,
                   ),
