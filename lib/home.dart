@@ -145,21 +145,21 @@ class _FirstHomescreen extends State<FirstHomescreen> {
           selectedIndex: selectedIndex,
         ),
         body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Consumer<LanguageProvider>(
-            builder: (context, languageProvider, child) {
-              return CustomHeader(
-                userName: languageProvider.getLocalizedString('guest_user'),
-                bannerImagePath: 'images/kdr_logo.png',
-                fullText:
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Consumer<LanguageProvider>(
+              builder: (context, languageProvider, child) {
+                return CustomHeader(
+                  userName: languageProvider.getLocalizedString('guest_user'),
+                  bannerImagePath: 'images/kdr_logo.png',
+                  fullText:
                     languageProvider.getLocalizedString('welcome_message'),
-              );
-            },
-          ),
+                );
+              },
+            ),
 
-          // Riyasat Button
-          Consumer<LanguageProvider>(
+            // Riyasat Button
+            Consumer<LanguageProvider>(
             builder: (context, languageProvider, child) {
               return Padding(
                 padding: ResponsiveUtils.getResponsivePadding(
@@ -611,10 +611,12 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                         ),
                       ),
                     ],
+                  ),
+
+              ),
             ),
           ),
-        ),
-      ),
+
     );
   }
 }

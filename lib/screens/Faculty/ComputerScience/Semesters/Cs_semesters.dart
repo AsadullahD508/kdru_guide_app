@@ -131,6 +131,18 @@ class _CurriculumScreenState extends State<CurriculumScreen> {
                         );
                       }
 
+                      // Sort curriculum data by semester
+                      List<QueryDocumentSnapshot> sortedDocs = snapshot.data!.docs.toList();
+                      sortedDocs.sort((a, b) {
+                        Map<String, dynamic> dataA = a.data() as Map<String, dynamic>;
+                        Map<String, dynamic> dataB = b.data() as Map<String, dynamic>;
+
+                        String semesterA = dataA['semesterName'] ?? '';
+                        String semesterB = dataB['semesterName'] ?? '';
+
+                        return _compareSemesters(semesterA, semesterB);
+                      });
+
                       return ListView(
                         padding: const EdgeInsets.all(16),
                         children: [
@@ -351,7 +363,7 @@ class _CurriculumScreenState extends State<CurriculumScreen> {
                                               ),
                                             ],
                                           ),
-                                          ...snapshot.data!.docs.map((doc) {
+                                          ...sortedDocs.map((doc) {
                                             Map<String, dynamic> subject =
                                                 doc.data() as Map<String, dynamic>;
                                             return TableRow(
@@ -521,5 +533,60 @@ class _CurriculumScreenState extends State<CurriculumScreen> {
         );
       },
     );
+  }
+
+  int _compareSemesters(String semesterA, String semesterB) {
+    // Extract year and semester number from semester names
+    Map<String, int> semesterInfoA = _extractSemesterInfo(semesterA);
+    Map<String, int> semesterInfoB = _extractSemesterInfo(semesterB);
+
+    // First compare by year
+    int yearComparison = semesterInfoA['year']!.compareTo(semesterInfoB['year']!);
+    if (yearComparison != 0) {
+      return yearComparison;
+    }
+
+    // If years are equal, compare by semester number
+    return semesterInfoA['semester']!.compareTo(semesterInfoB['semester']!);
+  }
+
+  Map<String, int> _extractSemesterInfo(String semesterName) {
+    // Default values
+    int year = 1;
+    int semester = 1;
+
+    String lowerSemester = semesterName.toLowerCase();
+
+    // Extract year information
+    if (lowerSemester.contains('first') || lowerSemester.contains('لومړی') || lowerSemester.contains('اول')) {
+      year = 1;
+    } else if (lowerSemester.contains('second') || lowerSemester.contains('دویم') || lowerSemester.contains('دوم')) {
+      year = 2;
+    } else if (lowerSemester.contains('third') || lowerSemester.contains('دریم') || lowerSemester.contains('سوم')) {
+      year = 3;
+    } else if (lowerSemester.contains('fourth') || lowerSemester.contains('څلورم') || lowerSemester.contains('چهارم')) {
+      year = 4;
+    } else if (lowerSemester.contains('fifth') || lowerSemester.contains('پنځم') || lowerSemester.contains('پنجم')) {
+      year = 5;
+    }
+
+    // Extract semester number (1 or 2)
+    if (lowerSemester.contains('semester 1') ||
+        lowerSemester.contains('semester1') ||
+        lowerSemester.contains('سمسټر ۱') ||
+        lowerSemester.contains('سمستر ۱') ||
+        lowerSemester.contains('نیمسال اول') ||
+        (lowerSemester.contains('semester') && lowerSemester.contains('1'))) {
+      semester = 1;
+    } else if (lowerSemester.contains('semester 2') ||
+               lowerSemester.contains('semester2') ||
+               lowerSemester.contains('سمسټر ۲') ||
+               lowerSemester.contains('سمستر ۲') ||
+               lowerSemester.contains('نیمسال دوم') ||
+               (lowerSemester.contains('semester') && lowerSemester.contains('2'))) {
+      semester = 2;
+    }
+
+    return {'year': year, 'semester': semester};
   }
 }

@@ -211,6 +211,28 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                                 ],
                               ),
                               const SizedBox(height: 4),
+                              // Graduated School
+                              if (teacherData['GraduatedSchool'] != null && teacherData['GraduatedSchool'].toString().isNotEmpty)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.school_outlined,
+                                        color: Colors.green, size: 20),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: Text(
+                                        'د فراغت پوهنتون: ${teacherData['GraduatedSchool']}',
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              if (teacherData['GraduatedSchool'] != null && teacherData['GraduatedSchool'].toString().isNotEmpty)
+                                const SizedBox(height: 4),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [

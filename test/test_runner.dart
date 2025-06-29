@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'unit/language_provider_test.dart' as language_provider_tests;
 import 'unit/app_localizations_test.dart' as localization_tests;
 import 'unit/responsive_utils_test.dart' as responsive_tests;
+import 'unit/database_connection_test.dart' as database_tests;
 import 'widget/home_screen_test.dart' as home_screen_tests;
 import 'widget/teacher_search_test.dart' as search_tests;
 
@@ -20,6 +21,10 @@ void main() {
 
       group('Responsive Utils Tests', () {
         responsive_tests.main();
+      });
+
+      group('Database Connection Tests', () {
+        database_tests.main();
       });
     });
 

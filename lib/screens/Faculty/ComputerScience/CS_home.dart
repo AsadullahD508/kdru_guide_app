@@ -429,6 +429,10 @@ class _FacultyScreenState extends State<FacultyScreen> {
                                 },
                               ),
                               const SizedBox(height: 30),
+                              _buildCommitteesSection(widget.facultyId),
+                              const SizedBox(height: 30),
+                              _buildPrerequisitesSection(widget.facultyId),
+                              const SizedBox(height: 30),
                               _buildDepartmentsSection(widget.facultyId),
                               const SizedBox(height: 30),
                               _buildGallerySection(
@@ -1039,6 +1043,428 @@ class _FacultyScreenState extends State<FacultyScreen> {
               ),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCommitteesSection(String facultyId) {
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTitleWithIcon(
+              languageProvider.getLocalizedString('committees'),
+              'images/view.png',
+              languageProvider,
+            ),
+            const SizedBox(height: 12),
+            StreamBuilder<DocumentSnapshot>(
+              stream: languageProvider
+                  .getFacultiesCollectionRef()
+                  .doc(facultyId)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      languageProvider.getLocalizedString('error_occurred'),
+                      style: TextStyle(
+                        fontFamily: languageProvider.getFontFamily(),
+                        color: Colors.red,
+                      ),
+                      textDirection: languageProvider.getTextDirection(),
+                    ),
+                  );
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return Center(
+                    child: Text(
+                      languageProvider.getLocalizedString('no_faculty_found'),
+                      style: TextStyle(
+                        fontFamily: languageProvider.getFontFamily(),
+                      ),
+                      textDirection: languageProvider.getTextDirection(),
+                    ),
+                  );
+                }
+
+                Map<String, dynamic> facultyData =
+                    snapshot.data!.data() as Map<String, dynamic>;
+
+                List<dynamic> committees = facultyData['committees'] ?? [];
+
+                if (committees.isEmpty) {
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Text(
+                      languageProvider.getLocalizedString('no_committees_available'),
+                      style: TextStyle(
+                        fontFamily: languageProvider.getFontFamily(),
+                        color: Colors.grey.shade600,
+                      ),
+                      textDirection: languageProvider.getTextDirection(),
+                    ),
+                  );
+                }
+
+                return Column(
+                  children: committees.map<Widget>((committee) {
+                    return _buildCommitteeCard(committee, languageProvider);
+                  }).toList(),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildCommitteeCard(Map<String, dynamic> committee, LanguageProvider languageProvider) {
+    bool isActive = committee['isActive'] ?? false;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.grey.shade300,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Committee Name and Status
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  committee['name'] ?? '',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                    fontFamily: languageProvider.getFontFamily(),
+                  ),
+                  textDirection: languageProvider.getTextDirection(),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isActive ? Colors.green : Colors.red,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  isActive
+                    ? languageProvider.getLocalizedString('active_committee')
+                    : languageProvider.getLocalizedString('inactive_committee'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Description
+          if (committee['description'] != null && committee['description'].toString().isNotEmpty)
+            _buildCommitteeInfoRow(
+              languageProvider.getLocalizedString('committee_description'),
+              committee['description'],
+              languageProvider,
+            ),
+
+          // Head
+          if (committee['head'] != null && committee['head'].toString().isNotEmpty)
+            _buildCommitteeInfoRow(
+              languageProvider.getLocalizedString('committee_head'),
+              committee['head'],
+              languageProvider,
+            ),
+
+          // Members
+          if (committee['members'] != null && committee['members'].toString().isNotEmpty)
+            _buildCommitteeInfoRow(
+              languageProvider.getLocalizedString('committee_members'),
+              committee['members'],
+              languageProvider,
+            ),
+
+          // Establishment Year
+          if (committee['establishmentYear'] != null && committee['establishmentYear'].toString().isNotEmpty)
+            _buildCommitteeInfoRow(
+              languageProvider.getLocalizedString('establishment_year'),
+              committee['establishmentYear'],
+              languageProvider,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCommitteeInfoRow(String label, String value, LanguageProvider languageProvider) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.red,
+              fontFamily: languageProvider.getFontFamily(),
+            ),
+            textDirection: languageProvider.getTextDirection(),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.black,
+              fontFamily: languageProvider.getFontFamily(),
+            ),
+            textDirection: languageProvider.getTextDirection(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPrerequisitesCard(String prerequisites, LanguageProvider languageProvider) {
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                color: Colors.red,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                languageProvider.getLocalizedString('prerequisites'),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.red,
+                  fontFamily: languageProvider.getFontFamily(),
+                ),
+                textDirection: languageProvider.getTextDirection(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Text(
+              prerequisites,
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.5,
+                color: Colors.black,
+                fontFamily: languageProvider.getFontFamily(),
+              ),
+              textDirection: languageProvider.getTextDirection(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPrerequisitesSection(String facultyId) {
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTitleWithIcon(
+              languageProvider.getLocalizedString('prerequisites'),
+              'images/view.png',
+              languageProvider,
+            ),
+            const SizedBox(height: 12),
+            StreamBuilder<DocumentSnapshot>(
+              stream: languageProvider
+                  .getFacultiesCollectionRef()
+                  .doc(facultyId)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      languageProvider.getLocalizedString('error_occurred'),
+                      style: TextStyle(
+                        fontFamily: languageProvider.getFontFamily(),
+                        color: Colors.red,
+                      ),
+                      textDirection: languageProvider.getTextDirection(),
+                    ),
+                  );
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return Center(
+                    child: Text(
+                      languageProvider.getLocalizedString('no_faculty_found'),
+                      style: TextStyle(
+                        fontFamily: languageProvider.getFontFamily(),
+                      ),
+                      textDirection: languageProvider.getTextDirection(),
+                    ),
+                  );
+                }
+
+                Map<String, dynamic> facultyData =
+                    snapshot.data!.data() as Map<String, dynamic>;
+
+                List<dynamic> committees = facultyData['committees'] ?? [];
+
+                // Collect all prerequisites from committees
+                List<String> allPrerequisites = [];
+                for (var committee in committees) {
+                  if (committee['prerequisites'] != null &&
+                      committee['prerequisites'].toString().isNotEmpty) {
+                    allPrerequisites.add(committee['prerequisites']);
+                  }
+                }
+
+                if (allPrerequisites.isEmpty) {
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Text(
+                      languageProvider.getLocalizedString('no_prerequisites_available'),
+                      style: TextStyle(
+                        fontFamily: languageProvider.getFontFamily(),
+                        color: Colors.grey.shade600,
+                      ),
+                      textDirection: languageProvider.getTextDirection(),
+                    ),
+                  );
+                }
+
+                return Column(
+                  children: allPrerequisites.asMap().entries.map<Widget>((entry) {
+                    int index = entry.key;
+                    String prerequisite = entry.value;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '${languageProvider.getLocalizedString('prerequisites')} ${index + 1}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.red,
+                                  fontFamily: languageProvider.getFontFamily(),
+                                ),
+                                textDirection: languageProvider.getTextDirection(),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade50,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: Colors.grey.shade200),
+                            ),
+                            child: Text(
+                              prerequisite,
+                              style: TextStyle(
+                                fontSize: 14,
+                                height: 1.5,
+                                color: Colors.black,
+                                fontFamily: languageProvider.getFontFamily(),
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ],
         );
       },
     );

@@ -407,6 +407,32 @@ class _AllFacultyTeachersScreenState extends State<AllFacultyTeachersScreen> {
                         ],
                       ),
                     ],
+                    if (teacher['GraduatedSchool'] != null && teacher['GraduatedSchool'].toString().isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.school_outlined,
+                            size: 14,
+                            color: Colors.green.shade600,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              '${languageProvider.getLocalizedString('graduated_school')}: ${teacher['GraduatedSchool']}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade600,
+                                fontFamily: languageProvider.getFontFamily(),
+                              ),
+                              textDirection: languageProvider.getTextDirection(),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                     if (teacher['rank'] != null && teacher['rank'].toString().isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Row(

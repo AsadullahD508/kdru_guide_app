@@ -260,6 +260,31 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                           ],
                         ),
                         const SizedBox(height: 4),
+                        // Graduated School
+                        if (teacherData['GraduatedSchool'] != null && teacherData['GraduatedSchool'].toString().isNotEmpty)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.school_outlined,
+                                  color: Colors.green, size: 20),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  '${languageProvider.getLocalizedString('graduated_school')}: ${teacherData['GraduatedSchool']}',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveUtils.adjustFontSizeForLanguage(12, languageProvider.currentLanguage),
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: languageProvider.getFontFamily(),
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textDirection: languageProvider.getTextDirection(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        if (teacherData['GraduatedSchool'] != null && teacherData['GraduatedSchool'].toString().isNotEmpty)
+                          const SizedBox(height: 4),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

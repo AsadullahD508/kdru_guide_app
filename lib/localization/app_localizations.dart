@@ -72,6 +72,7 @@ class AppLocalizations {
       'teacher_profile': 'د ښوونکي پروفایل',
       'phone': 'ټیلفون',
       'email': 'ایمیل',
+      'graduated_school': 'د فراغت پوهنتون',
       'no_teachers_found': 'هیڅ ښوونکی ونه موندل شو.',
       'teacher_error': 'د ښوونکو په ترلاسه کولو کې ستونزه رامنځته شوه.',
 
@@ -493,6 +494,16 @@ class AppLocalizations {
       'unknown': 'نامعلوم',
       'guest_user': 'میلمه کارونکی',
       'university_dean': 'د پوهنتون ریس',
+      'chancellor_message': 'د ریس پیغام',
+      'university_information': 'د پوهنتون معلومات',
+      'committees': 'کمیټې',
+      'no_committees_available': 'هیڅ کمیټې شتون نلري',
+      'committee_head': 'د کمیټې مشر',
+      'committee_members': 'د کمیټې غړي',
+      'committee_description': 'د کمیټې تشریح',
+      'no_prerequisites_available': 'هیڅ اړتیاوې شتون نلري',
+      'active_committee': 'فعاله کمیټه',
+      'inactive_committee': 'غیر فعاله کمیټه',
     },
 
     // Dari (fa)
@@ -564,6 +575,7 @@ class AppLocalizations {
       'published_research': 'تحقیقات منتشر شده',
       'phone': 'تلفن',
       'email': 'ایمیل',
+      'graduated_school': 'پوهنتون فارغ‌التحصیلی',
       'no_teachers_found': 'هیچ استادی یافت نشد.',
       'teacher_error': 'مشکل در دریافت اطلاعات استادان.',
 
@@ -707,6 +719,16 @@ class AppLocalizations {
       'guest_user': 'کاربر مهمان',
       'information': 'اطلاعات',
       'university_dean': 'رئیس پوهنتون',
+      'chancellor_message': 'پیام ریس',
+      'university_information': 'اطلاعات پوهنتون',
+      'committees': 'کمیته‌ها',
+      'no_committees_available': 'هیچ کمیته‌ای موجود نیست',
+      'committee_head': 'رئیس کمیته',
+      'committee_members': 'اعضای کمیته',
+      'committee_description': 'توضیحات کمیته',
+      'no_prerequisites_available': 'هیچ پیش‌نیازی موجود نیست',
+      'active_committee': 'کمیته فعال',
+      'inactive_committee': 'کمیته غیرفعال',
     },
 
     // English (en)
@@ -776,6 +798,7 @@ class AppLocalizations {
       'published_research': 'Published Research',
       'phone': 'Phone',
       'email': 'Email',
+      'graduated_school': 'Graduated University',
       'no_teachers_found': 'No teachers found.',
       'teacher_error': 'Error retrieving teacher information.',
 
@@ -996,6 +1019,16 @@ class AppLocalizations {
       'guest_user': 'Guest User',
       'information': 'Information',
       'university_dean': 'University Dean',
+      'chancellor_message': 'Chancellor Message',
+      'university_information': 'University Information',
+      'committees': 'Committees',
+      'no_committees_available': 'No committees available',
+      'committee_head': 'Committee Head',
+      'committee_members': 'Committee Members',
+      'committee_description': 'Committee Description',
+      'no_prerequisites_available': 'No prerequisites available',
+      'active_committee': 'Active Committee',
+      'inactive_committee': 'Inactive Committee',
     },
 
     // KDRU (kdru) - Mixed Pashto/Dari for Kandahar University
@@ -1067,6 +1100,7 @@ class AppLocalizations {
       'published_research': 'خپاره شوې څېړنې',
       'phone': 'تلیفون',
       'email': 'برېښنالیک',
+      'graduated_school': 'د فراغت پوهنتون',
       'no_teachers_found': 'هیڅ ښوونکی ونه موندل شو.',
       'teacher_error': 'د ښوونکو د معلوماتو په ترلاسه کولو کې ستونزه.',
 
@@ -1239,6 +1273,16 @@ class AppLocalizations {
       'guest_user': 'میلمه کارونکی',
       'information': 'معلومات',
       'university_dean': 'د پوهنتون ریس',
+      'chancellor_message': 'د ریس پیغام',
+      'university_information': 'د پوهنتون معلومات',
+      'committees': 'کمیټې',
+      'no_committees_available': 'هیڅ کمیټې شتون نلري',
+      'committee_head': 'د کمیټې مشر',
+      'committee_members': 'د کمیټې غړي',
+      'committee_description': 'د کمیټې تشریح',
+      'no_prerequisites_available': 'هیڅ اړتیاوې شتون نلري',
+      'active_committee': 'فعاله کمیټه',
+      'inactive_committee': 'غیر فعاله کمیټه',
     },
   };
 }
