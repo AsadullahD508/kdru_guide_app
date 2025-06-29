@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kdru_guide_app/screens/riast/directorate_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kdru_guide_app/services/firebase_cache_service.dart';
 import 'package:provider/provider.dart';
 import 'header.dart';
 import 'package:kdru_guide_app/widgets/buttom_header.dart';
@@ -196,6 +198,9 @@ class _FirstHomescreen extends State<FirstHomescreen> {
             },
           ),
 
+
+
+
           // 🔹 Main Page Content
           Expanded(
             child: _buildPage(selectedIndex),
@@ -281,7 +286,8 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                         ResponsiveUtils.getResponsiveSpacing(context),
                     crossAxisSpacing:
                         ResponsiveUtils.getResponsiveSpacing(context),
-                    childAspectRatio: context.responsiveValue(
+                    childAspectRatio: ResponsiveUtils.responsiveValue(
+                      context,
                       mobile: 1.2,
                       tablet: 1.1,
                       desktop: 1.0,
@@ -346,6 +352,11 @@ class _FirstHomescreen extends State<FirstHomescreen> {
               },
             ),
           ),
+
+          // Chancellor Message Section at the end of scrollable content
+          const SizedBox(height: 30),
+          _buildChancellorMessageSection(),
+          const SizedBox(height: 30),
         ],
       ),
     );
@@ -357,7 +368,8 @@ class _FirstHomescreen extends State<FirstHomescreen> {
     required LanguageProvider languageProvider,
   }) {
     return Container(
-      height: context.responsiveValue(
+      height: ResponsiveUtils.responsiveValue(
+        context,
         mobile: 120.0,
         tablet: 140.0,
         desktop: 160.0,
@@ -386,12 +398,14 @@ class _FirstHomescreen extends State<FirstHomescreen> {
               borderRadius: BorderRadius.circular(12),
               child: Image.asset(
                 imagePath,
-                width: context.responsiveValue(
+                width: ResponsiveUtils.responsiveValue(
+                  context,
                   mobile: 60.0,
                   tablet: 70.0,
                   desktop: 80.0,
                 ),
-                height: context.responsiveValue(
+                height: ResponsiveUtils.responsiveValue(
+                  context,
                   mobile: 60.0,
                   tablet: 70.0,
                   desktop: 80.0,
@@ -432,13 +446,17 @@ class _FirstHomescreen extends State<FirstHomescreen> {
   }
 
   Widget _buildRiyasatQadariButton(LanguageProvider languageProvider) {
-    return Container(
+    final double buttonHeight = ResponsiveUtils.responsiveValue(
+      context,
+      mobile: 60.0,
+      tablet: 90.0,
+      desktop: 100.0,
+    );
+
+    return SizedBox(
       width: double.infinity,
-      height: context.responsiveValue(
-        mobile: 60.0,
-        tablet: 90.0,
-        desktop: 100.0,
-      ),
+      height: buttonHeight,
+      child: Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF0D3B66), Color(0xFF1E5F8B)],
@@ -480,7 +498,8 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                       Icon(
                         Icons.arrow_back_ios,
                         color: Colors.white,
-                        size: context.responsiveValue(
+                        size: ResponsiveUtils.responsiveValue(
+                          context,
                           mobile: 20.0,
                           tablet: 24.0,
                           desktop: 28.0,
@@ -518,12 +537,14 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                       ),
                       SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context)),
                       Container(
-                        width: context.responsiveValue(
+                        width: ResponsiveUtils.responsiveValue(
+                          context,
                           mobile: 48.0,
                           tablet: 56.0,
                           desktop: 64.0,
                         ),
-                        height: context.responsiveValue(
+                        height: ResponsiveUtils.responsiveValue(
+                          context,
                           mobile: 35.0,
                           tablet: 56.0,
                           desktop: 64.0,
@@ -535,7 +556,8 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                         child: Icon(
                           Icons.account_balance,
                           color: Colors.white,
-                          size: context.responsiveValue(
+                          size: ResponsiveUtils.responsiveValue(
+                            context,
                             mobile: 24.0,
                             tablet: 28.0,
                             desktop: 32.0,
@@ -546,12 +568,14 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                   : [
                       // LTR Layout: Icon on left, text in middle, arrow on right
                       Container(
-                        width: context.responsiveValue(
+                        width: ResponsiveUtils.responsiveValue(
+                          context,
                           mobile: 48.0,
                           tablet: 56.0,
                           desktop: 64.0,
                         ),
-                        height: context.responsiveValue(
+                        height: ResponsiveUtils.responsiveValue(
+                          context,
                           mobile: 35.0,
                           tablet: 56.0,
                           desktop: 64.0,
@@ -563,7 +587,8 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                         child: Icon(
                           Icons.account_balance,
                           color: Colors.white,
-                          size: context.responsiveValue(
+                          size: ResponsiveUtils.responsiveValue(
+                            context,
                             mobile: 24.0,
                             tablet: 28.0,
                             desktop: 32.0,
@@ -604,7 +629,8 @@ class _FirstHomescreen extends State<FirstHomescreen> {
                       Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.white,
-                        size: context.responsiveValue(
+                        size: ResponsiveUtils.responsiveValue(
+                          context,
                           mobile: 20.0,
                           tablet: 24.0,
                           desktop: 28.0,
@@ -616,7 +642,90 @@ class _FirstHomescreen extends State<FirstHomescreen> {
               ),
             ),
           ),
+        ),
+      );
 
+  }
+
+  Widget _buildChancellorMessageSection() {
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseCacheService.instance
+              .getUniversityInfoStreamByLanguage(languageProvider.currentLanguage),
+          builder: (context, snapshot) {
+            if (snapshot.hasError ||
+                !snapshot.hasData ||
+                snapshot.data!.docs.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            // Get the first document from the university collection
+            final doc = snapshot.data!.docs.first;
+            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+            String deanMessage = data['deanMessage'] ?? '';
+
+            if (deanMessage.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            return Column(
+              children: [
+                // Section Title
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF20C0C7),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    languageProvider.getLocalizedString('chancellor_message'),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontFamily: languageProvider.getFontFamily(),
+                    ),
+                    textAlign: TextAlign.center,
+                    textDirection: languageProvider.getTextDirection(),
+                  ),
+                ),
+
+                // Message Content
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade300),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade200,
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    deanMessage,
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.5,
+                      color: Colors.black,
+                      fontFamily: languageProvider.getFontFamily(),
+                    ),
+                    textAlign: TextAlign.center,
+                    textDirection: languageProvider.getTextDirection(),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

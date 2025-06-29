@@ -28,7 +28,6 @@ class _HomescreenState extends State<Homescreen> {
   String aboutTitle = '';
   String aboutDescription = '';
   String universityDean = '';
-  String deanMessage = '';
   String universityYear = '';
   String universityEmail = '';
   String universityMobile = '';
@@ -63,7 +62,6 @@ class _HomescreenState extends State<Homescreen> {
         aboutTitle = '';
         aboutDescription = '';
         universityDean = '';
-        deanMessage = '';
         universityYear = '';
         universityEmail = '';
         universityMobile = '';
@@ -102,7 +100,6 @@ class _HomescreenState extends State<Homescreen> {
             aboutTitle = data['name'] ?? '';
             aboutDescription = data['information'] ?? '';
             universityYear = data['year'] ?? '';
-            deanMessage = data['deanMessage'] ?? '';
 
             // Extract contact information
             final contactInfo = data['contactInfo'] as Map<String, dynamic>?;
@@ -271,7 +268,6 @@ class _HomescreenState extends State<Homescreen> {
             aboutTitle = data['name'] ?? '';
             aboutDescription = data['information'] ?? '';
             universityYear = data['year'] ?? '';
-            deanMessage = data['deanMessage'] ?? '';
 
             // Extract contact information
             final contactInfo = data['contactInfo'] as Map<String, dynamic>?;
@@ -510,46 +506,6 @@ class _HomescreenState extends State<Homescreen> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.blue.shade800,
-                          fontFamily: languageProvider.getFontFamily(),
-                        ),
-                        textAlign: TextAlign.center,
-                        textDirection: languageProvider.getTextDirection(),
-                      ),
-                    ],
-                  ),
-                ),
-              const SizedBox(height: 16),
-
-              // Chancellor Message Section
-              if (deanMessage.isNotEmpty)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green.shade200),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        languageProvider.getLocalizedString('chancellor_message'),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.green.shade700,
-                          fontFamily: languageProvider.getFontFamily(),
-                        ),
-                        textAlign: TextAlign.center,
-                        textDirection: languageProvider.getTextDirection(),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        deanMessage,
-                        style: TextStyle(
-                          fontSize: 14,
-                          height: 1.5,
-                          color: Colors.green.shade800,
                           fontFamily: languageProvider.getFontFamily(),
                         ),
                         textAlign: TextAlign.center,
